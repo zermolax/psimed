@@ -1,0 +1,50 @@
+[
+	{
+		"name": "Dr. Gheorghe Gherasim",
+		"role": "Medic Primar Psihiatru",
+		"specialty": "Psihiatrie Adulți, Psihoterapie",
+		"description": "Cu peste 15 ani de experiență în psihiatrie, Dr. Gheorghe Gherasim s-a specializat în tratamentul tulburărilor afective și de anxietate. Este absolvent al Universității de Medicină și Farmacie din Iași și membru al Colegiului Medicilor din România.",
+		"qualifications": [
+			"Doctor în Medicină - UMF Iași",
+			"Specialist Psihiatrie",
+			"Psihoterapeut autorizat",
+			"Membru Colegiul Medicilor din România"
+		]
+	},
+	{
+		"name": "Dr. Maria Popescu",
+		"role": "Medic Specialist Psihiatru Pediatru",
+		"specialty": "Psihiatrie Pediatrică, ADHD, Autism",
+		"description": "Dr. Maria Popescu este specializată în psihiatria copilului și adolescentului, cu focus special pe tulburări de dezvoltare și ADHD. Are experiență vastă în lucrul cu copii și familiile lor.",
+		"qualifications": [
+			"Doctor în Medicină - UMF București",
+			"Specialist Psihiatrie Pediatrică",
+			"Formare în terapia ABA",
+			"Certificare internațională ADHD"
+		]
+	},
+	{
+		"name": "Psih. Ana Ionescu",
+		"role": "Psiholog Clinician",
+		"specialty": "Evaluări Psihologice, Consiliere",
+		"description": "Ana Ionescu este psiholog clinician cu expertiză în evaluări psihologice complexe și psihoterapie cognitiv-comportamentală. Lucrează atât cu adulți cât și cu copii.",
+		"qualifications": [
+			"Master Psihologie Clinică",
+			"Psiholog clinician autorizat",
+			"Psihoterapeut TCC",
+			"Specialist evaluări neuropsihologice"
+		]
+	},
+	{
+		"name": "Psih. Mihai Dumitrescu",
+		"role": "Psihoterapeut",
+		"specialty": "Psihoterapie, Hipnoză Clinică",
+		"description": "Cu o abordare integrativă în psihoterapie, Mihai Dumitrescu combină diverse tehnici terapeutice pentru a oferi tratamente personalizate. Are certificare în hipnoză clinică și mindfulness.",
+		"qualifications": [
+			"Master Psihoterapie",
+			"Certificare Hipnoză Clinică",
+			"Instructor Mindfulness",
+			"Terapeut Gestalt"
+		]
+	}
+]

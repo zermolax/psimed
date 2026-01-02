@@ -1,0 +1,136 @@
+[
+	{
+		"id": "psihiatrie-adulti",
+		"title": "Psihiatrie Adulți",
+		"icon": "user",
+		"description": "Diagnostic și tratament specializat pentru tulburări psihiatrice la adulți",
+		"featured": true,
+		"content": {
+			"intro": "Oferim servicii complete de psihiatrie pentru adulți, incluzând evaluare clinică, diagnostic și tratament personalizat pentru o gamă largă de afecțiuni psihiatrice.",
+			"whatWeTreat": [
+				"Depresie și tulburări afective",
+				"Tulburări de anxietate și panică",
+				"Tulburare bipolară",
+				"Schizofrenie și psihoze",
+				"Tulburări obsesiv-compulsive (TOC)",
+				"Tulburări de somn",
+				"Tulburări de personalitate"
+			],
+			"approach": "Abordarea noastră se bazează pe cele mai recente ghiduri clinice internaționale, combinând farmacoterapia cu psihoterapia atunci când este necesar. Fiecare pacient beneficiază de un plan de tratament individualizat.",
+			"process": [
+				"Evaluare clinică inițială completă",
+				"Diagnostic diferențiat",
+				"Plan de tratament personalizat",
+				"Monitorizare și ajustare regulată",
+				"Suport continuu și consiliere"
+			]
+		}
+	},
+	{
+		"id": "psihiatrie-pediatrica",
+		"title": "Psihiatrie Pediatrică",
+		"icon": "child",
+		"description": "Îngrijire specializată pentru tulburări psihiatrice la copii și adolescenți",
+		"featured": true,
+		"content": {
+			"intro": "Echipa noastră de psihiatrie pediatrică oferă evaluare și tratament specializat pentru copii și adolescenți cu diverse probleme de sănătate mintală.",
+			"whatWeTreat": [
+				"ADHD (Tulburare de deficit de atenție/hiperactivitate)",
+				"Tulburări din spectrul autist (TSA)",
+				"Anxietate și depresie la copii",
+				"Tulburări de comportament",
+				"Tulburări de învățare",
+				"Ticuri și sindrom Tourette",
+				"Tulburări alimentare"
+			],
+			"approach": "Lucrăm în strânsă colaborare cu părinții și profesorii pentru a asigura cea mai bună îngrijire. Abordarea noastră este orientată către familie și dezvoltarea sănătoasă a copilului.",
+			"process": [
+				"Evaluare dezvoltării și comportamentului",
+				"Diagnostic multiaxial",
+				"Consiliere parentală",
+				"Intervenție terapeutică adaptată vârstei",
+				"Colaborare cu școala și alți specialiști"
+			]
+		}
+	},
+	{
+		"id": "psihologie-clinica",
+		"title": "Psihologie Clinică",
+		"icon": "brain",
+		"description": "Evaluări psihologice și consiliere pentru adulți și copii",
+		"featured": true,
+		"content": {
+			"intro": "Serviciile noastre de psihologie clinică includ evaluări psihologice complete, testare psihometrică și consiliere psihologică pentru diverse problematici.",
+			"whatWeTreat": [
+				"Evaluări psihologice complete",
+				"Teste de inteligență (IQ)",
+				"Evaluări neuropsihologice",
+				"Evaluări pentru școală (adaptări curriculare)",
+				"Consiliere psihologică individuală",
+				"Consiliere pentru criză",
+				"Evaluări de personalitate"
+			],
+			"approach": "Folosim instrumente validate științific și abordări bazate pe dovezi pentru a oferi evaluări precise și recomandări practice.",
+			"process": [
+				"Interviu clinic inițial",
+				"Administrare teste psihologice",
+				"Analiză și interpretare rezultate",
+				"Raport psihologic detaliat",
+				"Recomandări și plan de intervenție"
+			]
+		}
+	},
+	{
+		"id": "psihoterapie",
+		"title": "Psihoterapie",
+		"icon": "heart",
+		"description": "Terapie individuală și de grup pentru diverse probleme psihologice",
+		"featured": true,
+		"content": {
+			"intro": "Oferim servicii de psihoterapie pentru adulți, adolescenți și copii, folosind diverse abordări terapeutice adaptate nevoilor fiecărui pacient.",
+			"whatWeTreat": [
+				"Depresie și anxietate",
+				"Probleme de relație",
+				"Trauma și PTSD",
+				"Tulburări de adaptare",
+				"Probleme de autoestimă",
+				"Gestionarea stresului",
+				"Dezvoltare personală"
+			],
+			"approach": "Folosim abordări terapeutice bazate pe dovezi, incluzând terapia cognitiv-comportamentală (TCC), terapia Gestalt, și terapia centrată pe client.",
+			"process": [
+				"Stabilirea obiectivelor terapeutice",
+				"Ședințe săptămânale de terapie",
+				"Tehnici și exerciții personalizate",
+				"Monitorizarea progresului",
+				"Prevenirea recidivelor"
+			]
+		}
+	},
+	{
+		"id": "terapii-complementare",
+		"title": "Terapii Complementare",
+		"icon": "brain",
+		"description": "Neurofeedback, hipnoză clinică și alte terapii moderne",
+		"featured": true,
+		"content": {
+			"intro": "Pe lângă serviciile tradiționale, oferim și terapii complementare moderne care pot îmbunătăți eficiența tratamentului.",
+			"whatWeTreat": [
+				"Neurofeedback pentru ADHD",
+				"Hipnoză clinică",
+				"Terapie de integrare senzorială",
+				"Biofeedback",
+				"Stimulare electrică transcraniană",
+				"Mindfulness și relaxare"
+			],
+			"approach": "Aceste terapii sunt folosite ca adjuvant în tratamentul complex, îmbunătățind rezultatele și reducând necesarul de medicație.",
+			"process": [
+				"Evaluare pentru eligibilitate",
+				"Protocol terapeutic personalizat",
+				"Ședințe regulate de terapie",
+				"Monitorizare și ajustări",
+				"Evaluare a eficienței"
+			]
+		}
+	}
+]

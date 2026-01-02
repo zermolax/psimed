@@ -1,0 +1,106 @@
+[
+	{
+		"slug": "depresie",
+		"title": "Tratament Depresie",
+		"description": "Diagnostic și tratament modern pentru depresie și tulburări afective",
+		"icon": "heart",
+		"conditions": [
+			"Depresie majoră",
+			"Depresie recurentă",
+			"Distimie",
+			"Depresie postpartum",
+			"Depresie sezonieră"
+		],
+		"approach": "Combinăm farmacoterapia cu psihoterapia pentru rezultate optime. Tratamentul este personalizat în funcție de severitatea și particularitățile fiecărui caz.",
+		"duration": "3-6 luni în medie",
+		"frequency": "Săptămânal inițial, apoi lunar",
+		"effectiveness": "90% dintre pacienți raportează îmbunătățiri semnificative"
+	},
+	{
+		"slug": "anxietate",
+		"title": "Tratament Anxietate",
+		"description": "Tratament specializat pentru tulburări de anxietate și panică",
+		"icon": "brain",
+		"conditions": [
+			"Tulburare de anxietate generalizată",
+			"Tulburare de panică",
+			"Fobie socială",
+			"Fobii specifice",
+			"Agorafobie"
+		],
+		"approach": "Folosim terapia cognitiv-comportamentală (TCC) combinată cu tehnici de relaxare și, dacă e necesar, medicație.",
+		"duration": "2-4 luni",
+		"frequency": "Săptămânal",
+		"effectiveness": "85% rată de succes în reducerea simptomelor"
+	},
+	{
+		"slug": "neurofeedback",
+		"title": "Neurofeedback",
+		"description": "Terapie modernă prin biofeedback pentru ADHD, anxietate și alte tulburări",
+		"icon": "brain",
+		"conditions": [
+			"ADHD (copii și adulți)",
+			"Anxietate",
+			"Depresie",
+			"Insomnie",
+			"Migrene",
+			"Tulburări de învățare"
+		],
+		"approach": "Neurofeedback-ul este o metodă non-invazivă care ajută creierul să se auto-regleze. Pacientul învață să-și controleze activitatea cerebrală prin feedback vizual sau auditiv.",
+		"duration": "20-40 ședințe",
+		"frequency": "2-3 ședințe pe săptămână",
+		"effectiveness": "Îmbunătățiri vizibile după 10-15 ședințe"
+	},
+	{
+		"slug": "stimulare-transcraniala",
+		"title": "Stimulare Electrică Transcraniană",
+		"description": "Tratament modern prin stimulare electrică de intensitate mică (tDCS)",
+		"icon": "brain",
+		"conditions": [
+			"Depresie rezistentă",
+			"Anxietate cronică",
+			"Tulburări cognitive",
+			"Tulburări de atenție",
+			"Durere cronică"
+		],
+		"approach": "Stimularea transcraniană cu curent continuu (tDCS) este o tehnică sigură și non-invazivă care modulează activitatea neuronală.",
+		"duration": "10-20 ședințe",
+		"frequency": "Zilnic sau 3x/săptămână",
+		"effectiveness": "Probată științific pentru depresie și îmbunătățirea funcțiilor cognitive"
+	},
+	{
+		"slug": "hipnoza-clinica",
+		"title": "Hipnoză Clinică",
+		"description": "Hipnoterapie pentru diverse afecțiuni psihologice și comportamentale",
+		"icon": "brain",
+		"conditions": [
+			"Anxietate și stres",
+			"Fobii",
+			"Dependențe (fumat, alimentație)",
+			"Durere cronică",
+			"Insomnie",
+			"Probleme de autocontrol"
+		],
+		"approach": "Hipnoza clinică este folosită ca adjuvant în tratament, ajutând pacientul să acceseze resurse interioare și să facă schimbări la nivel subconștient.",
+		"duration": "5-15 ședințe",
+		"frequency": "Săptămânal",
+		"effectiveness": "Foarte eficientă pentru fobii și dependențe"
+	},
+	{
+		"slug": "terapie-autism",
+		"title": "Terapie Autism și ADHD",
+		"description": "Program specializat pentru copii cu TSA, ADHD și tulburări de dezvoltare",
+		"icon": "child",
+		"conditions": [
+			"Tulburări din spectrul autist (TSA)",
+			"ADHD",
+			"Tulburări de limbaj",
+			"Tulburări senzoriale",
+			"Tulburări de comportament"
+		],
+		"approach": "Program integrat care include terapie comportamentală (ABA), terapie ocupațională, logopedie și integrare senzorială.",
+		"duration": "Program pe termen lung (6-24 luni)",
+		"frequency": "2-5 ședințe pe săptămână",
+		"effectiveness": "Rezultate semnificative în dezvoltarea abilităților sociale și de comunicare"
+	}
+]

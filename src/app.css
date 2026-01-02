@@ -1,0 +1,78 @@
+@import 'tailwindcss';
+
+/* Design System - Warm, Vibrant & Professional */
+@theme {
+	/* Primary Palette - Warm & Inviting */
+	--color-primary-DEFAULT: #ff6b6b; /* Coral Red - Warmth & Energy */
+	--color-primary-dark: #ee5a52;
+	--color-primary-light: #ffe0de;
+
+	/* Secondary - Calming Purple */
+	--color-secondary-DEFAULT: #a78bfa; /* Lavender - Calm & Healing */
+	--color-secondary-dark: #8b5cf6;
+	--color-secondary-light: #ede9fe;
+
+	/* Accent Colors */
+	--color-accent-DEFAULT: #4ecdc4; /* Turquoise - Hope & Freshness */
+	--color-accent-dark: #3dbdb3;
+	--color-accent-light: #d4f4f2;
+
+	--color-sunshine-DEFAULT: #ffd93d; /* Warm Yellow - Optimism */
+	--color-sunshine-dark: #f5c518;
+	--color-sunshine-light: #fff9e6;
+
+	--color-nature-DEFAULT: #6bcf7f; /* Fresh Green - Growth & Renewal */
+	--color-nature-dark: #51b863;
+	--color-nature-light: #e8f8eb;
+
+	/* Fonts - Friendly & Modern */
+	--font-family-sans: 'Nunito', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--font-family-display: 'Poppins', 'Nunito', sans-serif;
+}
+
+/* Custom CSS Variables */
+:root {
+	--spacing-section: 5rem;
+	--spacing-content: 3rem;
+	--radius-card: 1.5rem;
+	--shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.08);
+	--shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.12);
+}
+
+/* Base Typography */
+@layer base {
+	body {
+		@apply font-sans text-gray-900 antialiased;
+	}
+
+	h1 {
+		@apply text-4xl md:text-5xl font-bold leading-tight;
+	}
+
+	h2 {
+		@apply text-3xl md:text-4xl font-bold leading-tight;
+	}
+
+	h3 {
+		@apply text-2xl md:text-3xl font-semibold leading-snug;
+	}
+
+	h4 {
+		@apply text-xl md:text-2xl font-semibold;
+	}
+
+	p {
+		@apply text-base md:text-lg leading-relaxed;
+	}
+}
+
+/* Custom Utilities */
+@layer utilities {
+	.section-spacing {
+		@apply py-16 md:py-20 lg:py-24;
+	}
+
+	.container-custom {
+		@apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+	}
+}
