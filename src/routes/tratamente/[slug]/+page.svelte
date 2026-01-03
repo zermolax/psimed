@@ -9,11 +9,14 @@
 	let relatedTreatments = $derived(treatmentsData.filter((t) => t.slug !== slug).slice(0, 3));
 </script>
 
-{#if treatment}
-	<svelte:head>
+<svelte:head>
+	{#if treatment}
 		<title>{treatment.title} - Clinica Sf. Gherasim</title>
 		<meta name="description" content={treatment.description} />
-	</svelte:head>
+	{/if}
+</svelte:head>
+
+{#if treatment}
 
 	<!-- Hero Section -->
 	<section class="bg-gradient-to-br from-primary-light to-white py-16 md:py-20">

@@ -68,6 +68,19 @@
 		name="description"
 		content="Programează o consultație online la Clinica Sf. Gherasim. Sistem rapid și simplu de rezervare pentru servicii de psihiatrie și psihologie."
 	/>
+	<!-- Cal.com Embed Script -->
+	<script type="text/javascript">
+		(function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.eu/embed/embed.js", "init");
+		Cal("init", "psihoterapie", {origin:"https://app.cal.eu"});
+
+		Cal.ns.psihoterapie("inline", {
+			elementOrSelector:"#my-cal-inline-psihoterapie",
+			config: {"layout":"month_view"},
+			calLink: "iermolai/psihoterapie",
+		});
+
+		Cal.ns.psihoterapie("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
+	</script>
 </svelte:head>
 
 <!-- Hero Section -->
@@ -90,43 +103,14 @@
 	</div>
 </section>
 
-<!-- Booking Widget Placeholder -->
+<!-- Cal.com Booking Widget -->
 <section class="section-spacing bg-white">
 	<div class="container-custom max-w-5xl">
-		<!-- Cal.com Integration Info -->
-		<div class="bg-primary-light border-2 border-primary border-dashed rounded-xl p-12 text-center mb-12">
-			<div class="max-w-2xl mx-auto">
-				<Icon name="calendar" size="64" class="mx-auto mb-6 text-primary" />
-				<h2 class="text-2xl font-bold mb-4">Sistem de programare Cal.com</h2>
-				<p class="text-gray-700 mb-6 leading-relaxed">
-					Aici va fi integrat sistemul de programare Cal.com. Vei putea alege specialistul, tipul
-					de consultație și ora care îți convine.
-				</p>
-				<div class="bg-white rounded-lg p-6 text-left mb-6">
-					<h3 class="font-bold mb-3">Pași pentru integrare:</h3>
-					<ol class="space-y-2 text-sm text-gray-600">
-						<li class="flex items-start space-x-2">
-							<span class="text-primary font-bold">1.</span>
-							<span>Deploy Cal.com pe Vercel (gratuit)</span>
-						</li>
-						<li class="flex items-start space-x-2">
-							<span class="text-primary font-bold">2.</span>
-							<span>Configurare calendare pentru fiecare specialist</span>
-						</li>
-						<li class="flex items-start space-x-2">
-							<span class="text-primary font-bold">3.</span>
-							<span>Creare tipuri de consultații (Prima consultație, Follow-up, etc.)</span>
-						</li>
-						<li class="flex items-start space-x-2">
-							<span class="text-primary font-bold">4.</span>
-							<span>Integrare widget Cal.com în această pagină</span>
-						</li>
-					</ol>
-				</div>
-				<Button href="https://cal.com" variant="primary" size="lg">
-					Vezi documentație Cal.com
-				</Button>
-			</div>
+		<!-- Cal.com Embedded Booking -->
+		<div class="bg-white rounded-xl shadow-lg p-4 mb-12">
+			<!-- Cal inline embed code begins -->
+			<div style="width:100%;height:100%;min-height:700px;overflow:scroll" id="my-cal-inline-psihoterapie"></div>
+			<!-- Cal inline embed code ends -->
 		</div>
 
 		<!-- Alternative Booking Methods -->

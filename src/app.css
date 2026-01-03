@@ -3,26 +3,26 @@
 /* Design System - Warm, Vibrant & Professional */
 @theme {
 	/* Primary Palette - Warm & Inviting */
-	--color-primary-DEFAULT: #ff6b6b; /* Coral Red - Warmth & Energy */
-	--color-primary-dark: #ee5a52;
+	--color-primary-DEFAULT: #dd4444; /* Coral Red - Warmth & Energy - Enhanced for WCAG AA */
+	--color-primary-dark: #cc3333;
 	--color-primary-light: #ffe0de;
 
 	/* Secondary - Calming Purple */
-	--color-secondary-DEFAULT: #a78bfa; /* Lavender - Calm & Healing */
-	--color-secondary-dark: #8b5cf6;
+	--color-secondary-DEFAULT: #9370db; /* Lavender - Calm & Healing - Adjusted for better contrast */
+	--color-secondary-dark: #7c3aed;
 	--color-secondary-light: #ede9fe;
 
 	/* Accent Colors */
-	--color-accent-DEFAULT: #4ecdc4; /* Turquoise - Hope & Freshness */
-	--color-accent-dark: #3dbdb3;
+	--color-accent-DEFAULT: #2ba89b; /* Turquoise - Hope & Freshness - Enhanced for WCAG AA */
+	--color-accent-dark: #1f9a8a;
 	--color-accent-light: #d4f4f2;
 
-	--color-sunshine-DEFAULT: #ffd93d; /* Warm Yellow - Optimism */
-	--color-sunshine-dark: #f5c518;
+	--color-sunshine-DEFAULT: #d4a500; /* Warm Yellow - Optimism - Darkened for WCAG AA */
+	--color-sunshine-dark: #b89100;
 	--color-sunshine-light: #fff9e6;
 
-	--color-nature-DEFAULT: #6bcf7f; /* Fresh Green - Growth & Renewal */
-	--color-nature-dark: #51b863;
+	--color-nature-DEFAULT: #4ba85f; /* Fresh Green - Growth & Renewal - Enhanced for WCAG AA */
+	--color-nature-dark: #3a9349;
 	--color-nature-light: #e8f8eb;
 
 	/* Fonts - Friendly & Modern */
