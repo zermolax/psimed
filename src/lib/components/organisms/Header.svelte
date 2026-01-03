@@ -14,12 +14,13 @@
 				{ name: 'Psihiatrie Pediatrică', href: '/servicii#psihiatrie-pediatrica' },
 				{ name: 'Psihologie Clinică', href: '/servicii#psihologie-clinica' },
 				{ name: 'Psihoterapie', href: '/servicii#psihoterapie' },
-				{ name: 'Terapii Complementare', href: '/servicii#terapii-complementare' }
+				{ name: 'Terapii Complementare', href: '/servicii#terapii-complementare' },
+				{ name: 'Evaluări Psihologice', href: '/servicii#evaluari-psihologice' }
 			]
 		},
 		{ name: 'Tratamente', href: '/tratamente' },
+		{ name: 'Evaluări Psihologice', href: '/evaluari-psihologice' },
 		{ name: 'Despre Noi', href: '/despre-noi' },
-		{ name: 'Blog', href: '/blog' },
 		{ name: 'Contact', href: '/contact' }
 	];
 
@@ -67,6 +68,7 @@
 										<a
 											href={child.href}
 											class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
+											onclick={() => {}}
 										>
 											{child.name}
 										</a>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	type ButtonVariant = 'primary' | 'secondary' | 'outline';
+	type ButtonVariant = 'primary' | 'secondary';
 	type ButtonSize = 'sm' | 'md' | 'lg';
 
 	interface Props {
@@ -22,13 +22,9 @@
 		children
 	}: Props = $props();
 
-	const variants: Record<ButtonVariant, string> = {
-		primary:
-			'bg-primary text-white hover:bg-primary-dark hover:shadow-xl hover:scale-105 focus:ring-primary disabled:bg-gray-300 shadow-lg',
-		secondary:
-			'bg-secondary-dark text-white hover:bg-secondary hover:shadow-xl hover:scale-105 focus:ring-secondary shadow-lg',
-		outline:
-			'border-3 border-primary text-primary hover:bg-primary hover:text-white hover:shadow-lg hover:scale-105 focus:ring-primary disabled:border-gray-300 disabled:text-gray-300 bg-white'
+	const colors: Record<ButtonVariant, string> = {
+		primary: '#dd4444',
+		secondary: 'rgb(147, 112, 219)'
 	};
 
 	const sizes: Record<ButtonSize, string> = {
@@ -38,17 +34,17 @@
 	};
 
 	const baseClasses =
-		'inline-block rounded-2xl font-bold transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100';
+		'inline-block rounded-2xl font-bold text-white transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-offset-2 disabled:opacity-50 shadow-2xl hover:shadow-2xl hover:scale-105';
 
-	const buttonClasses = `${baseClasses} ${variants[variant]} ${sizes[size]}`;
+	const buttonClasses = `${baseClasses} ${sizes[size]}`;
 </script>
 
 {#if href}
-	<a {href} class={buttonClasses} aria-disabled={disabled}>
+	<a {href} class={buttonClasses} style="background-color: {colors[variant]}" aria-disabled={disabled}>
 		{@render children?.()}
 	</a>
 {:else}
-	<button {type} class={buttonClasses} {disabled} {onclick}>
+	<button {type} class={buttonClasses} style="background-color: {colors[variant]}" {disabled} {onclick}>
 		{@render children?.()}
 	</button>
 {/if}

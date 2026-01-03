@@ -40,6 +40,15 @@
 			iconBg: 'bg-nature'
 		},
 		{
+			title: 'Evaluări Psihologice',
+			icon: 'brain',
+			description: 'Evaluări comprehensive cu instrumente diagnostice gold-standard.',
+			href: '/evaluari-psihologice',
+			bgColor: 'bg-accent-light',
+			textColor: 'text-accent-dark',
+			iconBg: 'bg-accent'
+		},
+		{
 			title: 'Neurofeedback',
 			icon: 'brain',
 			description: 'Tratament modern pentru ADHD, anxietate și alte tulburări.',
@@ -94,11 +103,11 @@
 					Echipa noastră de specialiști îți stă la dispoziție cu căldură și profesionalism.
 				</p>
 
-				<div class="flex flex-col sm:flex-row gap-4">
+				<div class="flex flex-col sm:flex-row gap-4 pt-2">
 					<Button href="/programare" variant="primary" size="lg">
 						🗓️ Programează Consultație
 					</Button>
-					<Button href="/servicii" variant="outline" size="lg">
+					<Button href="/servicii" variant="secondary" size="lg">
 						Serviciile Noastre
 					</Button>
 				</div>
@@ -138,7 +147,7 @@
 				<div class="absolute -top-6 -left-6 bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-xl font-bold border-4 border-white">
 					💝 Empatie
 				</div>
-				<div class="absolute -bottom-6 -right-6 bg-primary text-white px-6 py-4 rounded-2xl shadow-xl font-bold border-4 border-white">
+				<div class="absolute -bottom-6 -right-6 text-white px-6 py-4 rounded-2xl shadow-xl font-bold border-4 border-white" style="background-color: #dd4444;">
 					🌱 Vindecare
 				</div>
 			</div>
@@ -164,20 +173,14 @@
 			{#each services as service}
 				<a
 					href={service.href}
-					class="group relative bg-white rounded-3xl p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-gray-100 hover:border-{service.iconBg.replace('bg-', '')}"
+					class="group relative {service.bgColor} rounded-3xl p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-3 border-{service.iconBg.replace('bg-', '')}"
 				>
-					<!-- Icon with solid background -->
-					<div class="mb-6">
-						<div class="inline-flex items-center justify-center w-16 h-16 {service.iconBg} rounded-2xl shadow-md group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-							<Icon name={service.icon} size="32" class="text-white" />
-						</div>
-					</div>
-
 					<!-- Content with high contrast -->
-					<h3 class="text-2xl font-bold mb-3 text-gray-900 group-hover:{service.textColor}">
+					<h3 class="text-2xl font-bold mb-3 {service.textColor} flex items-center gap-2">
+						<Icon name={service.icon} size="24" class="{service.textColor}" />
 						{service.title}
 					</h3>
-					<p class="text-gray-700 mb-6 leading-relaxed">{service.description}</p>
+					<p class="text-gray-800 mb-6 leading-relaxed font-medium">{service.description}</p>
 
 					<!-- CTA -->
 					<div class="flex items-center space-x-2 {service.textColor} font-bold group-hover:translate-x-2 transition-transform">

@@ -123,7 +123,7 @@
 					<Button href="/programare?treatment={treatment.slug}" variant="primary" size="lg">
 						Programează Consultație
 					</Button>
-					<Button href="/contact" variant="outline" size="lg"> Întreabă un Specialist </Button>
+					<Button href="/contact" variant="secondary" size="lg">Contactează-ne</Button>
 				</div>
 			</div>
 		</div>

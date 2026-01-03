@@ -129,7 +129,35 @@
 				"Protocol terapeutic personalizat",
 				"Ședințe regulate de terapie",
 				"Monitorizare și ajustări",
-				"Evaluare a eficienței"
+				"Evaluare a eficienției"
+			]
+		}
+	},
+	{
+		"id": "evaluari-psihologice",
+		"title": "Evaluări Psihologice",
+		"icon": "brain",
+		"description": "Evaluări psihologice comprehensive cu instrumente diagnostice de referință internațională",
+		"featured": true,
+		"content": {
+			"intro": "Oferim evaluări psihologice comprehensive cu instrumente diagnostice gold-standard, inclusiv diagnostic autism spectrum disorder (TSA) cu ADOS, ADI-R și NEPSY-II.",
+			"whatWeTreat": [
+				"Tulburări din spectrul autist (TSA)",
+				"Dificultăți cognitive și de învățare",
+				"Probleme de atenție și concentrare",
+				"Dificultăți în dezvoltarea limbajului",
+				"Întârzieri în dezvoltarea psihomotorie",
+				"Dificultăți de comportament și emoționale",
+				"Probleme de memorie și funcții executive",
+				"Evaluări pentru scopuri educaționale și legale"
+			],
+			"approach": "Folosim cele mai avansate instrumente diagnostice standardizate internațional (ADOS, ADI-R, NEPSY-II) pentru a oferi evaluări precise și complete. Fiecare evaluare include anamneză detaliată, observații comportamentale și raport final cu recomandări practice.",
+			"process": [
+				"Consultație inițială și anamneză detaliată",
+				"Aplicarea instrumentelor diagnostice standardizate",
+				"Observații comportamentale și funcționale",
+				"Analiza și interpretarea datelor",
+				"Raport final detaliat cu recomandări"
 			]
 		}
 	}
