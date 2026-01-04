@@ -191,7 +191,7 @@ export async function createBooking(input: unknown): Promise<Booking> {
       serviceId: validatedData.serviceId,
       appointmentDate,
       duration: service.duration, // Service duration
-      status: 'PENDING',
+      status: 'CONFIRMED', // Booking confirmed immediately (no email confirmation needed)
       confirmationToken
     }
   });

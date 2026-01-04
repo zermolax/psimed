@@ -15,7 +15,10 @@ import type { Booking } from '@prisma/client';
  */
 
 // Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY);
+// NOTE: If RESEND_API_KEY is not set, emails will be logged to console instead
+const resend = process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 're_placeholder_get_from_resend'
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 /**
  * Send booking confirmation email to patient
@@ -110,6 +113,13 @@ export async function sendBookingConfirmation(booking: Booking, doctorName: stri
 
   try {
     console.log(`📧 Sending confirmation email to ${booking.patientEmail}...`);
+
+    // If Resend API key is not configured, just log to console
+    if (!resend) {
+      console.log(`⚠️  Resend API not configured. Email would be sent to: ${booking.patientEmail}`);
+      console.log(`📧 Subject: Confirmare Programare - ${appointmentDate}`);
+      return;
+    }
 
     await resend.emails.send({
       from: 'noreply@clinicasfgherasim.ro', // Change to your domain
@@ -243,6 +253,13 @@ export async function sendDoctorNotification(
   try {
     console.log(`📧 Sending notification email to doctor ${doctorEmail}...`);
 
+    // If Resend API key is not configured, just log to console
+    if (!resend) {
+      console.log(`⚠️  Resend API not configured. Email would be sent to: ${doctorEmail}`);
+      console.log(`📧 Subject: Programare Nouă - ${booking.patientName}`);
+      return;
+    }
+
     await resend.emails.send({
       from: 'noreply@clinicasfgherasim.ro',
       to: doctorEmail,
@@ -341,6 +358,15 @@ export async function sendCancellationEmail(
   `;
 
   try {
+    console.log(`📧 Sending cancellation email to ${booking.patientEmail}...`);
+
+    // If Resend API key is not configured, just log to console
+    if (!resend) {
+      console.log(`⚠️  Resend API not configured. Email would be sent to: ${booking.patientEmail}`);
+      console.log(`📧 Subject: Anulare Programare`);
+      return;
+    }
+
     await resend.emails.send({
       from: 'noreply@clinicasfgherasim.ro',
       to: booking.patientEmail,
