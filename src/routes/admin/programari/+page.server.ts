@@ -9,6 +9,8 @@ import { prisma } from '$lib/server/db';
  * It runs on the server ONLY, so it has access to the session.
  */
 
+export const prerender = false;
+
 export const load: PageServerLoad = async ({ cookies }) => {
   // Get session from cookie
   const sessionCookie = cookies.get('doctor_session');
@@ -20,11 +22,17 @@ export const load: PageServerLoad = async ({ cookies }) => {
   let session;
   try {
     session = JSON.parse(sessionCookie);
-  } catch {
+  } catch (e) {
+    console.error('Failed to parse session cookie:', e);
     throw redirect(303, '/admin/login');
   }
 
   const doctorId = session.doctorId;
+
+  if (!doctorId) {
+    console.error('No doctorId in session');
+    throw redirect(303, '/admin/login');
+  }
 
   // Get doctor
   const doctor = await prisma.doctor.findUnique({
@@ -38,6 +46,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
   });
 
   if (!doctor) {
+    console.error('Doctor not found:', doctorId);
     throw redirect(303, '/admin/login');
   }
 
@@ -88,20 +97,32 @@ export const load: PageServerLoad = async ({ cookies }) => {
     }
   });
 
+  const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+
   const monthBookings = await prisma.booking.count({
     where: {
       doctorId,
       appointmentDate: {
-        gte: new Date(today.getFullYear(), today.getMonth(), 1),
-        lt: new Date(today.getFullYear(), today.getMonth() + 1, 1)
+        gte: monthStart,
+        lt: monthEnd
       },
       status: { not: 'CANCELLED' }
     }
   });
 
+  // Convert Decimal prices to numbers for JSON serialization
+  const serializedBookings = bookings.map(booking => ({
+    ...booking,
+    service: {
+      ...booking.service,
+      price: Number(booking.service.price)
+    }
+  }));
+
   return {
     doctor,
-    bookings,
+    bookings: serializedBookings,
     stats: {
       today: todayBookings,
       week: weekBookings,
