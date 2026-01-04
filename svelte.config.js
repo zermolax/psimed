@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-static';
+import adapter from '@sveltejs/adapter-auto';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { mdsvex } from 'mdsvex';
 
@@ -15,19 +15,12 @@ const config = {
 	],
 
 	kit: {
-		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
-			fallback: 'index.html',
-			precompress: false,
-			strict: false
-		}),
+		adapter: adapter(),
 		prerender: {
-			crawl: true,
-			entries: ['*'],
-			handleMissingId: 'warn',
-			handleUnseenRoutes: 'warn',
-			handleHttpError: 'warn'
+			// Don't crawl - we have dynamic pages with actions that can't be prerendered
+			crawl: false,
+			// Only prerender the static homepage and other static pages
+			entries: ['/', '/servicii', '/tratamente', '/despre-noi', '/contact']
 		}
 	}
 };

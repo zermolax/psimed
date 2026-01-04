@@ -1,242 +1,280 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import Button from '$lib/components/atoms/Button.svelte';
-	import Icon from '$lib/components/atoms/Icon.svelte';
+  import { goto } from '$app/navigation';
+  import DoctorSelect from '$lib/components/booking/DoctorSelect.svelte';
+  import ServiceSelect from '$lib/components/booking/ServiceSelect.svelte';
+  import DatePicker from '$lib/components/booking/DatePicker.svelte';
+  import TimePicker from '$lib/components/booking/TimePicker.svelte';
+  import PatientInfoForm from '$lib/components/booking/PatientInfoForm.svelte';
+  import BookingSummary from '$lib/components/booking/BookingSummary.svelte';
+  import type { Doctor, Service } from '$lib/types/booking';
 
-	// Preluăm parametrii din URL (de exemplu: /programare?treatment=neurofeedback&service=psihiatrie)
-	let treatment = $derived($page.url.searchParams.get('treatment'));
-	let service = $derived($page.url.searchParams.get('service'));
+  /**
+   * EXPLANATION: Booking Page (+page.svelte)
+   *
+   * This page orchestrates the entire booking flow:
+   * - Step 1: Select Doctor
+   * - Step 2: Select Service (for that doctor)
+   * - Step 3: Select Date
+   * - Step 4: Select Time (available slots)
+   * - Step 5: Enter Patient Info
+   * - Step 6: Confirm Booking
+   *
+   * SVELTE 5 PATTERN: Using $state() for managing the booking flow
+   */
 
-	const specialists = [
-		{
-			name: 'Dr. Gheorghe Gherasim',
-			role: 'Medic Primar Psihiatru',
-			specialties: ['Psihiatrie Adulți', 'Psihoterapie', 'Tulburări Afective'],
-			available: 'Luni, Miercuri, Vineri'
-		},
-		{
-			name: 'Dr. Maria Popescu',
-			role: 'Medic Specialist Psihiatru Pediatru',
-			specialties: ['Psihiatrie Pediatrică', 'ADHD', 'Autism'],
-			available: 'Marți, Joi, Sâmbătă'
-		},
-		{
-			name: 'Psih. Ana Ionescu',
-			role: 'Psiholog Clinician',
-			specialties: ['Evaluări Psihologice', 'Consiliere', 'TCC'],
-			available: 'Luni - Vineri'
-		},
-		{
-			name: 'Psih. Mihai Dumitrescu',
-			role: 'Psihoterapeut',
-			specialties: ['Psihoterapie', 'Hipnoză Clinică', 'Mindfulness'],
-			available: 'Luni - Vineri'
-		}
-	];
+  // Current step in booking flow (1-6)
+  let step = $state(1);
 
-	const consultationTypes = [
-		{
-			title: 'Prima Consultație',
-			duration: '60 minute',
-			description: 'Evaluare completă și stabilirea planului de tratament',
-			icon: 'user'
-		},
-		{
-			title: 'Consultație Follow-up',
-			duration: '30 minute',
-			description: 'Monitorizare și ajustare tratament',
-			icon: 'check'
-		},
-		{
-			title: 'Consultație Pediatrică',
-			duration: '45 minute',
-			description: 'Evaluare și consultație pentru copii și adolescenți',
-			icon: 'child'
-		},
-		{
-			title: 'Ședință Psihoterapie',
-			duration: '50 minute',
-			description: 'Ședință individuală de psihoterapie',
-			icon: 'heart'
-		}
-	];
+  // Booking data
+  let selectedDoctor = $state<Doctor | null>(null);
+  let selectedService = $state<Service | null>(null);
+  let selectedDate = $state('');
+  let selectedTime = $state('');
+  let patientInfo = $state<{
+    patientName: string;
+    patientEmail: string;
+    patientPhone: string;
+    patientNotes?: string;
+  } | null>(null);
+
+  /**
+   * Handle doctor selection
+   * Move to next step
+   */
+  function handleDoctorSelect(doctorId: string, doctor: Doctor) {
+    selectedDoctor = doctor;
+    step = 2;
+    console.log('✅ Doctor selected:', doctor.name);
+  }
+
+  /**
+   * Handle service selection
+   * Move to next step
+   */
+  function handleServiceSelect(serviceId: string, service: Service) {
+    selectedService = service;
+    step = 3;
+    console.log('✅ Service selected:', service.name);
+  }
+
+  /**
+   * Handle date selection
+   * Move to next step
+   */
+  function handleDateSelect(date: string) {
+    selectedDate = date;
+    step = 4;
+    console.log('✅ Date selected:', date);
+  }
+
+  /**
+   * Handle time selection
+   * Move to next step
+   */
+  function handleTimeSelect(time: string) {
+    selectedTime = time;
+    step = 5;
+    console.log('✅ Time selected:', time);
+  }
+
+  /**
+   * Handle patient info submission
+   * Move to summary step
+   */
+  function handlePatientInfoSubmit(data: any) {
+    patientInfo = data;
+    step = 6;
+    console.log('✅ Patient info collected');
+  }
+
+  /**
+   * Handle booking confirmation
+   * Redirect to confirmation page with token
+   */
+  function handleBookingConfirm(token: string) {
+    console.log('✅ Booking confirmed, redirecting...');
+    goto(`/programare/confirmare?token=${encodeURIComponent(token)}`);
+  }
+
+  /**
+   * Go back to previous step
+   */
+  function goBack() {
+    if (step > 1) {
+      // Reset data when going back
+      if (step === 2) selectedDoctor = null;
+      if (step === 3) selectedService = null;
+      if (step === 4) selectedDate = '';
+      if (step === 5) selectedTime = '';
+      if (step === 6) patientInfo = null;
+      step--;
+    }
+  }
 </script>
 
 <svelte:head>
-	<title>Programare Online - Clinica Sf. Gherasim</title>
-	<meta
-		name="description"
-		content="Programează o consultație online la Clinica Sf. Gherasim. Sistem rapid și simplu de rezervare pentru servicii de psihiatrie și psihologie."
-	/>
-	<!-- Cal.com Embed Script -->
-	<script type="text/javascript">
-		(function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.eu/embed/embed.js", "init");
-		Cal("init", "psihoterapie", {origin:"https://app.cal.eu"});
-
-		Cal.ns.psihoterapie("inline", {
-			elementOrSelector:"#my-cal-inline-psihoterapie",
-			config: {"layout":"month_view"},
-			calLink: "iermolai/psihoterapie",
-		});
-
-		Cal.ns.psihoterapie("ui", {"hideEventTypeDetails":false,"layout":"month_view"});
-	</script>
+  <title>Programare Online - Clinica SF. Gherasim</title>
+  <meta
+    name="description"
+    content="Programează o consultație online la Clinica SF. Gherasim. Sistem rapid și simplu de rezervare pentru servicii de psihiatrie și psihologie."
+  />
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="bg-gradient-to-br from-primary-light to-white py-16 md:py-20">
-	<div class="container-custom">
-		<div class="max-w-3xl mx-auto text-center">
-			<h1 class="text-4xl md:text-5xl font-bold mb-6">Programare Online</h1>
-			<p class="text-xl text-gray-600 leading-relaxed mb-8">
-				Alege specialistul și tipul de consultație potrivit pentru nevoile tale. Sistemul nostru
-				online îți permite să faci programări rapid și simplu.
-			</p>
-
-			{#if treatment}
-				<div class="inline-block bg-white rounded-lg px-6 py-3 shadow-md">
-					<p class="text-sm text-gray-600">Programare pentru:</p>
-					<p class="text-lg font-bold text-primary capitalize">{treatment.replace('-', ' ')}</p>
-				</div>
-			{/if}
-		</div>
-	</div>
+<section class="bg-gradient-to-br from-primary-light to-white py-12 md:py-16">
+  <div class="container-custom">
+    <div class="max-w-3xl mx-auto text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-6">Programare Online</h1>
+      <p class="text-lg text-gray-600 leading-relaxed">
+        Alege specialistul și tipul de consultație. Sistemul nostru online îți permite să faci programări rapid și simplu.
+      </p>
+    </div>
+  </div>
 </section>
 
-<!-- Cal.com Booking Widget -->
+<!-- Progress Bar -->
+<section class="bg-white border-b border-gray-200 sticky top-0 z-40">
+  <div class="container-custom py-4">
+    <div class="flex items-center justify-between max-w-4xl mx-auto">
+      {#each [1, 2, 3, 4, 5, 6] as s}
+        <div class="flex items-center">
+          <!-- Step Circle -->
+          <div
+            class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-200"
+            class:bg-primary={s <= step}
+            class:text-white={s <= step}
+            class:bg-gray-200={s > step}
+            class:text-gray-700={s > step}
+          >
+            {s}
+          </div>
+
+          <!-- Step Line -->
+          {#if s < 6}
+            <div
+              class="h-1 flex-grow mx-2 transition-all duration-200"
+              class:bg-primary={s < step}
+              class:bg-gray-200={s >= step}
+            />
+          {/if}
+        </div>
+      {/each}
+    </div>
+
+    <!-- Step Labels (optional) -->
+    <div class="text-center mt-2 text-xs text-gray-600">
+      {#if step === 1}
+        Selectează doctor
+      {:else if step === 2}
+        Selectează serviciu
+      {:else if step === 3}
+        Selectează data
+      {:else if step === 4}
+        Selectează ora
+      {:else if step === 5}
+        Informații pacient
+      {:else if step === 6}
+        Confirmă programarea
+      {/if}
+    </div>
+  </div>
+</section>
+
+<!-- Booking Form Steps -->
 <section class="section-spacing bg-white">
-	<div class="container-custom max-w-5xl">
-		<!-- Cal.com Embedded Booking -->
-		<div class="bg-white rounded-xl shadow-lg p-4 mb-12">
-			<!-- Cal inline embed code begins -->
-			<div style="width:100%;height:100%;min-height:700px;overflow:scroll" id="my-cal-inline-psihoterapie"></div>
-			<!-- Cal inline embed code ends -->
-		</div>
+  <div class="container-custom max-w-2xl">
+    {#if step === 1}
+      <DoctorSelect onSelect={handleDoctorSelect} selectedDoctorId={selectedDoctor?.id} />
+    {:else if step === 2 && selectedDoctor}
+      <DoctorSelect onSelect={handleDoctorSelect} selectedDoctorId={selectedDoctor.id} />
+      <div class="mt-8 pt-8 border-t border-gray-200">
+        <ServiceSelect services={selectedDoctor.services} onSelect={handleServiceSelect} selectedServiceId={selectedService?.id} />
+      </div>
+    {:else if step === 3 && selectedService}
+      <div class="mb-6 pb-6 border-b border-gray-200">
+        <p class="text-sm font-semibold text-gray-600">
+          <span class="text-primary">{selectedDoctor?.name}</span> • <span class="text-primary">{selectedService.name}</span>
+        </p>
+      </div>
+      <DatePicker onSelect={handleDateSelect} selectedDate={selectedDate} />
+    {:else if step === 4 && selectedDate}
+      <div class="mb-6 pb-6 border-b border-gray-200">
+        <p class="text-sm font-semibold text-gray-600">
+          <span class="text-primary">{selectedDoctor?.name}</span> • <span class="text-primary">{selectedService?.name}</span> •
+          <span class="text-primary">{new Date(selectedDate).toLocaleDateString('ro-RO', { month: 'short', day: 'numeric' })}</span>
+        </p>
+      </div>
+      <TimePicker
+        doctorId={selectedDoctor?.id}
+        serviceId={selectedService?.id}
+        date={selectedDate}
+        onSelect={handleTimeSelect}
+        selectedTime={selectedTime}
+      />
+    {:else if step === 5 && selectedTime}
+      <div class="mb-6 pb-6 border-b border-gray-200">
+        <p class="text-sm font-semibold text-gray-600">
+          <span class="text-primary">{selectedDoctor?.name}</span> • <span class="text-primary">{selectedService?.name}</span> •
+          <span class="text-primary">{new Date(selectedDate).toLocaleDateString('ro-RO', { month: 'short', day: 'numeric' })}</span> la
+          <span class="text-primary">{selectedTime}</span>
+        </p>
+      </div>
+      <PatientInfoForm onSubmit={handlePatientInfoSubmit} />
+    {:else if step === 6 && patientInfo && selectedDoctor && selectedService}
+      <BookingSummary
+        doctor={selectedDoctor}
+        service={selectedService}
+        date={selectedDate}
+        time={selectedTime}
+        patientInfo={patientInfo}
+        onConfirm={handleBookingConfirm}
+      />
+    {/if}
 
-		<!-- Alternative Booking Methods -->
-		<div class="text-center mb-12">
-			<h2 class="text-2xl font-bold mb-4">Între timp, programează-te telefonic sau prin email</h2>
-			<div class="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-				<a
-					href="tel:+40711039666"
-					class="bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-colors"
-				>
-					<Icon name="phone" size="32" class="mx-auto mb-3 text-primary" />
-					<h3 class="font-bold mb-2">Telefon</h3>
-					<p class="text-primary text-lg font-medium">0711 039 666</p>
-					<p class="text-sm text-gray-600 mt-2">Luni - Vineri: 09:00 - 18:00</p>
-				</a>
-
-				<a
-					href="mailto:office@psimed.ro"
-					class="bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-colors"
-				>
-					<Icon name="email" size="32" class="mx-auto mb-3 text-primary" />
-					<h3 class="font-bold mb-2">Email</h3>
-					<p class="text-primary text-lg font-medium">office@psimed.ro</p>
-					<p class="text-sm text-gray-600 mt-2">Răspundem în 24-48 ore</p>
-				</a>
-			</div>
-		</div>
-	</div>
+    <!-- Navigation Buttons -->
+    {#if step > 1}
+      <div class="mt-8 flex gap-4">
+        <button
+          on:click={goBack}
+          class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors duration-200"
+        >
+          ← Înapoi
+        </button>
+      </div>
+    {/if}
+  </div>
 </section>
 
-<!-- Consultation Types -->
+<!-- Alternative Contact Methods -->
 <section class="section-spacing bg-gray-50">
-	<div class="container-custom">
-		<h2 class="text-3xl font-bold text-center mb-12">Tipuri de consultații</h2>
-		<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-			{#each consultationTypes as type}
-				<div class="bg-white rounded-xl p-6">
-					<Icon name={type.icon} size="40" class="text-primary mb-4" />
-					<h3 class="text-lg font-bold mb-2">{type.title}</h3>
-					<p class="text-sm text-primary font-medium mb-3">{type.duration}</p>
-					<p class="text-sm text-gray-600">{type.description}</p>
-				</div>
-			{/each}
-		</div>
-	</div>
+  <div class="container-custom max-w-3xl">
+    <h2 class="text-2xl font-bold text-center mb-8">Probleme cu programarea online?</h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <a
+        href="tel:+40711039666"
+        class="bg-white rounded-xl p-6 hover:shadow-lg transition-all border-2 border-transparent hover:border-primary"
+      >
+        <div class="text-3xl mb-3">📞</div>
+        <h3 class="font-bold mb-2">Sună-ne</h3>
+        <p class="text-primary text-lg font-medium">+40 711 039 666</p>
+        <p class="text-sm text-gray-600 mt-2">Luni - Vineri: 09:00 - 18:00</p>
+      </a>
+
+      <a
+        href="mailto:office@psimed.ro"
+        class="bg-white rounded-xl p-6 hover:shadow-lg transition-all border-2 border-transparent hover:border-primary"
+      >
+        <div class="text-3xl mb-3">✉️</div>
+        <h3 class="font-bold mb-2">Trimite email</h3>
+        <p class="text-primary text-lg font-medium">office@psimed.ro</p>
+        <p class="text-sm text-gray-600 mt-2">Răspundem în 24-48 ore</p>
+      </a>
+    </div>
+  </div>
 </section>
 
-<!-- Our Specialists -->
-<section class="section-spacing bg-white">
-	<div class="container-custom">
-		<h2 class="text-3xl font-bold text-center mb-12">Specialiștii noștri</h2>
-		<div class="grid md:grid-cols-2 gap-8">
-			{#each specialists as specialist}
-				<div class="bg-gray-50 rounded-xl p-6">
-					<div class="flex items-start space-x-4">
-						<div class="w-16 h-16 bg-gradient-to-br from-primary to-primary-dark rounded-full flex-shrink-0"></div>
-						<div class="flex-1">
-							<h3 class="text-xl font-bold mb-1">{specialist.name}</h3>
-							<p class="text-primary text-sm font-medium mb-3">{specialist.role}</p>
-							<div class="mb-3">
-								<p class="text-sm font-semibold text-gray-700 mb-1">Specializări:</p>
-								<div class="flex flex-wrap gap-2">
-									{#each specialist.specialties as specialty}
-										<span class="text-xs bg-white px-2 py-1 rounded">{specialty}</span>
-									{/each}
-								</div>
-							</div>
-							<p class="text-sm text-gray-600">
-								<strong>Disponibil:</strong>
-								{specialist.available}
-							</p>
-						</div>
-					</div>
-				</div>
-			{/each}
-		</div>
-	</div>
-</section>
-
-<!-- What to Expect -->
-<section class="section-spacing bg-primary text-white">
-	<div class="container-custom max-w-4xl">
-		<h2 class="text-3xl font-bold text-center mb-12">Ce să te aștepți la prima consultație?</h2>
-		<div class="grid md:grid-cols-3 gap-8">
-			<div class="text-center">
-				<div class="inline-block p-4 bg-white/10 rounded-full mb-4">
-					<Icon name="user" size="32" />
-				</div>
-				<h3 class="text-lg font-bold mb-2">Evaluare completă</h3>
-				<p class="text-sm opacity-90">
-					Discutăm despre istoricul medical, simptomele actuale și obiectivele tale
-				</p>
-			</div>
-			<div class="text-center">
-				<div class="inline-block p-4 bg-white/10 rounded-full mb-4">
-					<Icon name="brain" size="32" />
-				</div>
-				<h3 class="text-lg font-bold mb-2">Plan personalizat</h3>
-				<p class="text-sm opacity-90">
-					Stabilim împreună cel mai bun plan de tratament pentru nevoile tale
-				</p>
-			</div>
-			<div class="text-center">
-				<div class="inline-block p-4 bg-white/10 rounded-full mb-4">
-					<Icon name="calendar" size="32" />
-				</div>
-				<h3 class="text-lg font-bold mb-2">Urmărire continuă</h3>
-				<p class="text-sm opacity-90">
-					Programăm consultații de follow-up pentru a monitoriza progresul
-				</p>
-			</div>
-		</div>
-	</div>
-</section>
-
-<!-- FAQ -->
-<section class="section-spacing bg-white">
-	<div class="container-custom max-w-3xl">
-		<h2 class="text-3xl font-bold text-center mb-12">Întrebări frecvente despre programare</h2>
-		<div class="space-y-6">
-			{#each [ { q: 'Pot anula sau reprograma o consultație?', a: 'Da, poți anula sau reprograma consultația cu minimum 24 de ore înainte. Te rugăm să ne anunți telefonic sau prin email.' }, { q: 'Cât timp durează până primesc confirmarea?', a: 'Vei primi o confirmare automată prin email imediat după programare, și o confirmare telefonică în 24 de ore.' }, { q: 'Pot veni însoțit de o altă persoană?', a: 'Da, poți veni însoțit. Pentru consultații pediatrice, prezența părinților este necesară.' }, { q: 'Ce documente trebuie să aduc?', a: 'Pentru prima consultație, te rugăm să aduci actul de identitate, card de sănătate (dacă ai), și orice analize/investigații medicale relevante.' } ] as faq}
-				<div class="border-b border-gray-200 pb-6">
-					<h3 class="text-lg font-bold mb-2">{faq.q}</h3>
-					<p class="text-gray-600">{faq.a}</p>
-				</div>
-			{/each}
-		</div>
-	</div>
-</section>
+<style>
+  :global(body) {
+    background: white;
+  }
+</style>

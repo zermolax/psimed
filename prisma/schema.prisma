@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// DOCTORS (Medicii din clinică)
+// ============================================
+model Doctor {
+  id                String     @id @default(cuid())
+  email             String     @unique
+  passwordHash      String
+
+  name              String
+  speciality        String     // "Psychiatrist", "Psychologist", etc.
+  phone             String?
+  bio               String?
+
+  // Working schedule configuration
+  workingHoursStart Int        @default(900)    // 9:00 AM (military time)
+  workingHoursEnd   Int        @default(1700)   // 5:00 PM
+  slotDuration      Int        @default(60)     // minutes per appointment
+  breakBetweenSlots Int        @default(15)     // break time between appointments
+
+  // Relations to other tables
+  services          Service[]
+  bookings          Booking[]
+
+  // Metadata
+  isActive          Boolean    @default(true)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  @@index([email])
+}
+
+// ============================================
+// SERVICES (Serviciile oferite de doctor)
+// ============================================
+model Service {
+  id                String     @id @default(cuid())
+  name              String     // "Individual Psychotherapy"
+  description       String?
+  duration          Int        // minutes
+  price             Decimal    @db.Decimal(10, 2) // EUR
+
+  doctorId          String
+  doctor            Doctor     @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+
+  bookings          Booking[]
+
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  @@unique([doctorId, name])
+  @@index([doctorId])
+}
+
+// ============================================
+// BOOKINGS (Programările pacienților)
+// ============================================
+model Booking {
+  id                String     @id @default(cuid())
+
+  // Patient information
+  patientName       String
+  patientEmail      String
+  patientPhone      String
+  patientNote       String?
+
+  // Appointment details
+  doctorId          String
+  doctor            Doctor     @relation(fields: [doctorId], references: [id], onDelete: Restrict)
+
+  serviceId         String
+  service           Service    @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+
+  appointmentDate   DateTime   // Full date + time
+  duration          Int        // minutes
+
+  // Status tracking
+  status            BookingStatus @default(PENDING)
+  cancellationReason String?
+  cancelledAt       DateTime?
+
+  // Confirmation token (for email links)
+  confirmationToken String     @unique @default(cuid())
+
+  // Relations
+  notifications     Notification[]
+
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  @@index([doctorId])
+  @@index([patientEmail])
+  @@index([appointmentDate])
+  @@index([status])
+}
+
+enum BookingStatus {
+  PENDING       // Waiting for confirmation
+  CONFIRMED     // Confirmed, ready to go
+  CANCELLED     // Cancelled by patient or clinic
+  COMPLETED     // Appointment happened
+  NO_SHOW       // Patient didn't show up
+}
+
+// ============================================
+// NOTIFICATIONS (Email tracking)
+// ============================================
+model Notification {
+  id                String     @id @default(cuid())
+
+  bookingId         String
+  booking           Booking    @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  type              NotificationType
+  channel           NotificationChannel  // EMAIL for now
+  recipient         String     // email address
+
+  subject           String?
+  message           String
+
+  status            NotificationStatus @default(PENDING)
+  sentAt            DateTime?
+  failureReason     String?
+
+  createdAt         DateTime   @default(now())
+
+  @@index([bookingId])
+  @@index([status])
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMATION
+  APPOINTMENT_REMINDER
+  CANCELLATION
+}
+
+enum NotificationChannel {
+  EMAIL
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
