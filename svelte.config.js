@@ -19,8 +19,19 @@ const config = {
 		prerender: {
 			// Don't crawl - we have dynamic pages with actions that can't be prerendered
 			crawl: false,
-			// Only prerender the static homepage and other static pages
-			entries: ['/', '/servicii', '/tratamente', '/despre-noi', '/contact']
+			// Only prerender static pages (programare uses MedSoft API so not prerendered)
+			entries: [
+				'/',
+				'/servicii',
+				'/tratamente',
+				'/tratamente/neurofeedback',
+				'/tratamente/hipnoza-clinica',
+				'/despre-noi',
+				'/contact',
+				'/evaluari-psihologice'
+			],
+			// Ignore routes that weren't found during build
+			handleUnseenRoutes: 'warn'
 		}
 	}
 };
