@@ -2,340 +2,369 @@
  * MedSoft CLOUD API Integration Service
  *
  * This service handles all communication with the MedSoft API
- * for the appointment booking system.
+ * for the online appointment booking system.
  *
- * API Documentation: Specificații Interconectare Cont Online v11
+ * API Documentation: Specificații Interconectare Programări Online v2
  */
 
 import { MEDSOFT_API_KEY, MEDSOFT_API_URL, MEDSOFT_CLIENT_PATH } from '$env/static/private';
 
-// Types based on MedSoft API responses
-export interface MedSoftDoctor {
-  cod: number;
-  cod_punct_lucru: number;
-  nume: string;
-  prenume: string;
-  specialitate: string;
-  cod_specialitate: number;
-  interval_programare: number;
-  telefon?: string;
-  email?: string;
-  activ_cont_online: number;
+// =====================================================
+// TYPES
+// =====================================================
+
+export interface ClinicLocation {
+	LocationId: number;
+	LocationName: string;
+	LocationAddress?: string;
 }
 
-export interface MedSoftPatient {
-  cod_pacient: number;
-  cnp?: string;
-  nume: string;
-  prenume: string;
-  data_nastere?: string;
-  tel: string;
-  email?: string;
+export interface LocationSpecialty {
+	LocationId: number;
+	SpecialtyId: number;
+	Name: string;
 }
 
-export interface MedSoftAppointment {
-  _cod_programare: number;
-  _cod_pacient: number;
-  _status_1: boolean;
-  _status_2: boolean;
-  _status_3: boolean;
-  _status_4: boolean;
-  _status_5: boolean;
-  _status_6: boolean;
-  _status_7: boolean;
-  _status_8: boolean;
-  _status_9: boolean;
-  _status_10: boolean;
-  Doctor: string;
-  Data: string;
-  'Ora inceput': string;
-  'Ora sfarsit': string;
-  'Punct lucru': string;
-  Cabinet: string;
-  Scop: string;
+export interface LocationDoctor {
+	LocationId: number;
+	DoctorId: number;
+	Name: string;
+	Grade?: string;
+	SpecialtyId: number;
+	SpecialtyName: string;
+	SlotDuration: number;
+	email?: string;
 }
 
-export interface MedSoftStatusProgramare {
-  index: number;
-  activ: number;
-  denumire: string;
-  culoare: string;
-  is_programare_displayed: number;
-  is_programare_succes: number;
+export interface ScheduleSlot {
+	DoctorId: number;
+	StartDateTime: string;
+	EndDateTime: string;
+	IsAvailable: number;
+	SpecialtyId: number;
+	LocationId: number;
 }
 
-export interface MedSoftService {
-  cod: number;
-  denumire: string;
-  punct_lucru: number;
-  pret: number;
-  valuta: string;
-  tip_serviciu: string;
-  data_adaugare_modificare: string;
+export interface AppointmentScop {
+	cod: number;
+	scop: string;
+	durata: number;
+	medic?: number;
+	puncte_lucru?: string;
+	lista_servicii?: Array<{
+		cod: number;
+		pret: number;
+		denumire: string;
+		puncte_lucru?: string | null;
+	}>;
+}
+
+export interface PriceListItem {
+	cod: number;
+	denumire: string;
+	punct_lucru: number;
+	pret: number;
+	valuta: string;
+	tip_serviciu: string;
+}
+
+export interface CreateAppointmentRequest {
+	doctorId: number;
+	locationId: number;
+	startDateTime: string;
+	endDateTime: string;
+	patientName: string;
+	patientEmail?: string;
+	patientPhoneNumber: string;
+	patientAddress?: object | null;
+	appointmentDetails?: string;
+	appointmentNotes?: string;
+	scopId?: number;
+}
+
+export interface AppointmentResponse {
+	AppointmentId: number;
+}
+
+export interface AppointmentStatus {
+	appointment: number;
+	doctorId: number;
+	locationId: number;
+	startDateTime: string;
+	endDateTime: string;
+	appointmentDetails: string;
+	patientId: number;
+	patientName: string;
+	lastEditDateTime: string;
+	statusList: string;
+	deleteDateTime?: string;
+}
+
+export interface ValidatePatientResponse {
+	codPacient: number;
+	tel: string;
+	numePacient: string;
 }
 
 export interface MedSoftApiResponse<T> {
-  Status: number;
-  ReturnData: T[];
+	Status: number;
+	ReturnData: T[];
 }
 
-class MedSoftService {
-  private baseUrl: string;
-  private apiKey: string;
-  private clientPath: string;
+// =====================================================
+// SERVICE CLASS
+// =====================================================
 
-  constructor() {
-    this.baseUrl = MEDSOFT_API_URL || '';
-    this.apiKey = MEDSOFT_API_KEY || '';
-    this.clientPath = MEDSOFT_CLIENT_PATH || '';
-  }
+class MedSoftAPIService {
+	private baseUrl: string;
+	private apiKey: string;
+	private clientPath: string;
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<MedSoftApiResponse<T>> {
-    const url = `${this.baseUrl}/integrations/cont-online/public/${this.clientPath}${endpoint}`;
+	constructor() {
+		this.baseUrl = MEDSOFT_API_URL || '';
+		this.apiKey = MEDSOFT_API_KEY || '';
+		this.clientPath = MEDSOFT_CLIENT_PATH || '';
+	}
 
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        'X-API-KEY': this.apiKey,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        ...options.headers,
-      },
-    });
+	private async request<T>(
+		endpoint: string,
+		options: RequestInit = {}
+	): Promise<MedSoftApiResponse<T>> {
+		const url = `${this.baseUrl}/integrations/programari-online/public/${this.clientPath}${endpoint}`;
 
-    if (!response.ok) {
-      throw new Error(`MedSoft API error: ${response.status} ${response.statusText}`);
-    }
+		console.log(`[MedSoft API] ${options.method || 'GET'} ${url}`);
 
-    return response.json();
-  }
+		const response = await fetch(url, {
+			...options,
+			headers: {
+				'X-API-KEY': this.apiKey,
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				...options.headers
+			}
+		});
 
-  // =====================================================
-  // DOCTORS / MEDICI
-  // =====================================================
+		if (!response.ok) {
+			const errorText = await response.text();
+			console.error(`[MedSoft API] Error ${response.status}: ${errorText}`);
+			throw new Error(`MedSoft API error: ${response.status} ${response.statusText}`);
+		}
 
-  /**
-   * Get list of doctors available for online appointments
-   */
-  async getDoctors(codPunctLucru?: number): Promise<MedSoftDoctor[]> {
-    let endpoint = '/medici';
-    if (codPunctLucru) {
-      endpoint += `?cod_punct_lucru=${codPunctLucru}`;
-    }
+		const data = await response.json();
+		return data;
+	}
 
-    const response = await this.request<MedSoftDoctor>(endpoint);
-    return response.ReturnData;
-  }
+	// =====================================================
+	// LOCATIONS
+	// =====================================================
 
-  /**
-   * Get a specific doctor by code
-   */
-  async getDoctor(codMedic: number): Promise<MedSoftDoctor | null> {
-    const endpoint = `/medici?cod_medic=${codMedic}`;
-    const response = await this.request<MedSoftDoctor>(endpoint);
-    return response.ReturnData[0] || null;
-  }
+	/**
+	 * Get all clinic locations
+	 */
+	async getClinicLocations(): Promise<ClinicLocation[]> {
+		const response = await this.request<ClinicLocation>('/clinicLocations');
+		return response.ReturnData;
+	}
 
-  // =====================================================
-  // SERVICES / LISTA PRETURI
-  // =====================================================
+	// =====================================================
+	// SPECIALTIES
+	// =====================================================
 
-  /**
-   * Get list of services available for online booking
-   */
-  async getServices(tipServiciu?: string): Promise<MedSoftService[]> {
-    let endpoint = '/listaPreturi';
-    if (tipServiciu) {
-      endpoint += `?tipServiciu=${tipServiciu}`;
-    }
+	/**
+	 * Get specialties available at a location
+	 */
+	async getLocationSpecialties(locationId: number): Promise<LocationSpecialty[]> {
+		const response = await this.request<LocationSpecialty>(
+			`/locationSpecialties?locationId=${locationId}`
+		);
+		return response.ReturnData;
+	}
 
-    const response = await this.request<MedSoftService>(endpoint);
-    return response.ReturnData;
-  }
+	// =====================================================
+	// DOCTORS
+	// =====================================================
 
-  // =====================================================
-  // PATIENTS / PACIENTI
-  // =====================================================
+	/**
+	 * Get doctors available at a location
+	 * Optionally filter by specialty
+	 */
+	async getLocationDoctors(locationId: number, specialtyId?: number): Promise<LocationDoctor[]> {
+		const response = await this.request<LocationDoctor>(`/locationDoctors?locationId=${locationId}`);
+		let doctors = response.ReturnData;
 
-  /**
-   * Search for an existing patient
-   */
-  async searchPatient(params: {
-    search?: string;
-    nume?: string;
-    prenume?: string;
-    telefon?: string;
-    dataNastere?: string;
-    cnp?: string;
-    cod_pacient?: number;
-  }): Promise<MedSoftPatient[]> {
-    const queryParams = new URLSearchParams();
+		if (specialtyId) {
+			doctors = doctors.filter((d) => d.SpecialtyId === specialtyId);
+		}
 
-    if (params.search) queryParams.append('search', params.search);
-    if (params.nume) queryParams.append('nume', params.nume);
-    if (params.prenume) queryParams.append('prenume', params.prenume);
-    if (params.telefon) queryParams.append('telefon', params.telefon);
-    if (params.dataNastere) queryParams.append('dataNastere', params.dataNastere);
-    if (params.cnp) queryParams.append('cnp', params.cnp);
-    if (params.cod_pacient) queryParams.append('cod_pacient', params.cod_pacient.toString());
+		return doctors;
+	}
 
-    const endpoint = `/pacient/cauta?${queryParams.toString()}`;
-    const response = await this.request<MedSoftPatient>(endpoint);
-    return response.ReturnData;
-  }
+	// =====================================================
+	// SCHEDULE
+	// =====================================================
 
-  /**
-   * Create a new patient in MedSoft
-   */
-  async createPatient(patient: {
-    nume: string;
-    prenume: string;
-    tel1: string;
-    email?: string;
-    tel2?: string;
-    cnp?: string;
-    sex?: '1' | '2' | null;
-    preferinte?: string;
-  }): Promise<MedSoftPatient> {
-    const response = await this.request<MedSoftPatient>('/pacient', {
-      method: 'POST',
-      body: JSON.stringify(patient),
-    });
+	/**
+	 * Get schedule for a location (all doctors)
+	 * Returns available time slots
+	 */
+	async getLocationSchedule(
+		locationId: number,
+		dateStart: string,
+		dateEnd: string
+	): Promise<ScheduleSlot[]> {
+		const response = await this.request<ScheduleSlot>(
+			`/locationSchedule?locationId=${locationId}&date=${dateStart}&dateEnd=${dateEnd}`
+		);
+		return response.ReturnData;
+	}
 
-    if (!response.ReturnData[0]) {
-      throw new Error('Failed to create patient');
-    }
+	/**
+	 * Get schedule for a specific doctor
+	 */
+	async getDoctorSchedule(
+		doctorId: number,
+		dateStart: string,
+		dateEnd: string
+	): Promise<ScheduleSlot[]> {
+		const response = await this.request<ScheduleSlot>(
+			`/doctorSchedule?doctorId=${doctorId}&date=${dateStart}&dateEnd=${dateEnd}`
+		);
+		return response.ReturnData;
+	}
 
-    return response.ReturnData[0];
-  }
+	// =====================================================
+	// APPOINTMENT SCOPES (Services/Purposes)
+	// =====================================================
 
-  /**
-   * Update an existing patient
-   */
-  async updatePatient(
-    codPacient: number,
-    patient: {
-      nume?: string;
-      prenume?: string;
-      tel1?: string;
-      email?: string;
-      tel2?: string;
-      cnp?: string;
-      sex?: '1' | '2' | null;
-      preferinte?: string;
-    }
-  ): Promise<MedSoftPatient> {
-    const response = await this.request<MedSoftPatient>(`/pacient/${codPacient}`, {
-      method: 'PUT',
-      body: JSON.stringify(patient),
-    });
+	/**
+	 * Get appointment scopes (purposes/services)
+	 * These define what type of appointment can be booked
+	 */
+	async getAppointmentScopes(): Promise<AppointmentScop[]> {
+		const response = await this.request<AppointmentScop>('/appointmentScop');
+		return response.ReturnData;
+	}
 
-    if (!response.ReturnData[0]) {
-      throw new Error('Failed to update patient');
-    }
+	/**
+	 * Get scopes filtered by doctor
+	 */
+	async getAppointmentScopesForDoctor(doctorId: number): Promise<AppointmentScop[]> {
+		const allScopes = await this.getAppointmentScopes();
+		return allScopes.filter((s) => s.medic === doctorId || !s.medic);
+	}
 
-    return response.ReturnData[0];
-  }
+	// =====================================================
+	// PRICE LIST
+	// =====================================================
 
-  // =====================================================
-  // APPOINTMENTS / PROGRAMARI
-  // =====================================================
+	/**
+	 * Get price list for services
+	 */
+	async getPriceList(): Promise<PriceListItem[]> {
+		const response = await this.request<PriceListItem>('/priceList');
+		return response.ReturnData;
+	}
 
-  /**
-   * Get appointment history for a patient
-   */
-  async getPatientAppointments(codPacient: number): Promise<MedSoftAppointment[]> {
-    const endpoint = `/pacient/${codPacient}/istoric/programari`;
-    const response = await this.request<MedSoftAppointment>(endpoint);
-    return response.ReturnData;
-  }
+	// =====================================================
+	// PATIENT VALIDATION
+	// =====================================================
 
-  /**
-   * Get appointment status definitions
-   */
-  async getAppointmentStatuses(): Promise<MedSoftStatusProgramare[]> {
-    const response = await this.request<MedSoftStatusProgramare>('/statusProgramari');
-    return response.ReturnData;
-  }
+	/**
+	 * Validate/find a patient by their data
+	 */
+	async validatePatient(patient: {
+		nume: string;
+		prenume: string;
+		tel: string;
+		email?: string;
+	}): Promise<ValidatePatientResponse | null> {
+		try {
+			const response = await this.request<ValidatePatientResponse>('/validare-pacient', {
+				method: 'POST',
+				body: JSON.stringify(patient)
+			});
+			return response.ReturnData[0] || null;
+		} catch {
+			return null;
+		}
+	}
 
-  /**
-   * Update appointment status
-   */
-  async updateAppointmentStatus(
-    codPacient: number,
-    codProgramare: number,
-    flagIndex: number,
-    newFlagValue: boolean,
-    motiv?: string
-  ): Promise<MedSoftAppointment> {
-    let endpoint = `/pacient/${codPacient}/istoric/programari/${codProgramare}/status/${flagIndex}/${newFlagValue}`;
-    if (motiv) {
-      endpoint += `?motiv=${encodeURIComponent(motiv)}`;
-    }
+	// =====================================================
+	// APPOINTMENTS
+	// =====================================================
 
-    const response = await this.request<MedSoftAppointment>(endpoint, {
-      method: 'PUT',
-    });
+	/**
+	 * Create a new appointment
+	 */
+	async createAppointment(data: CreateAppointmentRequest): Promise<AppointmentResponse> {
+		const response = await this.request<AppointmentResponse>('/createAppointment', {
+			method: 'POST',
+			body: JSON.stringify(data)
+		});
 
-    if (!response.ReturnData[0]) {
-      throw new Error('Failed to update appointment status');
-    }
+		if (!response.ReturnData[0]) {
+			throw new Error('Failed to create appointment');
+		}
 
-    return response.ReturnData[0];
-  }
+		return response.ReturnData[0];
+	}
 
-  // =====================================================
-  // UTILITY METHODS
-  // =====================================================
+	/**
+	 * Get appointment status
+	 */
+	async getAppointmentStatus(appointmentId: number): Promise<AppointmentStatus | null> {
+		const response = await this.request<AppointmentStatus>(
+			`/appointmentStatus?appointment=${appointmentId}`
+		);
+		return response.ReturnData[0] || null;
+	}
 
-  /**
-   * Find or create a patient by phone/email
-   * Returns the patient code for use in appointments
-   */
-  async findOrCreatePatient(patientData: {
-    nume: string;
-    prenume: string;
-    telefon: string;
-    email?: string;
-  }): Promise<MedSoftPatient> {
-    // First try to find by phone
-    const existingByPhone = await this.searchPatient({ telefon: patientData.telefon });
-    if (existingByPhone.length > 0) {
-      return existingByPhone[0];
-    }
+	/**
+	 * Cancel an appointment
+	 */
+	async cancelAppointment(
+		appointmentId: number
+	): Promise<{ cancellationResult: boolean; message: string }> {
+		const response = await this.request<{ cancellationResult: boolean; message: string }>(
+			`/cancelAppointment?appointment=${appointmentId}`,
+			{ method: 'POST' }
+		);
+		return response.ReturnData[0];
+	}
 
-    // Try to find by email if provided
-    if (patientData.email) {
-      const existingByEmail = await this.searchPatient({ search: patientData.email });
-      if (existingByEmail.length > 0) {
-        return existingByEmail[0];
-      }
-    }
+	// =====================================================
+	// UTILITY METHODS
+	// =====================================================
 
-    // Create new patient
-    return this.createPatient({
-      nume: patientData.nume,
-      prenume: patientData.prenume,
-      tel1: patientData.telefon,
-      email: patientData.email,
-    });
-  }
+	/**
+	 * Generate time slots from a schedule slot based on duration
+	 */
+	generateTimeSlots(scheduleSlot: ScheduleSlot, durationMinutes: number): string[] {
+		const slots: string[] = [];
+		const start = new Date(scheduleSlot.StartDateTime);
+		const end = new Date(scheduleSlot.EndDateTime);
 
-  /**
-   * Check if the API connection is working
-   */
-  async healthCheck(): Promise<boolean> {
-    try {
-      await this.getDoctors();
-      return true;
-    } catch {
-      return false;
-    }
-  }
+		let current = new Date(start);
+		while (current.getTime() + durationMinutes * 60000 <= end.getTime()) {
+			slots.push(current.toISOString());
+			current = new Date(current.getTime() + durationMinutes * 60000);
+		}
+
+		return slots;
+	}
+
+	/**
+	 * Check if the API connection is working
+	 */
+	async healthCheck(): Promise<boolean> {
+		try {
+			await this.getClinicLocations();
+			return true;
+		} catch {
+			return false;
+		}
+	}
 }
 
 // Export singleton instance
-export const medsoft = new MedSoftService();
+export const medsoft = new MedSoftAPIService();
