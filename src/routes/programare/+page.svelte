@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/atoms/Button.svelte';
+	import Calendar from '$lib/components/molecules/Calendar.svelte';
 
 	// Types
 	interface ClinicLocation {
@@ -620,52 +621,54 @@
 							<p class="text-sm text-gray-500 mt-2">Vă rugăm să ne contactați telefonic.</p>
 						</div>
 					{:else}
-						<!-- Date Selection -->
-						<div class="mb-6">
-							<label class="block text-sm font-medium text-gray-700 mb-3">Alegeți data:</label>
-							<div class="flex flex-wrap gap-2">
-								{#each availableDates as date}
-									<button
-										type="button"
-										class="px-4 py-2 rounded-lg text-sm font-medium transition-all
-                      {selectedDate === date
-											? 'bg-primary text-white'
-											: 'bg-white text-gray-700 hover:bg-primary/10'}"
-										onclick={() => {
-											selectedDate = date;
-											selectedTimeSlot = null;
-										}}
-									>
-										{formatDate(date)}
-									</button>
-								{/each}
+						<div class="grid md:grid-cols-2 gap-6">
+							<!-- Date Selection with Calendar -->
+							<div>
+								<label class="block text-sm font-medium text-gray-700 mb-3">Alegeți data:</label>
+								<Calendar
+									{availableDates}
+									{selectedDate}
+									onSelectDate={(date) => {
+										selectedDate = date;
+										selectedTimeSlot = null;
+									}}
+								/>
 							</div>
-						</div>
 
-						<!-- Time Selection -->
-						{#if selectedDate && availableTimeSlots.length > 0}
+							<!-- Time Selection -->
 							<div>
 								<label class="block text-sm font-medium text-gray-700 mb-3">Alegeți ora:</label>
-								<div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
-									{#each availableTimeSlots as slot}
-										<button
-											type="button"
-											class="px-3 py-2 rounded-lg text-sm font-medium transition-all
-                        {selectedTimeSlot?.formatted === slot.formatted
-												? 'bg-primary text-white'
-												: 'bg-white text-gray-700 hover:bg-primary/10'}"
-											onclick={() => selectTimeSlot(slot)}
-										>
-											{slot.formatted}
-										</button>
-									{/each}
-								</div>
+								{#if selectedDate && availableTimeSlots.length > 0}
+									<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+										<p class="text-sm text-gray-600 mb-3">
+											Ore disponibile pentru <strong>{formatDate(selectedDate)}</strong>:
+										</p>
+										<div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+											{#each availableTimeSlots as slot}
+												<button
+													type="button"
+													class="px-3 py-2 rounded-lg text-sm font-medium transition-all
+														{selectedTimeSlot?.formatted === slot.formatted
+															? 'bg-primary text-white ring-2 ring-primary ring-offset-2'
+															: 'bg-gray-50 text-gray-700 hover:bg-primary/10 hover:text-primary'}"
+													onclick={() => selectTimeSlot(slot)}
+												>
+													{slot.formatted}
+												</button>
+											{/each}
+										</div>
+									</div>
+								{:else if selectedDate}
+									<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center">
+										<p class="text-gray-500">Nu există ore disponibile pentru data selectată.</p>
+									</div>
+								{:else}
+									<div class="bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 p-6 text-center">
+										<p class="text-gray-400">Selectați mai întâi o dată din calendar</p>
+									</div>
+								{/if}
 							</div>
-						{:else if selectedDate}
-							<p class="text-gray-500 text-center py-4">
-								Nu există ore disponibile pentru data selectată.
-							</p>
-						{/if}
+						</div>
 					{/if}
 				</div>
 			{/if}

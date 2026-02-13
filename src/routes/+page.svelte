@@ -1,6 +1,52 @@
 <script lang="ts">
 	import Button from '$lib/components/atoms/Button.svelte';
 	import Icon from '$lib/components/atoms/Icon.svelte';
+	import ProblemCard from '$lib/components/molecules/ProblemCard.svelte';
+
+	const problems = [
+		{
+			title: 'Autism / TSA',
+			description: 'Evaluare și intervenție timpurie pentru tulburările din spectrul autist.',
+			href: '/ce-tratam/autism-tsa',
+			icon: 'brain',
+			category: 'copii' as const
+		},
+		{
+			title: 'ADHD',
+			description: 'Diagnostic și tratament pentru deficitul de atenție și hiperactivitate.',
+			href: '/ce-tratam/adhd',
+			icon: 'brain',
+			category: 'copii' as const
+		},
+		{
+			title: 'Anxietate la copii',
+			description: 'Ajutor pentru copiii care se confruntă cu frici, griji și anxietate.',
+			href: '/ce-tratam/anxietate-copii',
+			icon: 'heart',
+			category: 'copii' as const
+		},
+		{
+			title: 'Depresie',
+			description: 'Tratament complet pentru depresie și tulburări de dispoziție.',
+			href: '/ce-tratam/depresie',
+			icon: 'heart',
+			category: 'adulti' as const
+		},
+		{
+			title: 'Anxietate',
+			description: 'Terapie pentru anxietate, atacuri de panică și fobii.',
+			href: '/ce-tratam/anxietate',
+			icon: 'heart',
+			category: 'adulti' as const
+		},
+		{
+			title: 'Tulburări de somn',
+			description: 'Soluții pentru insomnie și alte probleme de somn.',
+			href: '/ce-tratam/tulburari-somn',
+			icon: 'brain',
+			category: 'adulti' as const
+		}
+	];
 
 	const services = [
 		{
@@ -107,8 +153,8 @@
 					<Button href="/programare" variant="primary" size="lg">
 						🗓️ Programează Consultație
 					</Button>
-					<Button href="/servicii" variant="secondary" size="lg">
-						Serviciile Noastre
+					<Button href="/ce-tratam" variant="secondary" size="lg">
+						Ce Tratăm
 					</Button>
 				</div>
 
@@ -217,6 +263,40 @@
 					<div class="text-lg font-semibold text-gray-300">{stat.label}</div>
 				</div>
 			{/each}
+		</div>
+	</div>
+</section>
+
+<!-- Problems Section - What We Treat -->
+<section class="section-spacing bg-gray-50">
+	<div class="container-custom">
+		<div class="text-center max-w-3xl mx-auto mb-16">
+			<span class="text-primary font-bold text-sm uppercase tracking-wider">Ce Tratăm</span>
+			<h2 class="text-4xl md:text-5xl font-black mt-4 mb-6 text-gray-900">
+				Probleme Frecvente pe Care le
+				<span class="text-primary">Tratăm</span>
+			</h2>
+			<p class="text-xl text-gray-700">
+				Suntem specializați în diagnosticul și tratamentul unei game largi de tulburări psihice, atât pentru copii cât și pentru adulți.
+			</p>
+		</div>
+
+		<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+			{#each problems as problem}
+				<ProblemCard
+					title={problem.title}
+					description={problem.description}
+					href={problem.href}
+					icon={problem.icon}
+					category={problem.category}
+				/>
+			{/each}
+		</div>
+
+		<div class="text-center mt-12">
+			<Button href="/ce-tratam" variant="secondary" size="md">
+				Vezi toate problemele pe care le tratăm
+			</Button>
 		</div>
 	</div>
 </section>

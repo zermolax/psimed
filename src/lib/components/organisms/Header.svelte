@@ -6,20 +6,25 @@
 	let mobileMenuOpen = $state(false);
 
 	const navigation = [
+		{ name: 'Acasă', href: '/' },
 		{
-			name: 'Servicii',
-			href: '/servicii',
+			name: 'Ce Tratăm',
+			href: '/ce-tratam',
 			children: [
-				{ name: 'Psihiatrie Adulți', href: '/servicii#psihiatrie-adulti' },
-				{ name: 'Psihiatrie Pediatrică', href: '/servicii#psihiatrie-pediatrica' },
-				{ name: 'Psihologie Clinică', href: '/servicii#psihologie-clinica' },
-				{ name: 'Psihoterapie', href: '/servicii#psihoterapie' },
-				{ name: 'Terapii Complementare', href: '/servicii#terapii-complementare' },
-				{ name: 'Evaluări Psihologice', href: '/servicii#evaluari-psihologice' }
+				{ name: 'Pentru Copii', href: '/ce-tratam#copii', isHeader: true },
+				{ name: 'Autism / TSA', href: '/ce-tratam/autism-tsa' },
+				{ name: 'ADHD', href: '/ce-tratam/adhd' },
+				{ name: 'Anxietate la Copii', href: '/ce-tratam/anxietate-copii' },
+				{ name: 'Întârzieri în Dezvoltare', href: '/ce-tratam/intarzieri-dezvoltare' },
+				{ name: 'Pentru Adulți', href: '/ce-tratam#adulti', isHeader: true },
+				{ name: 'Depresie', href: '/ce-tratam/depresie' },
+				{ name: 'Anxietate', href: '/ce-tratam/anxietate' },
+				{ name: 'Tulburări de Somn', href: '/ce-tratam/tulburari-somn' },
+				{ name: 'Stres și Burnout', href: '/ce-tratam/stres-burnout' }
 			]
 		},
-		{ name: 'Tratamente', href: '/tratamente' },
-		{ name: 'Evaluări Psihologice', href: '/evaluari-psihologice' },
+		{ name: 'Specialiști', href: '/specialisti' },
+		{ name: 'Servicii & Prețuri', href: '/servicii-si-preturi' },
 		{ name: 'Despre Noi', href: '/despre-noi' },
 		{ name: 'Contact', href: '/contact' }
 	];
@@ -61,17 +66,23 @@
 							</a>
 							<!-- Dropdown -->
 							<div
-								class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200"
+								class="absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 border border-gray-100"
 							>
 								<div class="py-2">
 									{#each item.children as child}
-										<a
-											href={child.href}
-											class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
-											onclick={() => {}}
-										>
-											{child.name}
-										</a>
+										{#if child.isHeader}
+											<div class="px-4 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider bg-gray-50 mt-2 first:mt-0">
+												{child.name}
+											</div>
+										{:else}
+											<a
+												href={child.href}
+												class="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 hover:text-primary transition-colors"
+												onclick={() => {}}
+											>
+												{child.name}
+											</a>
+										{/if}
 									{/each}
 								</div>
 							</div>
@@ -126,13 +137,19 @@
 							</a>
 							<div class="pl-4 space-y-1">
 								{#each item.children as child}
-									<a
-										href={child.href}
-										class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg"
-										onclick={closeMobileMenu}
-									>
-										{child.name}
-									</a>
+									{#if child.isHeader}
+										<div class="px-4 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider mt-2">
+											{child.name}
+										</div>
+									{:else}
+										<a
+											href={child.href}
+											class="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg"
+											onclick={closeMobileMenu}
+										>
+											{child.name}
+										</a>
+									{/if}
 								{/each}
 							</div>
 						</div>
