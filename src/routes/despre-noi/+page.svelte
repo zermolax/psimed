@@ -1,26 +1,61 @@
 <script lang="ts">
 	import Button from '$lib/components/atoms/Button.svelte';
 	import Icon from '$lib/components/atoms/Icon.svelte';
-	import teamData from '../../content/data/team.json';
 </script>
 
 <svelte:head>
 	<title>Despre Noi - Clinica Sf. Gherasim</title>
 	<meta
 		name="description"
-		content="Clinica Sf. Gherasim - PSIMED oferă servicii de psihiatrie și psihologie în Bacău de peste 15 ani. Echipă de specialiști dedicați sănătății tale mentale."
+		content="Clinica Sf. Gherasim - PSIMED oferă servicii de psihiatrie și psihologie în Bacău de peste 15 ani. Descoperă povestea, misiunea și valorile noastre."
 	/>
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="bg-gradient-to-br from-primary-light to-white py-16 md:py-20">
-	<div class="container-custom">
-		<div class="max-w-3xl">
-			<h1 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900">Despre Noi</h1>
-			<p class="text-xl text-gray-700 leading-relaxed">
-				Clinica Sf. Gherasim - PSIMED este dedicată îmbunătățirii sănătății mentale a comunității
-				din Bacău și împrejurimi prin servicii medicale de înaltă calitate și o abordare empatică.
+<section class="relative overflow-hidden bg-gradient-to-br from-primary-light via-white to-secondary-light py-16 md:py-24">
+	<div class="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+
+	<div class="container-custom relative z-10">
+		<div class="max-w-4xl">
+			<h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
+				Despre <span class="text-primary">Clinica Sf. Gherasim</span>
+			</h1>
+			<p class="text-xl text-gray-700 leading-relaxed mb-8">
+				De peste 15 ani, suntem dedicați îmbunătățirii sănătății mentale a comunității din Bacău
+				și împrejurimi. Oferim servicii medicale de înaltă calitate într-un mediu sigur și primitor.
 			</p>
+			<div class="flex flex-wrap gap-4">
+				<Button href="/specialisti" variant="primary" size="lg">
+					Cunoaște Echipa
+				</Button>
+				<Button href="/programare" variant="secondary" size="lg">
+					Programează o Consultație
+				</Button>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Stats -->
+<section class="py-12 bg-gray-900 text-white">
+	<div class="container-custom">
+		<div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+			<div>
+				<div class="text-4xl font-black text-primary mb-2">15+</div>
+				<div class="text-gray-300">Ani de experiență</div>
+			</div>
+			<div>
+				<div class="text-4xl font-black text-secondary mb-2">5000+</div>
+				<div class="text-gray-300">Pacienți ajutați</div>
+			</div>
+			<div>
+				<div class="text-4xl font-black text-accent mb-2">10+</div>
+				<div class="text-gray-300">Servicii specializate</div>
+			</div>
+			<div>
+				<div class="text-4xl font-black text-nature mb-2">95%</div>
+				<div class="text-gray-300">Satisfacție pacienți</div>
+			</div>
 		</div>
 	</div>
 </section>
@@ -28,161 +63,159 @@
 <!-- Our Story -->
 <section class="section-spacing bg-white">
 	<div class="container-custom">
-		<div class="grid md:grid-cols-2 gap-12 items-center">
+		<div class="grid lg:grid-cols-2 gap-12 items-center">
 			<div>
-				<h2 class="text-3xl md:text-4xl font-bold mb-6 text-gray-900">Povestea noastră</h2>
+				<span class="text-primary font-bold text-sm uppercase tracking-wider">Povestea Noastră</span>
+				<h2 class="text-3xl md:text-4xl font-black mt-2 mb-6 text-gray-900">
+					O Clinică Născută din Pasiune
+				</h2>
 				<div class="space-y-4 text-lg text-gray-700">
 					<p>
-						Clinica Sf. Gherasim - PSIMED a fost înființată cu misiunea de a oferi servicii de
-						sănătate mentală accesibile și de calitate în regiunea Moldovei. De peste 15 ani, ajutăm
-						pacienți să depășească provocările legate de sănătatea mentală.
+						Clinica Sf. Gherasim - PSIMED a fost înființată cu o viziune clară: să aducem servicii
+						de sănătate mentală de calitate în regiunea Moldovei, într-un mediu lipsit de stigmatizare.
 					</p>
 					<p>
-						Am crescut de la un cabinet modest la o clinică completă, oferind o gamă largă de
-						servicii - de la psihiatrie și psihologie clinică până la terapii moderne precum
-						neurofeedback și stimulare transcraniană.
+						Am pornit de la un cabinet modest, dar cu o mare dorință de a ajuta. Astăzi, am crescut
+						într-o clinică completă, oferind o gamă largă de servicii - de la psihiatrie și
+						psihologie clinică până la terapii moderne precum neurofeedback.
 					</p>
 					<p>
-						Credem că fiecare persoană merită acces la îngrijire de calitate pentru sănătatea
-						mentală, într-un mediu sigur, confidențial și lipsit de stigmatizare.
+						Fiecare pas al acestei călătorii a fost ghidat de pacienții noștri și de nevoile lor.
+						Ei sunt în centrul a tot ceea ce facem.
 					</p>
 				</div>
 			</div>
-			<div class="bg-gray-900 rounded-3xl aspect-square flex items-center justify-center">
-				<div class="text-center text-white p-8">
-					<div class="text-6xl mb-4">🏥</div>
-					<p class="text-2xl font-bold">15+ ani</p>
-					<p class="text-lg">de dedicare</p>
+			<div class="relative">
+				<div class="bg-gradient-to-br from-primary to-primary-dark rounded-3xl p-12 text-white">
+					<div class="text-7xl mb-6">🏥</div>
+					<blockquote class="text-xl font-medium italic mb-4">
+						"Credem că sănătatea mentală este la fel de importantă ca sănătatea fizică.
+						Fiecare persoană merită acces la îngrijire de calitate."
+					</blockquote>
+					<p class="text-white/80">— Filosofia Clinicii Sf. Gherasim</p>
 				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Mission & Vision -->
+<section class="section-spacing bg-gray-50">
+	<div class="container-custom">
+		<div class="text-center max-w-3xl mx-auto mb-12">
+			<span class="text-primary font-bold text-sm uppercase tracking-wider">Misiune & Viziune</span>
+			<h2 class="text-3xl md:text-4xl font-black mt-2 mb-4 text-gray-900">
+				Ce Ne Ghidează
+			</h2>
+		</div>
+
+		<div class="grid md:grid-cols-2 gap-8">
+			<div class="bg-white rounded-2xl p-8 shadow-lg border-l-4 border-primary">
+				<div class="text-4xl mb-4">🎯</div>
+				<h3 class="text-2xl font-bold mb-4 text-gray-900">Misiunea Noastră</h3>
+				<p class="text-gray-700 leading-relaxed">
+					Să oferim servicii de sănătate mentală accesibile, bazate pe dovezi științifice,
+					într-un mediu sigur și confidențial. Ne angajăm să tratăm fiecare pacient cu
+					respect, empatie și profesionalism, ajutându-l să-și recapete echilibrul și
+					calitatea vieții.
+				</p>
+			</div>
+
+			<div class="bg-white rounded-2xl p-8 shadow-lg border-l-4 border-secondary">
+				<div class="text-4xl mb-4">🌟</div>
+				<h3 class="text-2xl font-bold mb-4 text-gray-900">Viziunea Noastră</h3>
+				<p class="text-gray-700 leading-relaxed">
+					Să devenim un centru de referință pentru sănătatea mentală în regiunea Moldovei,
+					recunoscut pentru excelența clinică, abordarea inovatoare și impactul pozitiv
+					în comunitate. Visăm la o lume în care nimeni nu suferă în tăcere.
+				</p>
 			</div>
 		</div>
 	</div>
 </section>
 
 <!-- Our Values -->
-<section class="section-spacing bg-gray-50">
-	<div class="container-custom">
-		<h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">Valorile noastre</h2>
-		<div class="grid md:grid-cols-3 gap-8">
-			<div class="bg-white rounded-xl p-8 border-2 border-gray-200">
-				<div class="inline-block p-4 bg-gray-900 rounded-2xl mb-6">
-					<Icon name="heart" size="32" class="text-white" />
-				</div>
-				<h3 class="text-xl font-bold mb-3 text-gray-900">Empatie și Compasiune</h3>
-				<p class="text-gray-700">
-					Tratăm fiecare pacient cu respect, înțelegere și empatie, creând un spațiu sigur pentru
-					vindecare.
-				</p>
-			</div>
-
-			<div class="bg-white rounded-xl p-8 border-2 border-gray-200">
-				<div class="inline-block p-4 bg-gray-900 rounded-2xl mb-6">
-					<Icon name="brain" size="32" class="text-white" />
-				</div>
-				<h3 class="text-xl font-bold mb-3 text-gray-900">Excelență Profesională</h3>
-				<p class="text-gray-700">
-					Echipa noastră se dedică formării continue și aplicării celor mai bune practici în
-					domeniu.
-				</p>
-			</div>
-
-			<div class="bg-white rounded-xl p-8 border-2 border-gray-200">
-				<div class="inline-block p-4 bg-gray-900 rounded-2xl mb-6">
-					<Icon name="check" size="32" class="text-white" />
-				</div>
-				<h3 class="text-xl font-bold mb-3 text-gray-900">Abordare Bazată pe Dovezi</h3>
-				<p class="text-gray-700">
-					Folosim metode validate științific și ne adaptăm constant la noile descoperiri din
-					cercetare.
-				</p>
-			</div>
-		</div>
-	</div>
-</section>
-
-<!-- Our Team -->
 <section class="section-spacing bg-white">
 	<div class="container-custom">
-		<div class="text-center mb-12">
-			<h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Echipa noastră</h2>
-			<p class="text-xl text-gray-700 max-w-2xl mx-auto">
-				Profesioniști dedicați cu experiență vastă în sănătatea mentală
-			</p>
+		<div class="text-center max-w-3xl mx-auto mb-12">
+			<span class="text-primary font-bold text-sm uppercase tracking-wider">Valorile Noastre</span>
+			<h2 class="text-3xl md:text-4xl font-black mt-2 mb-4 text-gray-900">
+				Principiile Care Ne Definesc
+			</h2>
 		</div>
 
-		<div class="grid md:grid-cols-2 gap-8">
-			{#each teamData as member}
-				<div class="bg-gray-50 rounded-xl p-8 border-2 border-gray-200">
-					<!-- Avatar placeholder -->
-					<div class="w-32 h-32 bg-gray-900 rounded-full mb-6 mx-auto flex items-center justify-center text-white text-5xl font-bold">
-						{member.name.charAt(0)}
-					</div>
-
-					<!-- Info -->
-					<div class="text-center mb-6">
-						<h3 class="text-2xl font-bold mb-1 text-gray-900">{member.name}</h3>
-						<p class="text-gray-900 font-bold mb-2">{member.role}</p>
-						<p class="text-sm text-gray-700">{member.specialty}</p>
-					</div>
-
-					<!-- Description -->
-					<p class="text-gray-700 mb-6 leading-relaxed">{member.description}</p>
-
-					<!-- Qualifications -->
-					<div class="border-t border-gray-200 pt-6">
-						<h4 class="font-semibold mb-3 text-gray-900">Calificări:</h4>
-						<ul class="space-y-2">
-							{#each member.qualifications as qualification}
-								<li class="flex items-start space-x-2 text-sm text-gray-700">
-									<Icon name="check" size="16" class="text-nature flex-shrink-0 mt-0.5" />
-									<span>{qualification}</span>
-								</li>
-							{/each}
-						</ul>
-					</div>
+		<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+			<div class="text-center p-6">
+				<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+					<Icon name="heart" size="32" class="text-primary" />
 				</div>
-			{/each}
-		</div>
-	</div>
-</section>
+				<h3 class="text-lg font-bold mb-2 text-gray-900">Empatie</h3>
+				<p class="text-gray-600 text-sm">
+					Ascultăm cu atenție și înțelegem provocările fiecărui pacient
+				</p>
+			</div>
 
-<!-- Stats Section -->
-<section class="section-spacing bg-gray-900 text-white">
-	<div class="container-custom">
-		<div class="grid md:grid-cols-4 gap-8 text-center">
-			<div>
-				<div class="text-5xl font-bold mb-2 text-white">15+</div>
-				<div class="text-lg text-gray-200">Ani de experiență</div>
+			<div class="text-center p-6">
+				<div class="w-16 h-16 bg-secondary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+					<Icon name="brain" size="32" class="text-secondary" />
+				</div>
+				<h3 class="text-lg font-bold mb-2 text-gray-900">Excelență</h3>
+				<p class="text-gray-600 text-sm">
+					Ne dedicăm formării continue și celor mai bune practici
+				</p>
 			</div>
-			<div>
-				<div class="text-5xl font-bold mb-2 text-white">5000+</div>
-				<div class="text-lg text-gray-200">Pacienți tratați</div>
+
+			<div class="text-center p-6">
+				<div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+					<Icon name="check" size="32" class="text-accent" />
+				</div>
+				<h3 class="text-lg font-bold mb-2 text-gray-900">Integritate</h3>
+				<p class="text-gray-600 text-sm">
+					Acționăm etic și transparent în toate interacțiunile
+				</p>
 			</div>
-			<div>
-				<div class="text-5xl font-bold mb-2 text-white">10+</div>
-				<div class="text-lg text-gray-200">Servicii specializate</div>
-			</div>
-			<div>
-				<div class="text-5xl font-bold mb-2 text-white">95%</div>
-				<div class="text-lg text-gray-200">Satisfacție pacienți</div>
+
+			<div class="text-center p-6">
+				<div class="w-16 h-16 bg-nature/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+					<Icon name="user" size="32" class="text-nature" />
+				</div>
+				<h3 class="text-lg font-bold mb-2 text-gray-900">Respect</h3>
+				<p class="text-gray-600 text-sm">
+					Tratăm fiecare persoană cu demnitate și confidențialitate
+				</p>
 			</div>
 		</div>
 	</div>
 </section>
 
 <!-- Why Choose Us -->
-<section class="section-spacing bg-white">
+<section class="section-spacing bg-gray-50">
 	<div class="container-custom">
-		<h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">De ce Clinica Sf. Gherasim?</h2>
+		<div class="text-center max-w-3xl mx-auto mb-12">
+			<span class="text-primary font-bold text-sm uppercase tracking-wider">De Ce Noi</span>
+			<h2 class="text-3xl md:text-4xl font-black mt-2 mb-4 text-gray-900">
+				Ce Ne Face Diferiți
+			</h2>
+		</div>
+
 		<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-			{#each [ { icon: 'user', title: 'Echipă Experimentată', description: 'Specialiști cu experiență vastă și formare continuă' }, { icon: 'brain', title: 'Tratamente Moderne', description: 'Acces la cele mai noi metode de tratament validate științific' }, { icon: 'heart', title: 'Abordare Personalizată', description: 'Fiecare plan de tratament este adaptat nevoilor tale' }, { icon: 'check', title: 'Rezultate Dovedite', description: 'Rate ridicate de succes și satisfacție a pacienților' }, { icon: 'calendar', title: 'Program Flexibil', description: 'Programări convenabile, inclusiv sâmbăta' }, { icon: 'phone', title: 'Suport Continuu', description: 'Echipa noastră este disponibilă pentru tine' } ] as feature}
-				<div class="flex items-start space-x-4">
-					<div class="flex-shrink-0 p-3 bg-gray-900 rounded-xl">
-						<Icon name={feature.icon} size="24" class="text-white" />
-					</div>
-					<div>
-						<h3 class="font-bold mb-1 text-gray-900">{feature.title}</h3>
-						<p class="text-sm text-gray-700">{feature.description}</p>
+			{#each [
+				{ icon: 'user', title: 'Echipă Experimentată', description: 'Specialiști cu ani de experiență și formare continuă în cele mai noi metode de tratament.' },
+				{ icon: 'brain', title: 'Tratamente Moderne', description: 'Acces la terapii inovatoare precum neurofeedback, alături de metodele clasice validate.' },
+				{ icon: 'heart', title: 'Abordare Personalizată', description: 'Fiecare plan de tratament este creat specific pentru nevoile și obiectivele tale.' },
+				{ icon: 'check', title: 'Rezultate Dovedite', description: 'Rate ridicate de succes și satisfacție confirmată de pacienții noștri.' },
+				{ icon: 'calendar', title: 'Program Flexibil', description: 'Programări convenabile, inclusiv sâmbăta, pentru a ne adapta stilului tău de viață.' },
+				{ icon: 'phone', title: 'Suport Continuu', description: 'Suntem alături de tine pe tot parcursul procesului de vindecare.' }
+			] as feature}
+				<div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+					<div class="flex items-start gap-4">
+						<div class="flex-shrink-0 p-3 bg-gray-900 rounded-xl">
+							<Icon name={feature.icon} size="24" class="text-white" />
+						</div>
+						<div>
+							<h3 class="font-bold mb-2 text-gray-900">{feature.title}</h3>
+							<p class="text-sm text-gray-600">{feature.description}</p>
+						</div>
 					</div>
 				</div>
 			{/each}
@@ -190,17 +223,43 @@
 	</div>
 </section>
 
+<!-- Team CTA -->
+<section class="section-spacing bg-gradient-to-br from-primary to-primary-dark text-white">
+	<div class="container-custom">
+		<div class="max-w-3xl mx-auto text-center">
+			<h2 class="text-3xl md:text-4xl font-black mb-4">
+				Cunoaște Echipa Noastră
+			</h2>
+			<p class="text-xl text-white/90 mb-8">
+				În spatele fiecărei povești de succes se află profesioniști dedicați.
+				Descoperă specialiștii care te pot ajuta.
+			</p>
+			<Button href="/specialisti" variant="secondary" size="lg" class="bg-white text-primary hover:bg-gray-100">
+				Vezi Specialiștii
+			</Button>
+		</div>
+	</div>
+</section>
+
 <!-- CTA Section -->
-<section class="section-spacing bg-gray-50">
-	<div class="container-custom text-center">
-		<h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Gata să începem împreună?</h2>
-		<p class="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
-			Fă primul pas către o sănătate mentală mai bună. Programează o consultație și descoperă cum
-			te putem ajuta.
-		</p>
-		<div class="flex flex-col sm:flex-row gap-4 justify-center">
-			<Button href="/programare" variant="primary" size="lg"> Programează Consultație </Button>
-			<Button href="/contact" variant="outline" size="lg"> Contactează-ne </Button>
+<section class="section-spacing bg-white">
+	<div class="container-custom">
+		<div class="max-w-3xl mx-auto text-center">
+			<h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">
+				Gata să Începem Împreună?
+			</h2>
+			<p class="text-lg text-gray-700 mb-8">
+				Fă primul pas către o sănătate mentală mai bună. Programează o consultație
+				și descoperă cum te putem ajuta.
+			</p>
+			<div class="flex flex-col sm:flex-row gap-4 justify-center">
+				<Button href="/programare" variant="primary" size="lg">
+					Programează Consultație
+				</Button>
+				<Button href="/contact" variant="secondary" size="lg">
+					Contactează-ne
+				</Button>
+			</div>
 		</div>
 	</div>
 </section>

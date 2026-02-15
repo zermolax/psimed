@@ -1,13 +1,8 @@
 <script lang="ts">
 	import Button from '$lib/components/atoms/Button.svelte';
 	import SpecialistCard from '$lib/components/molecules/SpecialistCard.svelte';
-	import { specialists } from '$lib/data/specialists';
 
-	// Group specialists by category
-	const psihiatri = specialists.filter((s) => s.category === 'psihiatru');
-	const psihologi = specialists.filter((s) => s.category === 'psiholog');
-	const terapeuti = specialists.filter((s) => s.category === 'terapeut');
-	const altiSpecialisti = specialists.filter((s) => s.category === 'alt-specialist');
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -43,7 +38,7 @@
 	<div class="container-custom">
 		<div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
 			<div>
-				<div class="text-4xl font-black text-primary mb-2">{specialists.length}+</div>
+				<div class="text-4xl font-black text-primary mb-2">{data.specialists.length}</div>
 				<div class="text-gray-300">Specialiști</div>
 			</div>
 			<div>
@@ -62,100 +57,39 @@
 	</div>
 </section>
 
-<!-- Psihiatri -->
-{#if psihiatri.length > 0}
-	<section class="section-spacing bg-white">
-		<div class="container-custom">
-			<div class="flex items-center gap-4 mb-8">
-				<span class="px-4 py-2 bg-primary text-white rounded-full text-sm font-bold">
+<!-- Category Legend -->
+<section class="py-6 bg-white border-b border-gray-100">
+	<div class="container-custom">
+		<div class="flex flex-wrap items-center justify-center gap-6">
+			<span class="text-sm text-gray-500 font-medium">Filtrează după specialitate:</span>
+			<div class="flex flex-wrap gap-3">
+				<span class="flex items-center gap-2 text-sm">
+					<span class="w-3 h-3 rounded-full bg-primary"></span>
 					Psihiatri
 				</span>
-				<div class="flex-1 h-px bg-primary/20"></div>
-			</div>
-
-			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{#each psihiatri as specialist}
-					<SpecialistCard
-						name={specialist.name}
-						title={specialist.title}
-						specialties={specialist.specialties}
-						description={specialist.description}
-						image={specialist.image}
-						bookingParam={specialist.id}
-					/>
-				{/each}
-			</div>
-		</div>
-	</section>
-{/if}
-
-<!-- Psihologi -->
-{#if psihologi.length > 0}
-	<section class="section-spacing bg-gray-50">
-		<div class="container-custom">
-			<div class="flex items-center gap-4 mb-8">
-				<span class="px-4 py-2 bg-secondary text-white rounded-full text-sm font-bold">
+				<span class="flex items-center gap-2 text-sm">
+					<span class="w-3 h-3 rounded-full bg-secondary"></span>
 					Psihologi
 				</span>
-				<div class="flex-1 h-px bg-secondary/20"></div>
-			</div>
-
-			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{#each psihologi as specialist}
-					<SpecialistCard
-						name={specialist.name}
-						title={specialist.title}
-						specialties={specialist.specialties}
-						description={specialist.description}
-						image={specialist.image}
-						bookingParam={specialist.id}
-					/>
-				{/each}
-			</div>
-		</div>
-	</section>
-{/if}
-
-<!-- Terapeuți -->
-{#if terapeuti.length > 0}
-	<section class="section-spacing bg-white">
-		<div class="container-custom">
-			<div class="flex items-center gap-4 mb-8">
-				<span class="px-4 py-2 bg-accent text-white rounded-full text-sm font-bold">
+				<span class="flex items-center gap-2 text-sm">
+					<span class="w-3 h-3 rounded-full bg-accent"></span>
 					Psihoterapeuți
 				</span>
-				<div class="flex-1 h-px bg-accent/20"></div>
-			</div>
-
-			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{#each terapeuti as specialist}
-					<SpecialistCard
-						name={specialist.name}
-						title={specialist.title}
-						specialties={specialist.specialties}
-						description={specialist.description}
-						image={specialist.image}
-						bookingParam={specialist.id}
-					/>
-				{/each}
-			</div>
-		</div>
-	</section>
-{/if}
-
-<!-- Alți Specialiști -->
-{#if altiSpecialisti.length > 0}
-	<section class="section-spacing bg-gray-50">
-		<div class="container-custom">
-			<div class="flex items-center gap-4 mb-8">
-				<span class="px-4 py-2 bg-nature text-white rounded-full text-sm font-bold">
+				<span class="flex items-center gap-2 text-sm">
+					<span class="w-3 h-3 rounded-full bg-nature"></span>
 					Alți Specialiști
 				</span>
-				<div class="flex-1 h-px bg-nature/20"></div>
 			</div>
+		</div>
+	</div>
+</section>
 
-			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-				{#each altiSpecialisti as specialist}
+<!-- All Specialists Grid -->
+<section class="section-spacing bg-gray-50">
+	<div class="container-custom">
+		{#if data.specialists.length > 0}
+			<div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+				{#each data.specialists as specialist}
 					<SpecialistCard
 						name={specialist.name}
 						title={specialist.title}
@@ -163,12 +97,17 @@
 						description={specialist.description}
 						image={specialist.image}
 						bookingParam={specialist.id}
+						category={specialist.category}
 					/>
 				{/each}
 			</div>
-		</div>
-	</section>
-{/if}
+		{:else}
+			<div class="text-center py-12">
+				<p class="text-gray-500">Nu există specialiști disponibili momentan.</p>
+			</div>
+		{/if}
+	</div>
+</section>
 
 <!-- CTA Section -->
 <section class="section-spacing bg-gradient-to-br from-primary-light to-secondary-light">
