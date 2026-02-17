@@ -4,18 +4,17 @@
 	const currentYear = new Date().getFullYear();
 
 	const quickLinks = [
-		{ name: 'Servicii', href: '/servicii' },
-		{ name: 'Tratamente', href: '/tratamente' },
+		{ name: 'Ce Tratăm', href: '/ce-tratam' },
+		{ name: 'Specialiști', href: '/specialisti' },
+		{ name: 'Servicii & Prețuri', href: '/servicii-si-preturi' },
 		{ name: 'Despre Noi', href: '/despre-noi' },
-		{ name: 'Blog', href: '/blog' },
 		{ name: 'Contact', href: '/contact' }
 	];
 
 	const services = [
-		{ name: 'Psihiatrie Adulți', href: '/servicii#psihiatrie-adulti' },
-		{ name: 'Psihiatrie Pediatrică', href: '/servicii#psihiatrie-pediatrica' },
-		{ name: 'Psihologie Clinică', href: '/servicii#psihologie-clinica' },
-		{ name: 'Psihoterapie', href: '/servicii#psihoterapie' }
+		{ name: 'Psihiatrie Adulți', href: '/ce-tratam#adulti' },
+		{ name: 'Psihiatrie Copii', href: '/ce-tratam#copii' },
+		{ name: 'Programare Online', href: '/programare' }
 	];
 
 	const contactInfo = [
@@ -109,11 +108,11 @@
 				</p>
 
 				<div class="flex space-x-6">
-					<a href="/politica-confidentialitate" class="text-sm hover:text-primary transition-colors">
-						Politică de Confidențialitate
+					<a href="/contact" class="text-sm hover:text-primary transition-colors">
+						Contact
 					</a>
-					<a href="/termeni-conditii" class="text-sm hover:text-primary transition-colors">
-						Termeni și Condiții
+					<a href="/programare" class="text-sm hover:text-primary transition-colors">
+						Programare
 					</a>
 				</div>
 			</div>
