@@ -293,6 +293,17 @@
 		}
 	}
 
+	// Helper function to format date for MedSoft API (YYYY-MM-DD HH:MM:SS)
+	function formatDateTimeForMedSoft(date: Date): string {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+		const seconds = String(date.getSeconds()).padStart(2, '0');
+		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+	}
+
 	async function submitAppointment() {
 		if (!selectedDoctor || !selectedLocation || !selectedTimeSlot) return;
 
@@ -306,8 +317,8 @@
 				body: JSON.stringify({
 					doctorId: selectedDoctor.DoctorId,
 					locationId: selectedLocation.LocationId,
-					startDateTime: selectedTimeSlot.start.toISOString().replace('.000Z', ''),
-					endDateTime: selectedTimeSlot.end.toISOString().replace('.000Z', ''),
+					startDateTime: formatDateTimeForMedSoft(selectedTimeSlot.start),
+					endDateTime: formatDateTimeForMedSoft(selectedTimeSlot.end),
 					patientName: `${patientData.nume} ${patientData.prenume}`.toUpperCase(),
 					patientEmail: patientData.email || undefined,
 					patientPhoneNumber: patientData.telefon,
@@ -358,6 +369,59 @@
 	function getPrice(): number {
 		if (!selectedScope?.lista_servicii?.length) return 0;
 		return selectedScope.lista_servicii[0].pret;
+	}
+
+	function printConfirmation() {
+		const printContent = `
+			<!DOCTYPE html>
+			<html>
+			<head>
+				<title>Confirmare Programare - Clinica Sf. Gherasim</title>
+				<style>
+					body { font-family: Arial, sans-serif; padding: 40px; max-width: 600px; margin: 0 auto; }
+					h1 { color: #dc2626; text-align: center; margin-bottom: 30px; }
+					.details { background: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+					.details p { margin: 10px 0; }
+					.details strong { display: inline-block; width: 120px; }
+					.footer { text-align: center; color: #6b7280; font-size: 14px; margin-top: 30px; }
+					.price { color: #dc2626; font-weight: bold; font-size: 18px; margin-top: 15px; }
+				</style>
+			</head>
+			<body>
+				<h1>Clinica Sf. Gherasim</h1>
+				<h2 style="text-align: center; color: #16a34a;">✓ Programare Confirmată</h2>
+
+				<div class="details">
+					<p><strong>ID Programare:</strong> #${appointmentResult?.AppointmentId}</p>
+					<p><strong>Medic:</strong> ${selectedDoctor?.Name || ''}</p>
+					<p><strong>Specialitate:</strong> ${selectedDoctor?.SpecialtyName || ''}</p>
+					<p><strong>Serviciu:</strong> ${selectedScope?.scop || ''}</p>
+					<p><strong>Data:</strong> ${selectedDate ? formatDate(selectedDate) : ''}</p>
+					<p><strong>Ora:</strong> ${selectedTimeSlot?.formatted || ''}</p>
+					<p><strong>Locație:</strong> ${selectedLocation?.LocationName || ''}</p>
+					${selectedLocation?.LocationAddress ? `<p><strong>Adresă:</strong> ${selectedLocation.LocationAddress}</p>` : ''}
+					<hr style="margin: 15px 0; border: none; border-top: 1px solid #e5e7eb;">
+					<p><strong>Pacient:</strong> ${patientData.prenume} ${patientData.nume}</p>
+					<p><strong>Telefon:</strong> ${patientData.telefon}</p>
+					${patientData.email ? `<p><strong>Email:</strong> ${patientData.email}</p>` : ''}
+					${getPrice() > 0 ? `<p class="price">Preț: ${getPrice()} RON</p>` : ''}
+				</div>
+
+				<div class="footer">
+					<p>Vă mulțumim că ați ales Clinica Sf. Gherasim!</p>
+					<p>Pentru modificări, contactați-ne la telefon.</p>
+					<p style="margin-top: 15px;">Data imprimării: ${new Date().toLocaleDateString('ro-RO')} ${new Date().toLocaleTimeString('ro-RO')}</p>
+				</div>
+			</body>
+			</html>
+		`;
+
+		const printWindow = window.open('', '_blank');
+		if (printWindow) {
+			printWindow.document.write(printContent);
+			printWindow.document.close();
+			printWindow.print();
+		}
 	}
 </script>
 
@@ -830,6 +894,9 @@
 						<div class="flex flex-col sm:flex-row gap-4 justify-center">
 							<Button href="/">Pagina Principală</Button>
 							<Button variant="secondary" onclick={resetBooking}>Programare Nouă</Button>
+							<Button variant="secondary" onclick={printConfirmation}>
+								🖨️ Imprimă
+							</Button>
 						</div>
 					</div>
 				</div>

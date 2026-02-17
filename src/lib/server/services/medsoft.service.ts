@@ -297,13 +297,26 @@ class MedSoftAPIService {
 	 * Create a new appointment
 	 */
 	async createAppointment(data: CreateAppointmentRequest): Promise<AppointmentResponse> {
+		console.log('[MedSoft API] Creating appointment with data:', JSON.stringify(data, null, 2));
+
 		const response = await this.request<AppointmentResponse>('/createAppointment', {
 			method: 'POST',
 			body: JSON.stringify(data)
 		});
 
-		if (!response.ReturnData[0]) {
-			throw new Error('Failed to create appointment');
+		console.log('[MedSoft API] Create appointment response:', JSON.stringify(response, null, 2));
+
+		// Check if response has ReturnData
+		if (!response.ReturnData || !Array.isArray(response.ReturnData)) {
+			console.error('[MedSoft API] Invalid response format:', response);
+			throw new Error(`Răspuns invalid de la MedSoft API: ${JSON.stringify(response)}`);
+		}
+
+		if (response.ReturnData.length === 0) {
+			// Check if there's an error in the response
+			const errorResponse = response as unknown as { Status: number; ErrorMessage?: string; Message?: string };
+			const errorMsg = errorResponse.ErrorMessage || errorResponse.Message || 'Nu s-a putut crea programarea';
+			throw new Error(errorMsg);
 		}
 
 		return response.ReturnData[0];
