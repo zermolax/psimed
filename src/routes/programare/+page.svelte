@@ -60,7 +60,8 @@
 		SERVICE: 4,
 		DATETIME: 5,
 		PATIENT: 6,
-		CONFIRMATION: 7
+		CONFIRMATION: 7,
+		PAYMENT_REDIRECT: 8
 	};
 
 	// State
@@ -94,6 +95,9 @@
 
 	// Appointment result
 	let appointmentResult = $state<{ AppointmentId: number } | null>(null);
+
+	// Payment state
+	let paymentError = $state('');
 
 	// Computed: Available dates from schedule
 	let availableDates = $derived.by(() => {
@@ -309,8 +313,10 @@
 
 		isLoading = true;
 		error = '';
+		paymentError = '';
 
 		try {
+			// Step 1: Create appointment in MedSoft
 			const res = await fetch('/api/medsoft/appointment', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -329,14 +335,85 @@
 
 			const data = await res.json();
 
-			if (data.success) {
-				appointmentResult = data.data;
-				currentStep = STEPS.CONFIRMATION;
-			} else {
+			if (!data.success) {
 				error = data.error || 'Eroare la crearea programării';
+				return;
 			}
+
+			appointmentResult = data.data;
+
+			const price = getPrice();
+
+			// Step 2: If service has a price, initiate Netopia payment
+			if (price > 0) {
+				currentStep = STEPS.PAYMENT_REDIRECT;
+				await initiatePayment(data.data.AppointmentId, price);
+				return;
+			}
+
+			// Free service — go directly to confirmation
+			currentStep = STEPS.CONFIRMATION;
 		} catch (e) {
 			error = 'Eroare la conectarea cu serverul';
+		} finally {
+			isLoading = false;
+		}
+	}
+
+	async function initiatePayment(appointmentId: number, amount: number) {
+		isLoading = true;
+		paymentError = '';
+
+		try {
+			// Collect browser info for 3DS security
+			const browserInfo = {
+				BROWSER_USER_AGENT: navigator.userAgent,
+				BROWSER_TZ: Intl.DateTimeFormat().resolvedOptions().timeZone,
+				BROWSER_COLOR_DEPTH: String(window.screen.colorDepth),
+				BROWSER_JAVA_ENABLED: 'false',
+				BROWSER_LANGUAGE: navigator.language,
+				BROWSER_TZ_OFFSET: String(new Date().getTimezoneOffset()),
+				BROWSER_SCREEN_WIDTH: String(window.screen.width),
+				BROWSER_SCREEN_HEIGHT: String(window.screen.height),
+				BROWSER_PLUGINS: '',
+				MOBILE: String(/Mobi|Android/i.test(navigator.userAgent)),
+				SCREEN_POINT: 'false',
+				OS: '',
+				OS_VERSION: ''
+			};
+
+			const payRes = await fetch('/api/payment/start', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					appointmentId,
+					amount,
+					patientFirstName: patientData.prenume,
+					patientLastName: patientData.nume,
+					patientEmail: patientData.email || undefined,
+					patientPhone: patientData.telefon,
+					description: selectedScope?.scop || 'Consultație medicală',
+					browserInfo
+				})
+			});
+
+			const payData = await payRes.json();
+
+			if (payData.error) {
+				paymentError = payData.error;
+				isLoading = false;
+				return;
+			}
+
+			// Netopia returns error.code === '101' as normal redirect signal
+			const paymentURL = payData?.payment?.paymentURL;
+			if (paymentURL) {
+				window.location.href = paymentURL;
+			} else {
+				paymentError = 'Nu s-a putut obține URL-ul de plată. Contactați clinica.';
+			}
+		} catch (e) {
+			paymentError = 'Eroare la inițierea plății. Vă rugăm să reîncercați.';
 		} finally {
 			isLoading = false;
 		}
@@ -353,6 +430,7 @@
 		patientData = { nume: '', prenume: '', telefon: '', email: '', observatii: '' };
 		appointmentResult = null;
 		error = '';
+		paymentError = '';
 		loadLocations();
 	}
 
@@ -454,7 +532,7 @@
 </section>
 
 <!-- Progress Steps -->
-{#if currentStep < STEPS.CONFIRMATION}
+{#if currentStep < STEPS.CONFIRMATION && currentStep !== STEPS.PAYMENT_REDIRECT}
 	<section class="py-6 bg-white border-b">
 		<div class="container-custom">
 			<div class="flex items-center justify-center gap-2 md:gap-4 overflow-x-auto pb-2">
@@ -854,6 +932,35 @@
 								</Button>
 							</div>
 						</form>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Step 8: Payment Redirect (spinner while Netopia initiates) -->
+			{#if currentStep === STEPS.PAYMENT_REDIRECT}
+				<div class="max-w-lg mx-auto text-center">
+					<div class="bg-white rounded-xl p-8 md:p-12 shadow-lg">
+						{#if paymentError}
+							<div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+								<span class="text-4xl">⚠️</span>
+							</div>
+							<h2 class="text-xl font-bold text-gray-900 mb-3">Eroare la inițierea plății</h2>
+							<p class="text-gray-600 mb-2">{paymentError}</p>
+							<p class="text-sm text-gray-500 mb-6">
+								Programarea a fost înregistrată cu ID <strong>#{appointmentResult?.AppointmentId}</strong>.
+								Puteți achita la cabinet sau contactați-ne pentru asistență.
+							</p>
+							<div class="flex flex-col sm:flex-row gap-3 justify-center">
+								<Button href="/contact">Contactează-ne</Button>
+								<Button variant="secondary" onclick={() => { currentStep = STEPS.CONFIRMATION; }}>
+									Continuă fără plată online
+								</Button>
+							</div>
+						{:else}
+							<div class="inline-block animate-spin rounded-full h-16 w-16 border-4 border-primary border-t-transparent mb-6"></div>
+							<h2 class="text-xl font-bold text-gray-900 mb-2">Se inițiază plata...</h2>
+							<p class="text-gray-500 text-sm">Veți fi redirecționat către pagina de plată Netopia.</p>
+						{/if}
 					</div>
 				</div>
 			{/if}
