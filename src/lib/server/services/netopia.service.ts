@@ -5,6 +5,7 @@ import {
 	NETOPIA_PRIVATE_KEY_B64,
 	NETOPIA_SANDBOX
 } from '$env/static/private';
+import { randomBytes } from 'crypto';
 
 const SANDBOX_URL = 'https://sandboxsecure.mobilpay.ro';
 const PRODUCTION_URL = 'https://secure.mobilpay.ro';
@@ -29,6 +30,28 @@ export interface EncryptedOrder {
 	payment_url: string;
 }
 
+// ─── RC4 (pure TS — node-forge v1.x removed it, Node 25 OpenSSL 3 disabled it) ─
+function rc4(key: Buffer, data: Buffer): Buffer {
+	const S = Array.from({ length: 256 }, (_, i) => i);
+	let j = 0;
+	for (let i = 0; i < 256; i++) {
+		j = (j + S[i] + key[i % key.length]) & 0xff;
+		[S[i], S[j]] = [S[j], S[i]];
+	}
+	const out = Buffer.alloc(data.length);
+	let a = 0,
+		b = 0;
+	for (let n = 0; n < data.length; n++) {
+		a = (a + 1) & 0xff;
+		b = (b + S[a]) & 0xff;
+		[S[a], S[b]] = [S[b], S[a]];
+		out[n] = data[n] ^ S[(S[a] + S[b]) & 0xff];
+	}
+	return out;
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
 function loadCerts(): { publicCertPem: string; privateKeyPem: string } {
 	if (!NETOPIA_PUBLIC_CERT_B64 || !NETOPIA_PRIVATE_KEY_B64) {
 		throw new Error(
@@ -48,6 +71,17 @@ function buildTimestamp(): string {
 		`${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
 	);
 }
+
+function escapeXml(str: string): string {
+	return str
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&apos;');
+}
+
+// ─── XML builder ─────────────────────────────────────────────────────────────
 
 export function buildOrderXML(params: OrderParams): string {
 	const {
@@ -95,47 +129,53 @@ export function buildOrderXML(params: OrderParams): string {
 </order>`;
 }
 
+// ─── Encrypt (order → Netopia) ────────────────────────────────────────────────
+
 export function encryptOrder(xml: string, publicCertPem: string): { env_key: string; data: string } {
-	// 1. Generate random 16-byte RC4 symmetric key
-	const rc4Key = forge.random.getBytesSync(16);
+	// 1. Random 16-byte RC4 key
+	const rc4Key = randomBytes(16);
 
-	// 2. Encrypt XML with RC4
-	const rc4 = forge.rc4.create();
-	rc4.start(rc4Key);
-	const xmlBytes = forge.util.encodeUtf8(xml);
-	const buf = forge.util.createBuffer(xmlBytes);
-	rc4.update(buf);
-	const encryptedData = forge.util.encode64(buf.getBytes());
+	// 2. RC4-encrypt the XML
+	const xmlBuf = Buffer.from(xml, 'utf8');
+	const encryptedData = rc4(rc4Key, xmlBuf);
 
-	// 3. RSA-encrypt the RC4 key with Netopia's public certificate
+	// 3. RSA-PKCS1v1.5 encrypt the RC4 key with Netopia's public certificate
 	const cert = forge.pki.certificateFromPem(publicCertPem);
 	const publicKey = cert.publicKey as forge.pki.rsa.PublicKey;
-	const encryptedKey = publicKey.encrypt(rc4Key, 'RSAES-PKCS1-V1_5');
-	const envKey = forge.util.encode64(encryptedKey);
 
-	return { env_key: envKey, data: encryptedData };
+	// forge works with binary strings — convert Buffer → binary string
+	const rc4KeyBinary = rc4Key.toString('binary');
+	const encryptedKeyBinary = publicKey.encrypt(rc4KeyBinary, 'RSAES-PKCS1-V1_5');
+
+	return {
+		env_key: Buffer.from(encryptedKeyBinary, 'binary').toString('base64'),
+		data: encryptedData.toString('base64')
+	};
 }
+
+// ─── Decrypt (IPN ← Netopia) ──────────────────────────────────────────────────
 
 export function decryptCallback(envKeyB64: string, dataB64: string, privateKeyPem: string): string {
-	// 1. RSA-decrypt env_key to get RC4 symmetric key
+	// 1. RSA-decrypt the env_key to get the RC4 symmetric key
 	const privateKey = forge.pki.privateKeyFromPem(privateKeyPem) as forge.pki.rsa.PrivateKey;
-	const encryptedKey = forge.util.decode64(envKeyB64);
-	const rc4Key = privateKey.decrypt(encryptedKey, 'RSAES-PKCS1-V1_5');
+	const encryptedKeyBinary = Buffer.from(envKeyB64, 'base64').toString('binary');
+	const rc4KeyBinary = privateKey.decrypt(encryptedKeyBinary, 'RSAES-PKCS1-V1_5');
+	const rc4Key = Buffer.from(rc4KeyBinary, 'binary');
 
-	// 2. RC4-decrypt data to get XML
-	const encryptedData = forge.util.decode64(dataB64);
-	const rc4 = forge.rc4.create();
-	rc4.start(rc4Key);
-	const buf = forge.util.createBuffer(encryptedData);
-	rc4.update(buf);
-	const xml = forge.util.decodeUtf8(buf.getBytes());
+	// 2. RC4-decrypt the data to get the XML
+	const encryptedData = Buffer.from(dataB64, 'base64');
+	const xml = rc4(rc4Key, encryptedData);
 
-	return xml;
+	return xml.toString('utf8');
 }
+
+// ─── IPN response ─────────────────────────────────────────────────────────────
 
 export function buildIpnResponse(errorType: string, errorCode: string, message: string): string {
 	return `<?xml version="1.0" encoding="utf-8"?>\n<crc error_type="${errorType}" error_code="${errorCode}">${escapeXml(message)}</crc>`;
 }
+
+// ─── Public API ───────────────────────────────────────────────────────────────
 
 export function getPaymentUrl(): string {
 	return NETOPIA_SANDBOX === 'true' ? SANDBOX_URL : PRODUCTION_URL;
@@ -151,13 +191,4 @@ export async function createEncryptedOrder(params: OrderParams): Promise<Encrypt
 export function decryptIpnCallback(envKeyB64: string, dataB64: string): string {
 	const { privateKeyPem } = loadCerts();
 	return decryptCallback(envKeyB64, dataB64, privateKeyPem);
-}
-
-function escapeXml(str: string): string {
-	return str
-		.replace(/&/g, '&amp;')
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;')
-		.replace(/'/g, '&apos;');
 }
