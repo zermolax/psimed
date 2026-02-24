@@ -7,12 +7,22 @@
 	let netopiaContainer: HTMLDivElement;
 
 	onMount(() => {
-		const script = document.createElement('script');
-		script.src = 'https://mny.ro/npId.js?p=161289';
-		script.type = 'text/javascript';
-		script.dataset.version = 'orizontal';
-		script.dataset.contrastColor = '#111827';
-		netopiaContainer.appendChild(script);
+		// npId.js uses DOMContentLoaded, which fires before onMount in SvelteKit —
+		// the listener would never trigger. We replicate its output directly:
+		// data-version="orizontal" → horizontal (0), 250×50px
+		// data-contrast-color="#111827" → dark bg (HSP < 166) → white logo → np-white-0.svg
+		const img = document.createElement('img');
+		img.style.cssText = 'width:100%;height:100%;cursor:pointer';
+		img.title = 'NETOPIA Payments';
+		img.alt = 'Plată securizată NETOPIA Payments';
+		img.src = 'https://mny.ro/np-white-0.svg';
+		img.addEventListener('click', () => window.open('https://netopia-payments.com/', '_blank'));
+
+		const wrapper = document.createElement('div');
+		wrapper.style.cssText = 'width:100%;height:100%;max-width:250px;max-height:50px;';
+		wrapper.appendChild(img);
+
+		netopiaContainer.appendChild(wrapper);
 	});
 
 	const quickLinks = [
