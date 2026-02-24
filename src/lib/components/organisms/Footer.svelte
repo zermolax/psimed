@@ -141,7 +141,7 @@
 					src="/netopia-logo.png"
 					alt="Plată securizată Netopia mobilPay"
 					class="h-7 opacity-60 hover:opacity-90 transition-opacity"
-					onerror="this.style.display='none'"
+					onerror={(e) => ((e.currentTarget as HTMLImageElement).style.display = 'none')}
 				/>
 			</div>
 
