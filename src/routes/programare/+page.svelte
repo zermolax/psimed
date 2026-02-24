@@ -60,12 +60,13 @@
 		SERVICE: 4,
 		DATETIME: 5,
 		PATIENT: 6,
-		CONFIRMATION: 7
+		PAYMENT: 7
 	};
 
 	// State
 	let currentStep = $state(STEPS.LOCATION);
 	let isLoading = $state(false);
+	let isRedirecting = $state(false);
 	let error = $state('');
 
 	// Data from API
@@ -91,9 +92,6 @@
 		email: '',
 		observatii: ''
 	});
-
-	// Appointment result
-	let appointmentResult = $state<{ AppointmentId: number } | null>(null);
 
 	// Computed: Available dates from schedule
 	let availableDates = $derived.by(() => {
@@ -304,14 +302,51 @@
 		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 	}
 
-	async function submitAppointment() {
+	async function proceedToPayment() {
 		if (!selectedDoctor || !selectedLocation || !selectedTimeSlot) return;
 
+		const price = getPrice();
+
+		// If price is 0, create appointment directly (free consultations)
+		if (price === 0) {
+			isLoading = true;
+			error = '';
+			try {
+				const res = await fetch('/api/medsoft/appointment', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({
+						doctorId: selectedDoctor.DoctorId,
+						locationId: selectedLocation.LocationId,
+						startDateTime: formatDateTimeForMedSoft(selectedTimeSlot.start),
+						endDateTime: formatDateTimeForMedSoft(selectedTimeSlot.end),
+						patientName: `${patientData.nume} ${patientData.prenume}`.toUpperCase(),
+						patientEmail: patientData.email || undefined,
+						patientPhoneNumber: patientData.telefon,
+						appointmentDetails: selectedScope?.scop || 'Consultație',
+						appointmentNotes: patientData.observatii || undefined
+					})
+				});
+				const data = await res.json();
+				if (data.success) {
+					window.location.href = '/confirmare';
+				} else {
+					error = data.error || 'Eroare la crearea programării';
+				}
+			} catch {
+				error = 'Eroare la conectarea cu serverul';
+			} finally {
+				isLoading = false;
+			}
+			return;
+		}
+
+		// Paid service — initiate Netopia payment
 		isLoading = true;
 		error = '';
 
 		try {
-			const res = await fetch('/api/medsoft/appointment', {
+			const res = await fetch('/api/payment/initiate', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -320,24 +355,43 @@
 					startDateTime: formatDateTimeForMedSoft(selectedTimeSlot.start),
 					endDateTime: formatDateTimeForMedSoft(selectedTimeSlot.end),
 					patientName: `${patientData.nume} ${patientData.prenume}`.toUpperCase(),
+					patientNume: patientData.nume.toUpperCase(),
+					patientPrenume: patientData.prenume.toUpperCase(),
 					patientEmail: patientData.email || undefined,
 					patientPhoneNumber: patientData.telefon,
 					appointmentDetails: selectedScope?.scop || 'Consultație',
-					appointmentNotes: patientData.observatii || undefined
+					appointmentNotes: patientData.observatii || undefined,
+					amount: price
 				})
 			});
 
-			const data = await res.json();
+			const result = await res.json();
 
-			if (data.success) {
-				appointmentResult = data.data;
-				currentStep = STEPS.CONFIRMATION;
-			} else {
-				error = data.error || 'Eroare la crearea programării';
+			if (!result.success) {
+				error = result.error || 'Eroare la inițializarea plății';
+				isLoading = false;
+				return;
 			}
-		} catch (e) {
-			error = 'Eroare la conectarea cu serverul';
-		} finally {
+
+			// Redirect to Netopia payment page via auto-submitting form
+			isRedirecting = true;
+			const form = document.createElement('form');
+			form.method = 'post';
+			form.action = result.payment_url;
+			for (const [name, value] of [
+				['env_key', result.env_key],
+				['data', result.data]
+			]) {
+				const input = document.createElement('input');
+				input.type = 'hidden';
+				input.name = name;
+				input.value = value as string;
+				form.appendChild(input);
+			}
+			document.body.appendChild(form);
+			form.submit();
+		} catch {
+			error = 'Eroare la conectarea cu serverul de plăți';
 			isLoading = false;
 		}
 	}
@@ -351,7 +405,7 @@
 		selectedDate = '';
 		selectedTimeSlot = null;
 		patientData = { nume: '', prenume: '', telefon: '', email: '', observatii: '' };
-		appointmentResult = null;
+		isRedirecting = false;
 		error = '';
 		loadLocations();
 	}
@@ -369,59 +423,6 @@
 	function getPrice(): number {
 		if (!selectedScope?.lista_servicii?.length) return 0;
 		return selectedScope.lista_servicii[0].pret;
-	}
-
-	function printConfirmation() {
-		const printContent = `
-			<!DOCTYPE html>
-			<html>
-			<head>
-				<title>Confirmare Programare - Clinica Sf. Gherasim</title>
-				<style>
-					body { font-family: Arial, sans-serif; padding: 40px; max-width: 600px; margin: 0 auto; }
-					h1 { color: #dc2626; text-align: center; margin-bottom: 30px; }
-					.details { background: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
-					.details p { margin: 10px 0; }
-					.details strong { display: inline-block; width: 120px; }
-					.footer { text-align: center; color: #6b7280; font-size: 14px; margin-top: 30px; }
-					.price { color: #dc2626; font-weight: bold; font-size: 18px; margin-top: 15px; }
-				</style>
-			</head>
-			<body>
-				<h1>Clinica Sf. Gherasim</h1>
-				<h2 style="text-align: center; color: #16a34a;">✓ Programare Confirmată</h2>
-
-				<div class="details">
-					<p><strong>ID Programare:</strong> #${appointmentResult?.AppointmentId}</p>
-					<p><strong>Medic:</strong> ${selectedDoctor?.Name || ''}</p>
-					<p><strong>Specialitate:</strong> ${selectedDoctor?.SpecialtyName || ''}</p>
-					<p><strong>Serviciu:</strong> ${selectedScope?.scop || ''}</p>
-					<p><strong>Data:</strong> ${selectedDate ? formatDate(selectedDate) : ''}</p>
-					<p><strong>Ora:</strong> ${selectedTimeSlot?.formatted || ''}</p>
-					<p><strong>Locație:</strong> ${selectedLocation?.LocationName || ''}</p>
-					${selectedLocation?.LocationAddress ? `<p><strong>Adresă:</strong> ${selectedLocation.LocationAddress}</p>` : ''}
-					<hr style="margin: 15px 0; border: none; border-top: 1px solid #e5e7eb;">
-					<p><strong>Pacient:</strong> ${patientData.prenume} ${patientData.nume}</p>
-					<p><strong>Telefon:</strong> ${patientData.telefon}</p>
-					${patientData.email ? `<p><strong>Email:</strong> ${patientData.email}</p>` : ''}
-					${getPrice() > 0 ? `<p class="price">Preț: ${getPrice()} RON</p>` : ''}
-				</div>
-
-				<div class="footer">
-					<p>Vă mulțumim că ați ales Clinica Sf. Gherasim!</p>
-					<p>Pentru modificări, contactați-ne la telefon.</p>
-					<p style="margin-top: 15px;">Data imprimării: ${new Date().toLocaleDateString('ro-RO')} ${new Date().toLocaleTimeString('ro-RO')}</p>
-				</div>
-			</body>
-			</html>
-		`;
-
-		const printWindow = window.open('', '_blank');
-		if (printWindow) {
-			printWindow.document.write(printContent);
-			printWindow.document.close();
-			printWindow.print();
-		}
 	}
 </script>
 
@@ -454,7 +455,7 @@
 </section>
 
 <!-- Progress Steps -->
-{#if currentStep < STEPS.CONFIRMATION}
+{#if currentStep < STEPS.PAYMENT}
 	<section class="py-6 bg-white border-b">
 		<div class="container-custom">
 			<div class="flex items-center justify-center gap-2 md:gap-4 overflow-x-auto pb-2">
@@ -473,13 +474,14 @@
 							{/if}
 						</div>
 						<span
-							class="ml-2 text-xs md:text-sm font-medium hidden sm:inline
-              {currentStep >= step.n ? 'text-primary' : 'text-gray-400'}"
+							class="ml-2 text-xs md:text-sm font-medium hidden sm:inline {currentStep >= step.n
+								? 'text-primary'
+								: 'text-gray-400'}"
+							>{step.label}</span
 						>
-							{step.label}
-						</span>
 						{#if step.n < 6}
-							<div class="w-4 md:w-8 h-0.5 mx-2 {currentStep > step.n ? 'bg-primary' : 'bg-gray-200'}"
+							<div
+								class="w-4 md:w-8 h-0.5 mx-2 {currentStep > step.n ? 'bg-primary' : 'bg-gray-200'}"
 							></div>
 						{/if}
 					</div>
@@ -770,7 +772,7 @@
 						<form
 							onsubmit={(e) => {
 								e.preventDefault();
-								submitAppointment();
+								proceedToPayment();
 							}}
 							class="space-y-4"
 						>
@@ -845,9 +847,13 @@
 							</div>
 
 							<div class="pt-4">
-								<Button type="submit" size="lg" disabled={isLoading} class="w-full">
-									{#if isLoading}
+								<Button type="submit" size="lg" disabled={isLoading || isRedirecting} class="w-full">
+									{#if isRedirecting}
+										Se redirectează spre pagina de plată...
+									{:else if isLoading}
 										Se procesează...
+									{:else if getPrice() > 0}
+										Continuă spre Plată — {getPrice()} RON
 									{:else}
 										Confirmă Programarea
 									{/if}
@@ -858,47 +864,12 @@
 				</div>
 			{/if}
 
-			<!-- Step 7: Confirmation -->
-			{#if currentStep === STEPS.CONFIRMATION}
-				<div class="max-w-2xl mx-auto text-center">
-					<div class="bg-white rounded-xl p-8 md:p-12 shadow-lg">
-						<div
-							class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"
-						>
-							<span class="text-4xl text-green-600">✓</span>
-						</div>
-
-						<h2 class="text-2xl font-bold text-gray-900 mb-4">Programare Confirmată!</h2>
-						<p class="text-gray-600 mb-6">
-							Programarea dumneavoastră a fost înregistrată cu succes.
-						</p>
-
-						<div class="bg-gray-50 rounded-lg p-6 text-left mb-8">
-							<h3 class="font-bold text-gray-900 mb-4">Detalii programare:</h3>
-							<div class="space-y-2 text-sm">
-								<p><strong>ID Programare:</strong> #{appointmentResult?.AppointmentId}</p>
-								<p><strong>Medic:</strong> {selectedDoctor?.Name}</p>
-								<p><strong>Serviciu:</strong> {selectedScope?.scop}</p>
-								<p>
-									<strong>Data:</strong>
-									{selectedDate ? formatDate(selectedDate) : ''} la {selectedTimeSlot?.formatted}
-								</p>
-								<p><strong>Pacient:</strong> {patientData.prenume} {patientData.nume}</p>
-								<p><strong>Telefon:</strong> {patientData.telefon}</p>
-								{#if getPrice() > 0}
-									<p class="text-primary font-bold mt-2">Preț: {getPrice()} RON</p>
-								{/if}
-							</div>
-						</div>
-
-						<div class="flex flex-col sm:flex-row gap-4 justify-center">
-							<Button href="/">Pagina Principală</Button>
-							<Button variant="secondary" onclick={resetBooking}>Programare Nouă</Button>
-							<Button variant="secondary" onclick={printConfirmation}>
-								🖨️ Imprimă
-							</Button>
-						</div>
-					</div>
+			<!-- Step 7: Payment redirect overlay -->
+			{#if isRedirecting}
+				<div class="max-w-2xl mx-auto text-center py-16">
+					<div class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
+					<p class="text-lg font-medium text-gray-700">Se redirect&#x103;az&#x103; spre pagina de plat&#x103;...</p>
+					<p class="text-sm text-gray-500 mt-2">Ve&#x21b;i fi redirecționat automat. V&#x103; rug&#x103;m nu închide&#x21b;i pagina.</p>
 				</div>
 			{/if}
 		{/if}

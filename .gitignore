@@ -21,3 +21,8 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# Netopia payment keys (sensitive — store as base64 env vars for Vercel)
+*.private.key
+*private.key
+*.public.cer
