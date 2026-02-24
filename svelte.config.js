@@ -22,16 +22,6 @@ const config = {
 			// SvelteKit's default CSRF check blocks it with 403 — disable globally.
 			// Safe: our frontend uses fetch+JSON, not traditional form POSTs.
 			checkOrigin: false
-		},
-		prerender: {
-			handleHttpError: ({ path, message }) => {
-				// netopia-logo.png is intentionally absent — user adds it manually
-				// after downloading from Netopia dashboard → Identitate Vizuală.
-				// The <img onerror> handler in Footer.svelte hides it when missing.
-				if (path === '/netopia-logo.png') return;
-				// All other 404s during prerender are real errors — throw.
-				throw new Error(message);
-			}
 		}
 	}
 };

@@ -1,7 +1,19 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Icon from '../atoms/Icon.svelte';
 
 	const currentYear = new Date().getFullYear();
+
+	let netopiaContainer: HTMLDivElement;
+
+	onMount(() => {
+		const script = document.createElement('script');
+		script.src = 'https://mny.ro/npId.js?p=161289';
+		script.type = 'text/javascript';
+		script.dataset.version = 'orizontal';
+		script.dataset.contrastColor = '#111827';
+		netopiaContainer.appendChild(script);
+	});
 
 	const quickLinks = [
 		{ name: 'Ce Tratăm', href: '/ce-tratam' },
@@ -136,13 +148,8 @@
 				<p class="text-sm text-gray-400">
 					© {currentYear} Clinica Sf. Gherasim - PSIMED. Toate drepturile rezervate.
 				</p>
-				<!-- NETOPIA logo: download from Netopia dashboard → Identitate Vizuală → save as static/netopia-logo.png -->
-				<img
-					src="/netopia-logo.png"
-					alt="Plată securizată Netopia mobilPay"
-					class="h-7 opacity-60 hover:opacity-90 transition-opacity"
-					onerror={(e) => ((e.currentTarget as HTMLImageElement).style.display = 'none')}
-				/>
+				<!-- NETOPIA badge — rendered by Netopia's badge script (npId.js) -->
+				<div bind:this={netopiaContainer} class="flex items-center"></div>
 			</div>
 
 			<!-- ANPC SAL/ADR — required by Romanian law for online commerce -->
