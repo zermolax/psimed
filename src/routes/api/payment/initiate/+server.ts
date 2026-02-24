@@ -19,7 +19,11 @@ export const POST: RequestHandler = async ({ request }) => {
 			appointmentNotes,
 			amount,
 			patientNume,
-			patientPrenume
+			patientPrenume,
+			doctorName,
+			locationName,
+			displayDate,
+			displayTime
 		} = body;
 
 		// Validate required fields
@@ -55,6 +59,20 @@ export const POST: RequestHandler = async ({ request }) => {
 			appointmentNotes: appointmentNotes || null
 		};
 
+		// Summary for the /confirmare page (passed via return URL — no DB needed)
+		const summary = {
+			name: patientName,
+			email: patientEmail || null,
+			phone: patientPhoneNumber,
+			doctor: doctorName || null,
+			location: locationName || null,
+			date: displayDate || null,
+			time: displayTime || null,
+			service: appointmentDetails || 'Consultație',
+			amount
+		};
+		const summaryB64 = Buffer.from(JSON.stringify(summary)).toString('base64url');
+
 		const appUrl = PUBLIC_APP_URL || 'https://www.clinicasfgherasim.ro';
 
 		const { env_key, data, payment_url } = await createEncryptedOrder({
@@ -68,7 +86,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			patientTelefon: patientPhoneNumber,
 			bookingPayload,
 			confirmUrl: `${appUrl}/api/payment/callback`,
-			returnUrl: `${appUrl}/confirmare`
+			returnUrl: `${appUrl}/confirmare?orderId=${orderId}&s=${summaryB64}`
 		});
 
 		return json({ success: true, env_key, data, payment_url });

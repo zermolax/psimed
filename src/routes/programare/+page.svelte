@@ -361,7 +361,11 @@
 					patientPhoneNumber: patientData.telefon,
 					appointmentDetails: selectedScope?.scop || 'Consultație',
 					appointmentNotes: patientData.observatii || undefined,
-					amount: price
+					amount: price,
+					doctorName: selectedDoctor.Name,
+					locationName: selectedLocation.LocationName,
+					displayDate: selectedDate,
+					displayTime: selectedTimeSlot.formatted
 				})
 			});
 
