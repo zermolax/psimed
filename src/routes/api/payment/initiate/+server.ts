@@ -71,8 +71,6 @@ export const POST: RequestHandler = async ({ request }) => {
 			service: appointmentDetails || 'Consultație',
 			amount
 		};
-		const summaryB64 = Buffer.from(JSON.stringify(summary)).toString('base64url');
-
 		const appUrl = PUBLIC_APP_URL || 'https://www.clinicasfgherasim.ro';
 
 		const { env_key, data, payment_url } = await createEncryptedOrder({
@@ -86,10 +84,10 @@ export const POST: RequestHandler = async ({ request }) => {
 			patientTelefon: patientPhoneNumber,
 			bookingPayload,
 			confirmUrl: `${appUrl}/api/payment/callback`,
-			returnUrl: `${appUrl}/confirmare?orderId=${orderId}&s=${summaryB64}`
+			returnUrl: `${appUrl}/confirmare?orderId=${orderId}`
 		});
 
-		return json({ success: true, env_key, data, payment_url });
+		return json({ success: true, env_key, data, payment_url, orderId, summary });
 	} catch (error) {
 		console.error('Payment initiation error:', error);
 		return json(

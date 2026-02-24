@@ -377,6 +377,15 @@
 				return;
 			}
 
+			// Save booking summary to localStorage so /confirmare can display it
+			if (result.orderId && result.summary) {
+				try {
+					localStorage.setItem(`psimed_booking_${result.orderId}`, JSON.stringify(result.summary));
+				} catch {
+					// localStorage not available
+				}
+			}
+
 			// Redirect to Netopia payment page via auto-submitting form
 			isRedirecting = true;
 			const form = document.createElement('form');

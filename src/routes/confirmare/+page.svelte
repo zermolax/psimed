@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	const orderId = $derived($page.url.searchParams.get('orderId') || '');
 	const status = $derived($page.url.searchParams.get('status') || '');
@@ -17,13 +18,19 @@
 		amount: number;
 	}
 
-	const summary = $derived((): BookingSummary | null => {
-		const raw = $page.url.searchParams.get('s');
-		if (!raw) return null;
+	let summary = $state<BookingSummary | null>(null);
+
+	onMount(() => {
+		const id = new URLSearchParams(window.location.search).get('orderId');
+		if (!id) return;
 		try {
-			return JSON.parse(atob(raw.replace(/-/g, '+').replace(/_/g, '/')));
+			const stored = localStorage.getItem(`psimed_booking_${id}`);
+			if (stored) {
+				summary = JSON.parse(stored);
+				localStorage.removeItem(`psimed_booking_${id}`);
+			}
 		} catch {
-			return null;
+			// localStorage not available
 		}
 	});
 
@@ -64,13 +71,13 @@
 				<div class="flex flex-col sm:flex-row gap-4 justify-center">
 					<a
 						href="/programare"
-						class="inline-flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold"
+						class="inline-flex items-center justify-center gap-2 bg-[#dd4444] text-white px-6 py-3 rounded-xl font-bold"
 					>
 						Încearcă din nou
 					</a>
 					<a
 						href="tel:+40711039666"
-						class="inline-flex items-center justify-center gap-2 border-2 border-primary text-primary px-6 py-3 rounded-xl font-bold"
+						class="inline-flex items-center justify-center gap-2 border-2 border-[#dd4444] text-[#dd4444] px-6 py-3 rounded-xl font-bold"
 					>
 						📞 0711 039 666
 					</a>
@@ -93,64 +100,64 @@
 				</div>
 
 				<!-- Booking details card -->
-				{#if summary()}
+				{#if summary}
 					<div class="border border-gray-200 rounded-xl overflow-hidden mb-6">
-						<div class="bg-primary px-5 py-3">
+						<div class="bg-[#dd4444] px-5 py-3">
 							<h2 class="font-bold text-white text-sm uppercase tracking-wide">
 								Detalii programare
 							</h2>
 						</div>
 						<div class="divide-y divide-gray-100">
-							{#if summary()?.name}
+							{#if summary.name}
 								<div class="flex justify-between px-5 py-3 text-sm">
 									<span class="text-gray-500 font-medium">Pacient</span>
-									<span class="text-gray-800 font-semibold">{summary()?.name}</span>
+									<span class="text-gray-800 font-semibold">{summary.name}</span>
 								</div>
 							{/if}
-							{#if summary()?.doctor}
+							{#if summary.doctor}
 								<div class="flex justify-between px-5 py-3 text-sm">
 									<span class="text-gray-500 font-medium">Medic</span>
-									<span class="text-gray-800">{summary()?.doctor}</span>
+									<span class="text-gray-800">{summary.doctor}</span>
 								</div>
 							{/if}
-							{#if summary()?.location}
+							{#if summary.location}
 								<div class="flex justify-between px-5 py-3 text-sm">
 									<span class="text-gray-500 font-medium">Locație</span>
-									<span class="text-gray-800">{summary()?.location}</span>
+									<span class="text-gray-800">{summary.location}</span>
 								</div>
 							{/if}
-							{#if summary()?.service}
+							{#if summary.service}
 								<div class="flex justify-between px-5 py-3 text-sm">
 									<span class="text-gray-500 font-medium">Serviciu</span>
-									<span class="text-gray-800">{summary()?.service}</span>
+									<span class="text-gray-800">{summary.service}</span>
 								</div>
 							{/if}
-							{#if summary()?.date}
+							{#if summary.date}
 								<div class="flex justify-between px-5 py-3 text-sm">
 									<span class="text-gray-500 font-medium">Data</span>
 									<span class="text-gray-800">
-										{formatDateRo(summary()?.date ?? null)}
-										{#if summary()?.time}
-											la <strong>{summary()?.time}</strong>
+										{formatDateRo(summary.date)}
+										{#if summary.time}
+											la <strong>{summary.time}</strong>
 										{/if}
 									</span>
 								</div>
 							{/if}
-							{#if summary()?.phone}
+							{#if summary.phone}
 								<div class="flex justify-between px-5 py-3 text-sm">
 									<span class="text-gray-500 font-medium">Telefon</span>
-									<span class="text-gray-800">{summary()?.phone}</span>
+									<span class="text-gray-800">{summary.phone}</span>
 								</div>
 							{/if}
-							{#if summary()?.email}
+							{#if summary.email}
 								<div class="flex justify-between px-5 py-3 text-sm">
 									<span class="text-gray-500 font-medium">Email</span>
-									<span class="text-gray-800">{summary()?.email}</span>
+									<span class="text-gray-800">{summary.email}</span>
 								</div>
 							{/if}
 							<div class="flex justify-between px-5 py-3 text-sm bg-green-50">
 								<span class="text-gray-500 font-medium">Sumă plătită</span>
-								<span class="text-green-700 font-bold">{summary()?.amount} RON</span>
+								<span class="text-green-700 font-bold">{summary.amount} RON</span>
 							</div>
 						</div>
 					</div>
@@ -158,7 +165,9 @@
 
 				<!-- Order reference -->
 				{#if orderId}
-					<div class="bg-gray-50 rounded-lg px-5 py-3 mb-6 flex justify-between items-center text-sm">
+					<div
+						class="bg-gray-50 rounded-lg px-5 py-3 mb-6 flex justify-between items-center text-sm"
+					>
 						<span class="text-gray-500">Referință plată</span>
 						<span class="font-mono text-gray-700">{orderId}</span>
 					</div>
@@ -204,9 +213,9 @@
 		<div class="mt-8 text-center text-sm text-gray-500 print:hidden">
 			<p>
 				Probleme? Contactați-ne la
-				<a href="tel:+40711039666" class="text-primary font-medium">0711 039 666</a>
+				<a href="tel:+40711039666" class="text-[#dd4444] font-medium">0711 039 666</a>
 				sau
-				<a href="mailto:office@psimed.ro" class="text-primary font-medium">office@psimed.ro</a>
+				<a href="mailto:office@psimed.ro" class="text-[#dd4444] font-medium">office@psimed.ro</a>
 			</p>
 		</div>
 	</div>
