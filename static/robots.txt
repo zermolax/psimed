@@ -1,3 +1,8 @@
-# allow crawling everything by default
 User-agent: *
-Disallow:
+Disallow: /wp-*
+Disallow: /elementor-*
+Disallow: /category-sitemap.xml
+Disallow: /wp-sitemap.xml
+Disallow: /api/
+
+Sitemap: https://www.clinicasfgherasim.ro/sitemap.xml

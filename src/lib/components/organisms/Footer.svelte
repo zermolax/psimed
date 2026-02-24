@@ -21,6 +21,13 @@
 		{ icon: 'phone', text: '0711 039 666', href: 'tel:+40711039666' },
 		{ icon: 'email', text: 'office@psimed.ro', href: 'mailto:office@psimed.ro' }
 	];
+
+	const legalLinks = [
+		{ name: 'Termeni și Condiții', href: '/termeni-si-conditii' },
+		{ name: 'Confidențialitate', href: '/politica-confidentialitate' },
+		{ name: 'Politica de Anulare', href: '/politica-de-anulare' },
+		{ name: 'Politica de Livrare', href: '/politica-de-livrare' }
+	];
 </script>
 
 <footer class="bg-gray-900 text-gray-300">
@@ -41,6 +48,13 @@
 					Îngrijire psihiatrică și psihologică de încredere în Bacău. Oferim tratamente moderne și
 					personalizate pentru sănătatea ta mentală.
 				</p>
+				<!-- Company registration info — required for Netopia enrollment -->
+				<div class="text-xs text-gray-500 space-y-0.5 pt-3 border-t border-gray-800">
+					<p class="font-medium text-gray-400">PSI-MIND S.R.L.</p>
+					<p>CUI: 44289726</p>
+					<p>Jud. Bacău, Sat Schineni, Com. Săucești</p>
+					<p>Str. Mare nr. 189</p>
+				</div>
 			</div>
 
 			<!-- Quick Links -->
@@ -101,21 +115,53 @@
 		</div>
 
 		<!-- Bottom Bar -->
-		<div class="mt-12 pt-8 border-t border-gray-800">
-			<div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+		<div class="mt-12 pt-8 border-t border-gray-800 space-y-4">
+			<!-- Legal links -->
+			<div class="flex flex-wrap gap-x-5 gap-y-2 justify-center md:justify-start">
+				{#each legalLinks as link}
+					<a href={link.href} class="text-xs text-gray-500 hover:text-primary transition-colors">
+						{link.name}
+					</a>
+				{/each}
+				<a href="/contact" class="text-xs text-gray-500 hover:text-primary transition-colors">
+					Contact
+				</a>
+				<a href="/programare" class="text-xs text-gray-500 hover:text-primary transition-colors">
+					Programare
+				</a>
+			</div>
+
+			<!-- Copyright + NETOPIA logo -->
+			<div class="flex flex-col md:flex-row justify-between items-center gap-4">
 				<p class="text-sm text-gray-400">
 					© {currentYear} Clinica Sf. Gherasim - PSIMED. Toate drepturile rezervate.
 				</p>
-
-				<div class="flex space-x-6">
-					<a href="/contact" class="text-sm hover:text-primary transition-colors">
-						Contact
-					</a>
-					<a href="/programare" class="text-sm hover:text-primary transition-colors">
-						Programare
-					</a>
-				</div>
+				<!-- NETOPIA logo: download from Netopia dashboard → Identitate Vizuală → save as static/netopia-logo.png -->
+				<img
+					src="/netopia-logo.png"
+					alt="Plată securizată Netopia mobilPay"
+					class="h-7 opacity-60 hover:opacity-90 transition-opacity"
+					onerror="this.style.display='none'"
+				/>
 			</div>
+
+			<!-- ANPC SAL/ADR — required by Romanian law for online commerce -->
+			<p class="text-xs text-gray-600 text-center md:text-left">
+				Soluționarea alternativă a litigiilor:
+				<a
+					href="https://anpc.ro/ce-este-sal/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="hover:text-gray-400 transition-colors underline">ANPC</a
+				>
+				·
+				<a
+					href="https://ec.europa.eu/consumers/odr"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="hover:text-gray-400 transition-colors underline">Platforma ODR</a
+				>
+			</p>
 		</div>
 	</div>
 </footer>
