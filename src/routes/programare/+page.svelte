@@ -97,11 +97,13 @@
 	let availableDates = $derived.by(() => {
 		if (!schedule.length || !selectedDoctor) return [];
 
-		const doctorSchedule = schedule.filter((s) => s.DoctorId === selectedDoctor.DoctorId);
+		const doctorSchedule = schedule.filter(
+			(s) => Number(s.DoctorId) === Number(selectedDoctor.DoctorId) && s.IsAvailable === 1
+		);
 		const dates = new Set<string>();
 
 		doctorSchedule.forEach((slot) => {
-			const date = new Date(slot.StartDateTime).toISOString().split('T')[0];
+			const date = slot.StartDateTime.split('T')[0];
 			dates.add(date);
 		});
 
@@ -113,12 +115,14 @@
 		if (!selectedDate || !schedule.length || !selectedDoctor || !selectedScope) return [];
 
 		const duration = selectedScope.durata || selectedDoctor.SlotDuration;
-		const doctorSchedule = schedule.filter((s) => s.DoctorId === selectedDoctor.DoctorId);
+		const doctorSchedule = schedule.filter(
+			(s) => Number(s.DoctorId) === Number(selectedDoctor.DoctorId) && s.IsAvailable === 1
+		);
 
 		const slots: TimeSlot[] = [];
 
 		doctorSchedule.forEach((scheduleSlot) => {
-			const slotDate = new Date(scheduleSlot.StartDateTime).toISOString().split('T')[0];
+			const slotDate = scheduleSlot.StartDateTime.split('T')[0];
 			if (slotDate !== selectedDate) return;
 
 			const start = new Date(scheduleSlot.StartDateTime);

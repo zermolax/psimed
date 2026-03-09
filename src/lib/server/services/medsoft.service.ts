@@ -193,7 +193,7 @@ class MedSoftAPIService {
 		let doctors = response.ReturnData;
 
 		if (specialtyId) {
-			doctors = doctors.filter((d) => d.SpecialtyId === specialtyId);
+			doctors = doctors.filter((d) => Number(d.SpecialtyId) === Number(specialtyId));
 		}
 
 		return doctors;
