@@ -112,10 +112,8 @@
 
 	// Computed: Time slots for selected date
 	//
-	// MedSoft returns a pre-defined slot grid: one ScheduleSlot per bookable time,
-	// each slot exactly SlotDuration minutes long. IsAvailable=1 means that slot is free.
-	// We list each free slot directly — no subdivision needed.
-	// The appointment end time is start + scope.durata (may span multiple MedSoft slots).
+	// MedSoft returns large shift-window blocks (e.g. 08:00–16:30, IsAvailable=1).
+	// We subdivide each window into scope.durata-sized appointment slots.
 	let availableTimeSlots = $derived.by(() => {
 		if (!selectedDate || !schedule.length || !selectedDoctor || !selectedScope) return [];
 
@@ -131,14 +129,18 @@
 			if (slotDate !== selectedDate) return;
 
 			const start = new Date(scheduleSlot.StartDateTime);
-			// End time = start + scope duration (correct duration for the createAppointment call)
-			const slotEnd = new Date(start.getTime() + duration * 60000);
+			const end = new Date(scheduleSlot.EndDateTime);
 
-			slots.push({
-				start: new Date(start),
-				end: slotEnd,
-				formatted: start.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
-			});
+			let current = new Date(start);
+			while (current.getTime() + duration * 60000 <= end.getTime()) {
+				const slotEnd = new Date(current.getTime() + duration * 60000);
+				slots.push({
+					start: new Date(current),
+					end: slotEnd,
+					formatted: current.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+				});
+				current = slotEnd;
+			}
 		});
 
 		return slots;
