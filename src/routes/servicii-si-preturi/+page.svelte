@@ -69,8 +69,61 @@
 	</div>
 </section>
 
-<!-- Payment Info -->
+<!-- Evaluări Psihologice Specializate -->
 <section class="section-spacing bg-white">
+	<div class="container-custom">
+		<div class="mb-10">
+			<h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-3">
+				Evaluări <span class="text-secondary">Psihologice Specializate</span>
+			</h2>
+			<p class="text-lg text-gray-600 max-w-3xl">
+				Pachete complete de evaluare psihologică pentru copii, adolescenți și adulți.
+				Fiecare evaluare include interviu, administrare teste standardizate, scorare, raport scris
+				și discuție finală cu familia.
+			</p>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+			{#each data.evaluari as ev}
+				<details class="group bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 hover:border-secondary/30 transition-colors">
+					<summary class="flex items-start justify-between gap-3 p-5 cursor-pointer list-none select-none">
+						<div class="flex-1 min-w-0">
+							<p class="font-bold text-gray-900 leading-snug">{ev.name}</p>
+							<p class="text-sm text-gray-500 mt-1 leading-snug">{ev.description}</p>
+						</div>
+						<div class="flex flex-col items-end gap-1 shrink-0">
+							<span class="text-lg font-black text-secondary">{ev.price} RON</span>
+							<span class="text-xs text-gray-400 whitespace-nowrap">{ev.totalTime}</span>
+						</div>
+					</summary>
+					<div class="px-5 pb-5 border-t border-gray-200 pt-4">
+						<p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Structura evaluării</p>
+						<ul class="space-y-1">
+							{#each ev.steps as step}
+								<li class="text-sm text-gray-700 flex items-start gap-2">
+									<span class="text-secondary mt-0.5 shrink-0">›</span>
+									<span>{step}</span>
+								</li>
+							{/each}
+						</ul>
+						<div class="mt-4 flex items-center justify-between">
+							<span class="text-sm font-semibold text-gray-700">Total: {ev.totalTime} — <span class="text-secondary">{ev.price} RON</span></span>
+							<a
+								href="/programare"
+								class="text-sm font-medium text-secondary hover:text-secondary/80 underline underline-offset-2 transition-colors"
+							>
+								Programează
+							</a>
+						</div>
+					</div>
+				</details>
+			{/each}
+		</div>
+	</div>
+</section>
+
+<!-- Payment Info -->
+<section class="section-spacing bg-gray-50">
 	<div class="container-custom">
 		<div class="max-w-4xl mx-auto">
 			<h2 class="text-3xl font-black text-gray-900 mb-8 text-center">

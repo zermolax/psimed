@@ -250,7 +250,8 @@ class MedSoftAPIService {
 	 */
 	async getAppointmentScopesForDoctor(doctorId: number): Promise<AppointmentScop[]> {
 		const allScopes = await this.getAppointmentScopes();
-		return allScopes.filter((s) => s.medic === doctorId || !s.medic);
+		// Use Number() to handle cases where MedSoft returns medic as a string instead of number
+		return allScopes.filter((s) => Number(s.medic) === Number(doctorId) || !s.medic);
 	}
 
 	// =====================================================
