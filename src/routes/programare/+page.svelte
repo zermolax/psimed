@@ -98,7 +98,7 @@
 		if (!schedule.length || !selectedDoctor) return [];
 
 		const doctorSchedule = schedule.filter(
-			(s) => Number(s.DoctorId) === Number(selectedDoctor.DoctorId) && s.IsAvailable === 1
+			(s) => Number(s.DoctorId) === Number(selectedDoctor.DoctorId) && Number(s.IsAvailable) === 1
 		);
 		const dates = new Set<string>();
 
@@ -111,12 +111,17 @@
 	});
 
 	// Computed: Time slots for selected date
+	//
+	// MedSoft returns a pre-defined slot grid: one ScheduleSlot per bookable time,
+	// each slot exactly SlotDuration minutes long. IsAvailable=1 means that slot is free.
+	// We list each free slot directly — no subdivision needed.
+	// The appointment end time is start + scope.durata (may span multiple MedSoft slots).
 	let availableTimeSlots = $derived.by(() => {
 		if (!selectedDate || !schedule.length || !selectedDoctor || !selectedScope) return [];
 
 		const duration = selectedScope.durata || selectedDoctor.SlotDuration;
 		const doctorSchedule = schedule.filter(
-			(s) => Number(s.DoctorId) === Number(selectedDoctor.DoctorId) && s.IsAvailable === 1
+			(s) => Number(s.DoctorId) === Number(selectedDoctor.DoctorId) && Number(s.IsAvailable) === 1
 		);
 
 		const slots: TimeSlot[] = [];
@@ -126,18 +131,14 @@
 			if (slotDate !== selectedDate) return;
 
 			const start = new Date(scheduleSlot.StartDateTime);
-			const end = new Date(scheduleSlot.EndDateTime);
+			// End time = start + scope duration (correct duration for the createAppointment call)
+			const slotEnd = new Date(start.getTime() + duration * 60000);
 
-			let current = new Date(start);
-			while (current.getTime() + duration * 60000 <= end.getTime()) {
-				const slotEnd = new Date(current.getTime() + duration * 60000);
-				slots.push({
-					start: new Date(current),
-					end: slotEnd,
-					formatted: current.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
-				});
-				current = slotEnd;
-			}
+			slots.push({
+				start: new Date(start),
+				end: slotEnd,
+				formatted: start.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+			});
 		});
 
 		return slots;

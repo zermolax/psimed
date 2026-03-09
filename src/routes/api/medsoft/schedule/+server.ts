@@ -55,6 +55,11 @@ export const GET: RequestHandler = async ({ url }) => {
 			);
 		}
 
+		// Diagnostic: log first 3 raw slots so Vercel function logs show actual IsAvailable values
+		if (schedule.length > 0) {
+			console.log('[MedSoft] Sample raw slots:', JSON.stringify(schedule.slice(0, 3)));
+		}
+
 		return json({ success: true, data: normalizeDateTimes(schedule) });
 	} catch (error) {
 		console.error('Error fetching schedule:', error);
