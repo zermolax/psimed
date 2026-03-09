@@ -3,23 +3,29 @@ import type { RequestHandler } from './$types';
 import { medsoft, type ScheduleSlot } from '$lib/server/services/medsoft.service';
 import { env } from '$env/dynamic/private';
 
-// Append a timezone offset to datetime strings that lack one.
-// MedSoft may return times in local Romanian time without a TZ marker (e.g. "2026-03-09T10:00:00").
-// Without this, browsers may interpret them as local time, which can cause display offsets.
-// Adjust MEDSOFT_TZ_OFFSET in Vercel env vars (+02:00 EET, +03:00 EEST, +00:00 UTC) to match
-// whatever timezone MedSoft uses internally until schedule times align with the MedSoft backend.
+// Normalize MedSoft datetime strings to the clinic's local timezone.
+//
+// MedSoft returns times in Romanian local time but appends 'Z' (e.g. "2026-03-11T08:00:00Z").
+// 'Z' means UTC, so browsers interpret 08:00Z as 08:00 UTC = 10:00 Romanian time → 2h offset.
+//
+// Fix: strip 'Z' / '+00:00' and replace with the configured local offset (+02:00 EET winter,
+// +03:00 EEST summer). Set MEDSOFT_TZ_OFFSET in Vercel environment variables.
+function normalizeDateTime(dt: string, offset: string): string {
+	// Already has a non-UTC timezone offset (e.g. "+02:00") → correct as-is
+	if (dt.match(/[+-]\d{2}:\d{2}$/) && !dt.endsWith('+00:00')) {
+		return dt;
+	}
+	// Strip 'Z' or '+00:00' suffix, then append the configured local offset
+	const base = dt.replace(/Z$/, '').replace(/\+00:00$/, '');
+	return base + offset;
+}
+
 function normalizeDateTimes(slots: ScheduleSlot[]): ScheduleSlot[] {
 	const offset = env.MEDSOFT_TZ_OFFSET ?? '+02:00';
 	return slots.map((s) => ({
 		...s,
-		StartDateTime:
-			s.StartDateTime.includes('+') || s.StartDateTime.endsWith('Z')
-				? s.StartDateTime
-				: s.StartDateTime + offset,
-		EndDateTime:
-			s.EndDateTime.includes('+') || s.EndDateTime.endsWith('Z')
-				? s.EndDateTime
-				: s.EndDateTime + offset
+		StartDateTime: normalizeDateTime(s.StartDateTime, offset),
+		EndDateTime: normalizeDateTime(s.EndDateTime, offset)
 	}));
 }
 
