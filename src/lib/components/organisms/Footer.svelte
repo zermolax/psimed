@@ -171,12 +171,12 @@
 					/>
 				</a>
 				<a
-					href="https://ec.europa.eu/consumers/odr"
+					href="https://consumer-redress.ec.europa.eu/dispute-resolution-bodies"
 					target="_blank"
 					rel="noopener noreferrer"
 					class="text-xs text-gray-500 hover:text-gray-400 transition-colors underline"
 				>
-					Platforma ODR (UE)
+					Soluționarea Litigiilor Online (UE)
 				</a>
 			</div>
 		</div>

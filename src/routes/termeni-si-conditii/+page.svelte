@@ -144,19 +144,19 @@
 							>
 						</li>
 						<li>
-							<strong>Platforma ODR</strong> (Uniunea Europeană):
+							<strong>Portalul de Soluționare a Litigiilor Online</strong> (Uniunea Europeană):
 							<a
-								href="https://ec.europa.eu/consumers/odr"
+								href="https://consumer-redress.ec.europa.eu/dispute-resolution-bodies"
 								target="_blank"
 								rel="noopener noreferrer"
-								class="text-primary hover:underline">ec.europa.eu/consumers/odr</a
+								class="text-primary hover:underline">consumer-redress.ec.europa.eu</a
 							>
 						</li>
 					</ul>
 				</section>
 
 				<div class="pt-6 border-t border-gray-200">
-					<p class="text-sm text-gray-500">Ultima actualizare: Februarie 2026</p>
+					<p class="text-sm text-gray-500">Ultima actualizare: Martie 2026</p>
 				</div>
 			</div>
 
