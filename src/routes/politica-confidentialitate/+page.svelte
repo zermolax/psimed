@@ -3,14 +3,14 @@
 </script>
 
 <svelte:head>
-	<title>Politica de Confidentialitate - Clinica Sf. Gherasim</title>
-	<meta name="description" content="Politica de confidentialitate a Clinicii Sf. Gherasim - PSIMED din Bacau." />
+	<title>Politica de Confidentialitate și GDPR - Clinica Sf. Gherasim</title>
+	<meta name="description" content="Politica de confidentialitate și GDPR a Clinicii Sf. Gherasim - PSIMED din Bacau. Protecția datelor cu caracter personal." />
 </svelte:head>
 
 <section class="py-16 bg-gray-50">
 	<div class="container-custom">
 		<div class="max-w-4xl mx-auto">
-			<h1 class="text-4xl font-black text-gray-900 mb-8">Politica de Confidentialitate</h1>
+			<h1 class="text-4xl font-black text-gray-900 mb-8">Politica de Confidentialitate și GDPR</h1>
 
 			<div class="bg-white rounded-xl p-8 shadow-sm space-y-6 text-gray-700">
 				<section>

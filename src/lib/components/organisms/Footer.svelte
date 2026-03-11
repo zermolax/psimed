@@ -1,29 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import Icon from '../atoms/Icon.svelte';
 
 	const currentYear = new Date().getFullYear();
-
-	let netopiaContainer: HTMLDivElement;
-
-	onMount(() => {
-		// npId.js uses DOMContentLoaded, which fires before onMount in SvelteKit —
-		// the listener would never trigger. We replicate its output directly:
-		// data-version="orizontal" → horizontal (0), 250×50px
-		// data-contrast-color="#111827" → dark bg (HSP < 166) → white logo → np-white-0.svg
-		const img = document.createElement('img');
-		img.style.cssText = 'width:100%;height:100%;cursor:pointer';
-		img.title = 'NETOPIA Payments';
-		img.alt = 'Plată securizată NETOPIA Payments';
-		img.src = 'https://mny.ro/np-white-0.svg';
-		img.addEventListener('click', () => window.open('https://netopia-payments.com/', '_blank'));
-
-		const wrapper = document.createElement('div');
-		wrapper.style.cssText = 'width:100%;height:100%;max-width:250px;max-height:50px;';
-		wrapper.appendChild(img);
-
-		netopiaContainer.appendChild(wrapper);
-	});
 
 	const quickLinks = [
 		{ name: 'Ce Tratăm', href: '/ce-tratam' },
@@ -46,7 +24,7 @@
 
 	const legalLinks = [
 		{ name: 'Termeni și Condiții', href: '/termeni-si-conditii' },
-		{ name: 'Confidențialitate', href: '/politica-confidentialitate' },
+		{ name: 'Confidențialitate & GDPR', href: '/politica-confidentialitate' },
 		{ name: 'Politica de Anulare', href: '/politica-de-anulare' },
 		{ name: 'Politica de Livrare', href: '/politica-de-livrare' }
 	];
@@ -158,27 +136,49 @@
 				<p class="text-sm text-gray-400">
 					© {currentYear} Clinica Sf. Gherasim - PSIMED. Toate drepturile rezervate.
 				</p>
-				<!-- NETOPIA badge — rendered by Netopia's badge script (npId.js) -->
-				<div bind:this={netopiaContainer} class="flex items-center"></div>
+				<!-- NETOPIA badge — static img, vizibil și fără JavaScript -->
+				<a
+					href="https://netopia-payments.com/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="flex items-center"
+					aria-label="Plată securizată NETOPIA Payments"
+				>
+					<img
+						src="https://mny.ro/np-white-0.svg"
+						alt="Plată securizată NETOPIA Payments"
+						width="200"
+						height="40"
+						style="max-width:200px;max-height:40px;"
+					/>
+				</a>
 			</div>
 
-			<!-- ANPC SAL/ADR — required by Romanian law for online commerce -->
-			<p class="text-xs text-gray-600 text-center md:text-left">
-				Soluționarea alternativă a litigiilor:
+			<!-- ANPC SAL/ODR — obligatoriu conform legislației române pentru comerț online -->
+			<div class="flex flex-wrap items-center gap-4 justify-center md:justify-start mt-2">
 				<a
 					href="https://anpc.ro/ce-este-sal/"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="hover:text-gray-400 transition-colors underline">ANPC</a
+					aria-label="ANPC - Soluționarea Alternativă a Litigiilor"
 				>
-				·
+					<img
+						src="/anpc-sal.png"
+						alt="ANPC - Soluționarea Alternativă a Litigiilor"
+						width="150"
+						height="37"
+						style="max-width:150px;height:auto;"
+					/>
+				</a>
 				<a
 					href="https://ec.europa.eu/consumers/odr"
 					target="_blank"
 					rel="noopener noreferrer"
-					class="hover:text-gray-400 transition-colors underline">Platforma ODR</a
+					class="text-xs text-gray-500 hover:text-gray-400 transition-colors underline"
 				>
-			</p>
+					Platforma ODR (UE)
+				</a>
+			</div>
 		</div>
 	</div>
 </footer>
