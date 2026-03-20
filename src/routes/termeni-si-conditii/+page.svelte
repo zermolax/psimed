@@ -25,6 +25,7 @@
 					<ul class="list-disc pl-6 mt-2 space-y-1">
 						<li><strong>Denumire societate:</strong> PSI-MIND S.R.L.</li>
 						<li><strong>CUI:</strong> 44289726</li>
+						<li><strong>Nr. Reg. Com.:</strong> J04/917/2021</li>
 						<li>
 							<strong>Sediu social:</strong> Jud. Bacău, Sat Schineni, Comuna Săucești, Strada Mare,
 							Nr. 189

@@ -51,7 +51,7 @@
 				<!-- Company registration info — required for Netopia enrollment -->
 				<div class="text-xs text-gray-500 space-y-0.5 pt-3 border-t border-gray-800">
 					<p class="font-medium text-gray-400">PSI-MIND S.R.L.</p>
-					<p>CUI: 44289726</p>
+					<p>CUI: 44289726 | Reg. Com.: J04/917/2021</p>
 					<p>Jud. Bacău, Sat Schineni, Com. Săucești</p>
 					<p>Str. Mare nr. 189</p>
 				</div>
