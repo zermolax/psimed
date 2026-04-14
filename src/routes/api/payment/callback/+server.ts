@@ -36,38 +36,45 @@ function getParamValue(xml: string, name: string): string {
 
 export const POST: RequestHandler = async ({ request }) => {
 	let xml = '';
+	let step = 'init';
 	try {
+		// Step 1: Parse form data
+		step = 'formData';
 		const formData = await request.formData();
 		const envKey = formData.get('env_key') as string;
 		const data = formData.get('data') as string;
 
+		console.log('[Netopia IPN] Received callback, env_key length:', envKey?.length, 'data length:', data?.length);
+
 		if (!envKey || !data) {
-			console.error('Netopia IPN: missing env_key or data');
+			console.error('[Netopia IPN] Missing env_key or data');
 			return xmlText(buildIpnResponse('1', '1', 'Missing payment data'));
 		}
 
-		// Decrypt the IPN payload
+		// Step 2: Decrypt the IPN payload
+		step = 'decrypt';
 		xml = decryptIpnCallback(envKey, data);
-		console.log('Netopia IPN received, action:', getXmlValue(xml, 'action'));
+		console.log('[Netopia IPN] Decrypted OK, action:', getXmlValue(xml, 'action'));
 
 		const action = getXmlValue(xml, 'action');
 		const errorCode = getXmlAttr(xml, 'error', 'code') || getXmlValue(xml, 'error');
 
 		// Handle non-approved actions (cancel, error, credit)
 		if (CANCEL_ACTIONS.includes(action)) {
-			console.log(`Netopia IPN: payment ${action}`);
+			console.log(`[Netopia IPN] Payment ${action}`);
 			return xmlText(buildIpnResponse('0', '0', action));
 		}
 
 		if (!APPROVED_ACTIONS.includes(action)) {
-			console.log(`Netopia IPN: unknown action ${action}`);
+			console.log(`[Netopia IPN] Non-approved action: "${action}", errorCode: "${errorCode}"`);
 			return xmlText(buildIpnResponse('0', '0', 'acknowledged'));
 		}
 
-		// Payment approved — read booking data from params
+		// Step 3: Payment approved — read booking data from params
+		step = 'parseBooking';
 		const bookingB64 = getParamValue(xml, 'd');
 		if (!bookingB64) {
-			console.error('Netopia IPN: missing booking param "d"');
+			console.error('[Netopia IPN] Missing booking param "d" in XML');
 			return xmlText(buildIpnResponse('1', '99', 'Missing booking data param'));
 		}
 
@@ -86,12 +93,18 @@ export const POST: RequestHandler = async ({ request }) => {
 		try {
 			const decoded = Buffer.from(bookingB64, 'base64').toString('utf8');
 			bookingPayload = JSON.parse(decoded);
-		} catch {
-			console.error('Netopia IPN: failed to parse booking payload');
+			console.log('[Netopia IPN] Booking payload parsed:', {
+				doctorId: bookingPayload.doctorId,
+				startDateTime: bookingPayload.startDateTime,
+				patientName: bookingPayload.patientName
+			});
+		} catch (parseErr) {
+			console.error('[Netopia IPN] Failed to parse booking payload:', parseErr);
 			return xmlText(buildIpnResponse('1', '99', 'Invalid booking data'));
 		}
 
-		// Create the appointment in MedSoft
+		// Step 4: Create the appointment in MedSoft
+		step = 'medsoft';
 		const result = await medsoft.createAppointment({
 			doctorId: bookingPayload.doctorId,
 			locationId: bookingPayload.locationId,
@@ -105,13 +118,15 @@ export const POST: RequestHandler = async ({ request }) => {
 			appointmentNotes: bookingPayload.appointmentNotes || undefined
 		});
 
-		console.log('MedSoft appointment created:', result);
+		console.log('[Netopia IPN] MedSoft appointment created:', result);
 
 		// Respond to Netopia with success
 		return xmlText(buildIpnResponse('0', '0', 'confirmed'));
 	} catch (error) {
-		console.error('Netopia IPN processing error:', error, '\nXML:', xml);
+		const errMsg = error instanceof Error ? error.message : String(error);
+		console.error(`[Netopia IPN] ERROR at step "${step}":`, errMsg);
+		if (xml) console.error('[Netopia IPN] Decrypted XML was:', xml.substring(0, 500));
 		// Return error type 1 (general error) — Netopia will retry
-		return xmlText(buildIpnResponse('1', '1', 'Server error'));
+		return xmlText(buildIpnResponse('1', '1', `Error at ${step}: ${errMsg}`));
 	}
 };
