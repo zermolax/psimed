@@ -1,10 +1,5 @@
 import forge from 'node-forge';
-import {
-	NETOPIA_MERCHANT_ID,
-	NETOPIA_PUBLIC_CERT_B64,
-	NETOPIA_PRIVATE_KEY_B64,
-	NETOPIA_SANDBOX
-} from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { randomBytes } from 'crypto';
 
 const SANDBOX_URL = 'https://sandboxsecure.mobilpay.ro';
@@ -53,13 +48,15 @@ function rc4(key: Buffer, data: Buffer): Buffer {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function loadCerts(): { publicCertPem: string; privateKeyPem: string } {
-	if (!NETOPIA_PUBLIC_CERT_B64 || !NETOPIA_PRIVATE_KEY_B64) {
+	const pubB64 = env.NETOPIA_PUBLIC_CERT_B64;
+	const privB64 = env.NETOPIA_PRIVATE_KEY_B64;
+	if (!pubB64 || !privB64) {
 		throw new Error(
 			'Netopia credentials missing: set NETOPIA_PUBLIC_CERT_B64 and NETOPIA_PRIVATE_KEY_B64 env vars'
 		);
 	}
-	const publicCertPem = Buffer.from(NETOPIA_PUBLIC_CERT_B64, 'base64').toString('utf8');
-	const privateKeyPem = Buffer.from(NETOPIA_PRIVATE_KEY_B64, 'base64').toString('utf8');
+	const publicCertPem = Buffer.from(pubB64, 'base64').toString('utf8');
+	const privateKeyPem = Buffer.from(privB64, 'base64').toString('utf8');
 	return { publicCertPem, privateKeyPem };
 }
 
@@ -101,7 +98,10 @@ export function buildOrderXML(params: OrderParams): string {
 	const bookingB64 = Buffer.from(JSON.stringify(bookingPayload)).toString('base64');
 	const amountFormatted = amount.toFixed(2);
 	const timestamp = buildTimestamp();
-	const merchantId = NETOPIA_MERCHANT_ID;
+	const merchantId = env.NETOPIA_MERCHANT_ID ?? '';
+	if (!merchantId) {
+		throw new Error('NETOPIA_MERCHANT_ID env var is not set');
+	}
 
 	return `<?xml version="1.0" encoding="utf-8"?>
 <order type="card" id="${escapeXml(orderId)}" timestamp="${timestamp}">
@@ -178,14 +178,27 @@ export function buildIpnResponse(errorType: string, errorCode: string, message: 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 export function getPaymentUrl(): string {
-	return NETOPIA_SANDBOX === 'true' ? SANDBOX_URL : PRODUCTION_URL;
+	return env.NETOPIA_SANDBOX === 'true' ? SANDBOX_URL : PRODUCTION_URL;
 }
 
 export async function createEncryptedOrder(params: OrderParams): Promise<EncryptedOrder> {
+	const paymentUrl = getPaymentUrl();
+	const merchantId = env.NETOPIA_MERCHANT_ID ?? '(not set)';
+	const certB64 = env.NETOPIA_PUBLIC_CERT_B64 ?? '';
+
+	// Diagnostic — appears in Vercel function logs
+	console.log('[Netopia] Creating order:', {
+		merchantId,
+		sandbox: env.NETOPIA_SANDBOX,
+		paymentUrl,
+		certLength: certB64.length,
+		certStart: certB64.substring(0, 30) + '…'
+	});
+
 	const { publicCertPem } = loadCerts();
 	const xml = buildOrderXML(params);
 	const { env_key, data } = encryptOrder(xml, publicCertPem);
-	return { env_key, data, payment_url: getPaymentUrl() };
+	return { env_key, data, payment_url: paymentUrl };
 }
 
 export function decryptIpnCallback(envKeyB64: string, dataB64: string): string {
