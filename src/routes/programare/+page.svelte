@@ -339,6 +339,11 @@
 					window.location.href = '/confirmare';
 				} else {
 					error = data.error || 'Eroare la crearea programării';
+					// Reload schedule to refresh available slots
+					selectedDate = '';
+					selectedTimeSlot = null;
+					currentStep = STEPS.DATETIME;
+					loadSchedule(selectedDoctor!.DoctorId);
 				}
 			} catch {
 				error = 'Eroare la conectarea cu serverul';
@@ -381,6 +386,14 @@
 			if (!result.success) {
 				error = result.error || 'Eroare la inițializarea plății';
 				isLoading = false;
+
+				// If slot is no longer available (409), reload schedule & reset selection
+				if (res.status === 409) {
+					selectedDate = '';
+					selectedTimeSlot = null;
+					currentStep = STEPS.DATETIME;
+					loadSchedule(selectedDoctor!.DoctorId);
+				}
 				return;
 			}
 

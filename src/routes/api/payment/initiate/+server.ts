@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { createEncryptedOrder } from '$lib/server/services/netopia.service';
+import { medsoft } from '$lib/server/services/medsoft.service';
 import { PUBLIC_APP_URL } from '$env/static/public';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -40,6 +41,39 @@ export const POST: RequestHandler = async ({ request }) => {
 			return json(
 				{ success: false, error: 'Câmpuri obligatorii lipsă sau prețul este 0' },
 				{ status: 400 }
+			);
+		}
+
+		// ── Pre-validation: check the slot is still available in MedSoft ──
+		// Re-fetch the schedule right before payment to catch slots that were
+		// booked by another patient between the time the calendar loaded and now.
+		const slotDate = startDateTime.split(' ')[0]; // "YYYY-MM-DD"
+		const schedule = await medsoft.getDoctorSchedule(
+			doctorId,
+			slotDate,
+			slotDate
+		);
+
+		// Parse the requested start/end as timestamps for comparison
+		const reqStart = new Date(startDateTime.replace(' ', 'T')).getTime();
+		const reqEnd = new Date(endDateTime.replace(' ', 'T')).getTime();
+
+		// The slot is valid if ANY IsAvailable=1 block fully contains [reqStart, reqEnd]
+		const slotAvailable = schedule.some((s) => {
+			if (Number(s.IsAvailable) !== 1) return false;
+			const blockStart = new Date(s.StartDateTime).getTime();
+			const blockEnd = new Date(s.EndDateTime).getTime();
+			return blockStart <= reqStart && reqEnd <= blockEnd;
+		});
+
+		if (!slotAvailable) {
+			console.log('[Payment] Slot no longer available:', { doctorId, startDateTime, endDateTime });
+			return json(
+				{
+					success: false,
+					error: 'Ora selectată nu mai este disponibilă. Vă rugăm selectați altă oră.'
+				},
+				{ status: 409 }
 			);
 		}
 
