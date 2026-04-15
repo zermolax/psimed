@@ -113,11 +113,17 @@
 	// Computed: Time slots for selected date
 	//
 	// MedSoft returns large shift-window blocks (e.g. 08:00–16:30, IsAvailable=1).
-	// We subdivide each window into scope.durata-sized appointment slots.
+	// We subdivide each window using SlotDuration as the grid step (includes
+	// the doctor's break between patients) and scope.durata as the actual
+	// appointment length. Example: SlotDuration=60, scope.durata=50 →
+	// slots at 08:00, 09:00, 10:00… (not 08:00, 08:50, 09:40…).
 	let availableTimeSlots = $derived.by(() => {
 		if (!selectedDate || !schedule.length || !selectedDoctor || !selectedScope) return [];
 
-		const duration = selectedScope.durata || selectedDoctor.SlotDuration;
+		// Round up to nearest 15 min so slots land on clean times
+		// (e.g. SlotDuration=50 → step=60 → 08:00, 09:00, 10:00…)
+		const step = Math.ceil(selectedDoctor.SlotDuration / 15) * 15;
+		const duration = selectedScope.durata || step; // actual appointment length
 		const doctorSchedule = schedule.filter(
 			(s) => Number(s.DoctorId) === Number(selectedDoctor.DoctorId) && Number(s.IsAvailable) === 1
 		);
@@ -137,9 +143,14 @@
 				slots.push({
 					start: new Date(current),
 					end: slotEnd,
-					formatted: current.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit' })
+					formatted: current.toLocaleTimeString('ro-RO', {
+						hour: '2-digit',
+						minute: '2-digit',
+						timeZone: 'Europe/Bucharest'
+					})
 				});
-				current = slotEnd;
+				// Advance by SlotDuration (not scope.durata) to respect the grid + break
+				current = new Date(current.getTime() + step * 60000);
 			}
 		});
 
@@ -299,14 +310,21 @@
 	}
 
 	// Helper function to format date for MedSoft API (YYYY-MM-DD HH:MM:SS)
+	// Always uses Europe/Bucharest so it works even if the patient is abroad
 	function formatDateTimeForMedSoft(date: Date): string {
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0');
-		const day = String(date.getDate()).padStart(2, '0');
-		const hours = String(date.getHours()).padStart(2, '0');
-		const minutes = String(date.getMinutes()).padStart(2, '0');
-		const seconds = String(date.getSeconds()).padStart(2, '0');
-		return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+		const parts = new Intl.DateTimeFormat('en-CA', {
+			timeZone: 'Europe/Bucharest',
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit',
+			hour: '2-digit',
+			minute: '2-digit',
+			second: '2-digit',
+			hour12: false
+		}).formatToParts(date);
+
+		const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '00';
+		return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}:${get('second')}`;
 	}
 
 	async function proceedToPayment() {
@@ -449,7 +467,8 @@
 			weekday: 'long',
 			year: 'numeric',
 			month: 'long',
-			day: 'numeric'
+			day: 'numeric',
+			timeZone: 'Europe/Bucharest'
 		});
 	}
 

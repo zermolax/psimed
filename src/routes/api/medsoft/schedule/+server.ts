@@ -1,39 +1,71 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { medsoft, type ScheduleSlot } from '$lib/server/services/medsoft.service';
-import { env } from '$env/dynamic/private';
 
-// Normalize MedSoft datetime strings to the clinic's local timezone.
-//
-// MedSoft returns times in Romanian local time but marks them as UTC, e.g.:
-//   "2026-03-10T08:00:00.000+0000"  ← colon-less ISO 8601 basic format
-//   "2026-03-11T08:00:00Z"          ← Z suffix (seen in some API versions)
-//
-// Browsers parse +0000 / Z as UTC, so 08:00+0000 → 10:00 Romanian time (2h offset).
-//
-// Fix: normalise to extended ISO format (+HH:MM), then replace any UTC/zero offset
-// with the configured local offset (+02:00 EET winter, +03:00 EEST summer).
-// Set MEDSOFT_TZ_OFFSET in Vercel environment variables.
-function normalizeDateTime(dt: string, offset: string): string {
+/**
+ * Get the UTC offset string for Europe/Bucharest at a specific date.
+ * Uses the runtime's IANA timezone database via Intl — automatically handles DST.
+ *
+ * Romania uses:
+ *   EET  (UTC+02:00) — last Sunday of October → last Sunday of March
+ *   EEST (UTC+03:00) — last Sunday of March  → last Sunday of October
+ */
+function getRomaniaOffset(naiveDateTimeStr: string): string {
+	// Treat the naive datetime as UTC to create a reference Date for offset lookup.
+	// DST switches at 03:00 local (≈ 01:00 UTC) and appointments are during
+	// business hours (08:00–18:00), so the lookup is always unambiguous.
+	const refDate = new Date(naiveDateTimeStr + 'Z');
+
+	try {
+		const parts = new Intl.DateTimeFormat('en-US', {
+			timeZone: 'Europe/Bucharest',
+			timeZoneName: 'longOffset'
+		}).formatToParts(refDate);
+
+		const tz = parts.find((p) => p.type === 'timeZoneName');
+		if (tz) {
+			const m = tz.value.match(/GMT([+-]\d{2}:\d{2})/);
+			if (m) return m[1];
+		}
+	} catch {
+		// timeZoneName:'longOffset' unsupported — shouldn't happen on Node 18+
+	}
+	return '+02:00'; // safe fallback (EET)
+}
+
+/**
+ * Normalize MedSoft datetime strings to the correct Romania timezone.
+ *
+ * MedSoft returns times in Romanian local time but stamps them as UTC:
+ *   "2026-04-17T08:00:00.000+0000"  → actually 08:00 Romanian time
+ *   "2026-04-17T08:00:00Z"          → actually 08:00 Romanian time
+ *
+ * Fix: strip the bogus UTC marker, compute the correct Romania offset
+ * for that specific date (handling DST automatically), and re-attach it.
+ * No env vars needed — the offset is derived from the IANA timezone database.
+ */
+function normalizeDateTime(dt: string): string {
 	// Step 1: convert colon-less offset (+0000, +0200) → colon format (+00:00, +02:00)
 	const normalized = dt.replace(/([+-])(\d{2})(\d{2})$/, '$1$2:$3');
 
-	// Step 2: if it already carries a non-UTC offset (e.g. "+02:00") → correct as-is
+	// Step 2: if it already carries a non-UTC offset (e.g. "+03:00") → trust it
 	if (normalized.match(/[+-]\d{2}:\d{2}$/) && !normalized.endsWith('+00:00')) {
 		return normalized;
 	}
 
-	// Step 3: strip Z or +00:00, then append the configured local offset
-	const base = normalized.replace(/Z$/, '').replace(/\+00:00$/, '');
-	return base + offset;
+	// Step 3: strip Z or +00:00 to get bare local datetime
+	const bare = normalized.replace(/Z$/, '').replace(/\+00:00$/, '');
+
+	// Step 4: compute the correct Romania offset for this specific date
+	const offset = getRomaniaOffset(bare);
+	return bare + offset;
 }
 
 function normalizeDateTimes(slots: ScheduleSlot[]): ScheduleSlot[] {
-	const offset = env.MEDSOFT_TZ_OFFSET ?? '+02:00';
 	return slots.map((s) => ({
 		...s,
-		StartDateTime: normalizeDateTime(s.StartDateTime, offset),
-		EndDateTime: normalizeDateTime(s.EndDateTime, offset)
+		StartDateTime: normalizeDateTime(s.StartDateTime),
+		EndDateTime: normalizeDateTime(s.EndDateTime)
 	}));
 }
 

@@ -1,9 +1,48 @@
+import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { decryptIpnCallback, buildIpnResponse } from '$lib/server/services/netopia.service';
 import { medsoft } from '$lib/server/services/medsoft.service';
 
+// ─── In-memory payment status store ──────────────────────────────────────────
+// Both GET (status poll) and POST (IPN callback) live in the same file so
+// Vercel bundles them into one serverless function that shares this Map.
+const STATUS_TTL = 5 * 60 * 1000; // 5 minutes
+const paymentResults = new Map<string, { status: 'confirmed' | 'failed'; ts: number }>();
+
+function setPaymentStatus(orderId: string, status: 'confirmed' | 'failed') {
+	paymentResults.set(orderId, { status, ts: Date.now() });
+	// Lazy cleanup
+	if (paymentResults.size > 50) {
+		const now = Date.now();
+		for (const [k, v] of paymentResults) {
+			if (now - v.ts > STATUS_TTL) paymentResults.delete(k);
+		}
+	}
+}
+
+function getPaymentStatus(orderId: string): 'confirmed' | 'failed' | 'pending' {
+	const entry = paymentResults.get(orderId);
+	if (!entry) return 'pending';
+	if (Date.now() - entry.ts > STATUS_TTL) {
+		paymentResults.delete(orderId);
+		return 'pending';
+	}
+	return entry.status;
+}
+
+// ─── GET: polled by /confirmare page to check payment result ─────────────────
+export const GET: RequestHandler = async ({ url }) => {
+	const orderId = url.searchParams.get('orderId');
+	if (!orderId) return json({ status: 'pending' });
+	return json({ status: getPaymentStatus(orderId) });
+};
+
 // Netopia IPN actions
-const APPROVED_ACTIONS = ['confirmed', 'paid_pending'];
+// 'confirmed' = payment finalized successfully
+// 'paid' with errorCode '0' = payment succeeded (alternative to 'confirmed')
+// 'paid' with errorCode != '0' = payment FAILED (e.g. 35 = insufficient funds)
+// 'paid_pending' = awaiting 3D Secure or bank confirmation
+const CONFIRMED_ACTIONS = ['confirmed'];
 const CANCEL_ACTIONS = ['canceled', 'credit'];
 
 function xmlText(response: string): Response {
@@ -59,14 +98,33 @@ export const POST: RequestHandler = async ({ request }) => {
 		const action = getXmlValue(xml, 'action');
 		const errorCode = getXmlAttr(xml, 'error', 'code') || getXmlValue(xml, 'error');
 
-		// Handle non-approved actions (cancel, error, credit)
+		console.log(`[Netopia IPN] action="${action}", errorCode="${errorCode}"`);
+
+		// Extract orderId for status store
+		const orderId = getXmlAttr(xml, 'order', 'id');
+
+		// Handle cancellations
 		if (CANCEL_ACTIONS.includes(action)) {
 			console.log(`[Netopia IPN] Payment ${action}`);
+			if (orderId) setPaymentStatus(orderId, 'failed');
 			return xmlText(buildIpnResponse('0', '0', action));
 		}
 
-		if (!APPROVED_ACTIONS.includes(action)) {
+		// 'paid' with non-zero errorCode = payment FAILED (e.g. 35 = insufficient funds)
+		if (action === 'paid' && errorCode && errorCode !== '0') {
+			console.log(`[Netopia IPN] Payment failed: action=paid, errorCode=${errorCode}`);
+			if (orderId) setPaymentStatus(orderId, 'failed');
+			return xmlText(buildIpnResponse('0', '0', 'acknowledged'));
+		}
+
+		// Only proceed to create appointment for confirmed payments
+		// 'confirmed' = definitive success, 'paid' with errorCode='0' = also success
+		const isApproved = CONFIRMED_ACTIONS.includes(action) ||
+			(action === 'paid' && (!errorCode || errorCode === '0'));
+
+		if (!isApproved) {
 			console.log(`[Netopia IPN] Non-approved action: "${action}", errorCode: "${errorCode}"`);
+			if (orderId) setPaymentStatus(orderId, 'failed');
 			return xmlText(buildIpnResponse('0', '0', 'acknowledged'));
 		}
 
@@ -127,6 +185,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			const msg = medsoftErr instanceof Error ? medsoftErr.message : String(medsoftErr);
 			console.error('[Netopia IPN] MedSoft appointment FAILED (payment still confirmed):', msg);
 		}
+
+		// Mark as confirmed in the status store
+		if (orderId) setPaymentStatus(orderId, 'confirmed');
 
 		// Respond to Netopia with success — payment is acknowledged
 		return xmlText(buildIpnResponse('0', '0', 'confirmed'));

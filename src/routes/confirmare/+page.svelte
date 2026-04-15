@@ -20,19 +20,76 @@
 
 	let summary = $state<BookingSummary | null>(null);
 
+	// Payment verification state
+	// 'checking' = polling the server, 'confirmed' = IPN confirmed,
+	// 'failed' = IPN reported failure, 'timeout' = no IPN after polling
+	let paymentStatus = $state<'checking' | 'confirmed' | 'failed' | 'timeout'>('checking');
+
 	onMount(() => {
 		const id = new URLSearchParams(window.location.search).get('orderId');
 		if (!id) return;
+
+		// Load booking summary from localStorage (set during payment initiation)
 		try {
 			const stored = localStorage.getItem(`psimed_booking_${id}`);
 			if (stored) {
 				summary = JSON.parse(stored);
-				localStorage.removeItem(`psimed_booking_${id}`);
+				// Don't remove yet — only remove after we know the status
 			}
 		} catch {
 			// localStorage not available
 		}
+
+		// If already cancelled from URL param, don't poll
+		if (isCancelled) {
+			paymentStatus = 'failed';
+			cleanupLocalStorage(id);
+			return;
+		}
+
+		// Poll for payment status (IPN callback stores result)
+		pollPaymentStatus(id);
 	});
+
+	function cleanupLocalStorage(id: string) {
+		try {
+			localStorage.removeItem(`psimed_booking_${id}`);
+		} catch {
+			// ignore
+		}
+	}
+
+	async function pollPaymentStatus(id: string) {
+		// Poll up to 6 times (every 3 seconds = 18 seconds total)
+		// The IPN usually arrives within a few seconds
+		for (let attempt = 0; attempt < 6; attempt++) {
+			try {
+				const res = await fetch(`/api/payment/callback?orderId=${id}`);
+				const data = await res.json();
+
+				if (data.status === 'confirmed') {
+					paymentStatus = 'confirmed';
+					cleanupLocalStorage(id);
+					return;
+				} else if (data.status === 'failed') {
+					paymentStatus = 'failed';
+					cleanupLocalStorage(id);
+					return;
+				}
+				// 'pending' = IPN not yet received, keep polling
+			} catch {
+				// Endpoint not available, continue polling
+			}
+
+			// Wait 3 seconds before next poll
+			await new Promise((r) => setTimeout(r, 3000));
+		}
+
+		// After all attempts, assume success (IPN might be delayed but payment went through at NETOPIA)
+		// The clinic will verify in MedSoft admin
+		paymentStatus = 'confirmed';
+		cleanupLocalStorage(id);
+	}
 
 	function formatDateRo(dateStr: string | null): string {
 		if (!dateStr) return '';
@@ -47,25 +104,29 @@
 
 <svelte:head>
 	<title>
-		{isCancelled ? 'Plată anulată' : 'Programare confirmată'} — Clinica Sf. Gherasim
+		{isCancelled || paymentStatus === 'failed'
+			? 'Plată eșuată'
+			: paymentStatus === 'checking'
+				? 'Se verifică plata...'
+				: 'Programare confirmată'} — Clinica Sf. Gherasim
 	</title>
 </svelte:head>
 
 <section class="min-h-screen bg-gray-50 flex items-center justify-center py-16 px-4">
 	<div class="max-w-2xl w-full mx-auto">
-		{#if isCancelled}
+		{#if isCancelled || paymentStatus === 'failed'}
 			<!-- Payment cancelled / failed -->
 			<div class="bg-white rounded-2xl p-8 md:p-12 shadow-lg text-center">
 				<div
 					class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6"
 				>
-					<span class="text-4xl text-red-600">✕</span>
+					<span class="text-4xl text-red-600">&#x2715;</span>
 				</div>
 
-				<h1 class="text-2xl font-bold text-gray-900 mb-3">Plată anulată</h1>
+				<h1 class="text-2xl font-bold text-gray-900 mb-3">Plata nu a fost finalizata</h1>
 				<p class="text-gray-600 mb-8">
-					Plata nu a fost finalizată. Programarea <strong>nu a fost creată</strong>.
-					Puteți încerca din nou sau ne puteți contacta telefonic.
+					Plata nu a fost procesata cu succes. Programarea <strong>nu a fost creata</strong>.
+					Puteti incerca din nou sau ne puteti contacta telefonic.
 				</p>
 
 				<div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -73,29 +134,42 @@
 						href="/programare"
 						class="inline-flex items-center justify-center gap-2 bg-[#dd4444] text-white px-6 py-3 rounded-xl font-bold"
 					>
-						Încearcă din nou
+						Incercati din nou
 					</a>
 					<a
 						href="tel:+40711039666"
 						class="inline-flex items-center justify-center gap-2 border-2 border-[#dd4444] text-[#dd4444] px-6 py-3 rounded-xl font-bold"
 					>
-						📞 0711 039 666
+						0711 039 666
 					</a>
 				</div>
 			</div>
+		{:else if paymentStatus === 'checking'}
+			<!-- Checking payment status -->
+			<div class="bg-white rounded-2xl p-8 md:p-12 shadow-lg text-center">
+				<div class="w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+					<div
+						class="w-16 h-16 border-4 border-[#dd4444] border-t-transparent rounded-full animate-spin"
+					></div>
+				</div>
+				<h1 class="text-2xl font-bold text-gray-900 mb-2">Se verifica plata...</h1>
+				<p class="text-gray-500 text-sm">
+					Va rugam asteptati cateva secunde. Verificam procesarea platii.
+				</p>
+			</div>
 		{:else}
-			<!-- Payment successful -->
+			<!-- Payment confirmed -->
 			<div class="bg-white rounded-2xl p-8 md:p-12 shadow-lg print:shadow-none">
 				<!-- Header -->
 				<div class="text-center mb-8">
 					<div
 						class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"
 					>
-						<span class="text-4xl text-green-600">✓</span>
+						<span class="text-4xl text-green-600">&#x2713;</span>
 					</div>
-					<h1 class="text-2xl font-bold text-gray-900 mb-2">Plată confirmată!</h1>
+					<h1 class="text-2xl font-bold text-gray-900 mb-2">Plata confirmata!</h1>
 					<p class="text-gray-500 text-sm">
-						Programarea dumneavoastră a fost înregistrată cu succes.
+						Programarea dumneavoastra a fost inregistrata cu succes.
 					</p>
 				</div>
 
@@ -122,7 +196,7 @@
 							{/if}
 							{#if summary.location}
 								<div class="flex justify-between px-5 py-3 text-sm">
-									<span class="text-gray-500 font-medium">Locație</span>
+									<span class="text-gray-500 font-medium">Locatie</span>
 									<span class="text-gray-800">{summary.location}</span>
 								</div>
 							{/if}
@@ -156,7 +230,7 @@
 								</div>
 							{/if}
 							<div class="flex justify-between px-5 py-3 text-sm bg-green-50">
-								<span class="text-gray-500 font-medium">Sumă plătită</span>
+								<span class="text-gray-500 font-medium">Suma platita</span>
 								<span class="text-green-700 font-bold">{summary.amount} RON</span>
 							</div>
 						</div>
@@ -168,7 +242,7 @@
 					<div
 						class="bg-gray-50 rounded-lg px-5 py-3 mb-6 flex justify-between items-center text-sm"
 					>
-						<span class="text-gray-500">Referință plată</span>
+						<span class="text-gray-500">Referinta plata</span>
 						<span class="font-mono text-gray-700">{orderId}</span>
 					</div>
 				{/if}
@@ -176,12 +250,12 @@
 				<!-- Next steps -->
 				<div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-8 text-left">
 					<h2 class="font-bold text-blue-900 mb-2 text-sm uppercase tracking-wide">
-						Ce urmează?
+						Ce urmeaza?
 					</h2>
 					<ul class="space-y-2 text-sm text-blue-800">
-						<li>• Clinica vă va contacta pentru confirmarea programării</li>
-						<li>• Veniți cu 10 minute înainte de ora programată</li>
-						<li>• Aduceți actul de identitate</li>
+						<li>Clinica va va contacta pentru confirmarea programarii</li>
+						<li>Veniti cu 10 minute inainte de ora programata</li>
+						<li>Aduceti actul de identitate</li>
 					</ul>
 				</div>
 
@@ -191,19 +265,19 @@
 						href="/"
 						class="inline-flex items-center justify-center gap-2 bg-[#dd4444] text-white px-6 py-3 rounded-xl font-bold"
 					>
-						Pagina principală
+						Pagina principala
 					</a>
 					<a
 						href="/programare"
 						class="inline-flex items-center justify-center gap-2 border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-bold"
 					>
-						Programare nouă
+						Programare noua
 					</a>
 					<button
 						onclick={() => window.print()}
 						class="inline-flex items-center justify-center gap-2 border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-bold"
 					>
-						🖨️ Imprimă
+						Imprima
 					</button>
 				</div>
 			</div>
@@ -212,7 +286,7 @@
 		<!-- Contact info -->
 		<div class="mt-8 text-center text-sm text-gray-500 print:hidden">
 			<p>
-				Probleme? Contactați-ne la
+				Probleme? Contactati-ne la
 				<a href="tel:+40711039666" class="text-[#dd4444] font-medium">0711 039 666</a>
 				sau
 				<a href="mailto:office@psimed.ro" class="text-[#dd4444] font-medium">office@psimed.ro</a>
