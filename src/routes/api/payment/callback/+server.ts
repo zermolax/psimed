@@ -104,23 +104,31 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		// Step 4: Create the appointment in MedSoft
+		// IMPORTANT: Always confirm to NETOPIA (0,0) even if MedSoft fails.
+		// The payment already went through — returning an error would make
+		// NETOPIA retry the IPN endlessly while the patient is already charged.
 		step = 'medsoft';
-		const result = await medsoft.createAppointment({
-			doctorId: bookingPayload.doctorId,
-			locationId: bookingPayload.locationId,
-			startDateTime: bookingPayload.startDateTime,
-			endDateTime: bookingPayload.endDateTime,
-			patientName: bookingPayload.patientName,
-			patientEmail: bookingPayload.patientEmail || undefined,
-			patientPhoneNumber: bookingPayload.patientPhoneNumber,
-			patientAddress: null,
-			appointmentDetails: bookingPayload.appointmentDetails || 'Consultație',
-			appointmentNotes: bookingPayload.appointmentNotes || undefined
-		});
+		try {
+			const result = await medsoft.createAppointment({
+				doctorId: bookingPayload.doctorId,
+				locationId: bookingPayload.locationId,
+				startDateTime: bookingPayload.startDateTime,
+				endDateTime: bookingPayload.endDateTime,
+				patientName: bookingPayload.patientName,
+				patientEmail: bookingPayload.patientEmail || undefined,
+				patientPhoneNumber: bookingPayload.patientPhoneNumber,
+				patientAddress: null,
+				appointmentDetails: bookingPayload.appointmentDetails || 'Consultație',
+				appointmentNotes: bookingPayload.appointmentNotes || undefined
+			});
+			console.log('[Netopia IPN] MedSoft appointment created:', result);
+		} catch (medsoftErr) {
+			// Log the error but DO NOT fail the IPN — payment is already charged
+			const msg = medsoftErr instanceof Error ? medsoftErr.message : String(medsoftErr);
+			console.error('[Netopia IPN] MedSoft appointment FAILED (payment still confirmed):', msg);
+		}
 
-		console.log('[Netopia IPN] MedSoft appointment created:', result);
-
-		// Respond to Netopia with success
+		// Respond to Netopia with success — payment is acknowledged
 		return xmlText(buildIpnResponse('0', '0', 'confirmed'));
 	} catch (error) {
 		const errMsg = error instanceof Error ? error.message : String(error);
