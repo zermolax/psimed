@@ -63,10 +63,11 @@ export const GET: RequestHandler = async ({ url }) => {
 			);
 		}
 
-		// Diagnostic: log first 3 raw slots so Vercel function logs show actual IsAvailable values
-		if (schedule.length > 0) {
-			console.log('[MedSoft] Sample raw slots:', JSON.stringify(schedule.slice(0, 3)));
-		}
+		// Diagnostic: log ALL slots so we can verify if MedSoft splits blocks around manual bookings
+		console.log(`[MedSoft] Schedule: ${schedule.length} blocks returned`);
+		schedule.forEach((s, i) => {
+			console.log(`[MedSoft] Block ${i}: ${s.StartDateTime} → ${s.EndDateTime} | IsAvailable=${s.IsAvailable} | DoctorId=${s.DoctorId}`);
+		});
 
 		return json({ success: true, data: normalizeDateTimes(schedule) });
 	} catch (error) {
