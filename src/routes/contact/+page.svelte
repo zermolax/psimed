@@ -255,7 +255,7 @@
 			<div class="aspect-video w-full">
 				<iframe
 					title="Locație Clinica Sf. Gherasim — Str. Bogdan Voievod 18, Bacău"
-					src="https://www.openstreetmap.org/export/embed.html?bbox=26.9009%2C46.5636%2C26.9209%2C46.5736&layer=mapnik&marker=46.5686%2C26.9109"
+					src="https://www.openstreetmap.org/export/embed.html?bbox=26.8884%2C46.5593%2C26.9084%2C46.5693&layer=mapnik&marker=46.5643022%2C26.8983681"
 					style="width:100%;height:100%;border:0;"
 					allowfullscreen
 					loading="lazy"
@@ -266,7 +266,7 @@
 					<strong class="text-gray-900">Str. Bogdan Voievod nr. 18, Bacău</strong>
 				</p>
 				<a
-					href="https://www.openstreetmap.org/?mlat=46.5686&mlon=26.9109#map=16/46.5686/26.9109"
+					href="https://www.openstreetmap.org/?mlat=46.5643022&mlon=26.8983681#map=17/46.5643022/26.8983681"
 					target="_blank"
 					rel="noopener noreferrer"
 					class="text-sm text-[#dd4444] font-medium hover:underline whitespace-nowrap"
