@@ -18,8 +18,8 @@
 	];
 
 	const contactInfo = [
-		{ icon: 'phone', text: '0711 039 666', href: 'tel:+40711039666' },
-		{ icon: 'email', text: 'office@psimed.ro', href: 'mailto:office@psimed.ro' }
+		{ icon: 'phone', text: '+40 711 039 666', href: 'tel:+40711039666' },
+		{ icon: 'email', text: 'office@clinicasfgherasim.ro', href: 'mailto:office@clinicasfgherasim.ro' }
 	];
 
 	const legalLinks = [
@@ -109,7 +109,7 @@
 				<div class="mt-6">
 					<h4 class="text-sm font-medium text-white mb-2">Program</h4>
 					<p class="text-sm">Luni - Vineri: 09:00 - 18:00</p>
-					<p class="text-sm">Sâmbătă: Pe programare</p>
+					<p class="text-sm">Sâmbătă: pe bază de programare</p>
 				</div>
 			</div>
 		</div>

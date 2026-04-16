@@ -86,13 +86,13 @@
 						</div>
 						<div>
 							<h3 class="font-bold mb-1 text-gray-900">Telefon</h3>
-							<p class="text-lg text-gray-900 font-bold">0711 039 666</p>
+							<p class="text-lg text-gray-900 font-bold">+40 711 039 666</p>
 							<p class="text-sm text-gray-700 mt-1">Luni - Vineri: 09:00 - 18:00</p>
 						</div>
 					</a>
 
 					<a
-						href="mailto:office@psimed.ro"
+						href="mailto:office@clinicasfgherasim.ro"
 						class="flex items-start space-x-4 p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-2 border-gray-200"
 					>
 						<div class="flex-shrink-0 p-3 bg-gray-900 rounded-xl">
@@ -100,7 +100,7 @@
 						</div>
 						<div>
 							<h3 class="font-bold mb-1 text-gray-900">Email</h3>
-							<p class="text-lg text-gray-900 font-bold">office@psimed.ro</p>
+							<p class="text-lg text-gray-900 font-bold">office@clinicasfgherasim.ro</p>
 							<p class="text-sm text-gray-700 mt-1">Răspundem în 24-48 ore</p>
 						</div>
 					</a>
@@ -113,7 +113,7 @@
 							<h3 class="font-bold mb-1 text-gray-900">Program</h3>
 							<div class="space-y-1 text-gray-700">
 								<p>Luni - Vineri: 09:00 - 18:00</p>
-								<p>Sâmbătă: Pe programare</p>
+								<p>Sâmbătă: pe bază de programare</p>
 								<p>Duminică: Închis</p>
 							</div>
 						</div>
@@ -247,17 +247,32 @@
 	</div>
 </section>
 
-<!-- Map Section (Placeholder) -->
+<!-- Map Section -->
 <section class="bg-gray-50 py-12">
 	<div class="container-custom">
 		<h2 class="text-3xl font-bold text-center mb-8 text-gray-900">Locația noastră</h2>
-		<div class="bg-white border-2 border-gray-200 rounded-xl aspect-video w-full flex items-center justify-center">
-			<div class="text-center text-gray-700">
-				<div class="text-6xl mb-4">📍</div>
-				<p class="text-lg text-gray-900">
-					<strong>Adresă:</strong> Strada Exemplu nr. 123, Bacău
+		<div class="bg-white border-2 border-gray-200 rounded-xl overflow-hidden">
+			<div class="aspect-video w-full">
+				<iframe
+					title="Locație Clinica Sf. Gherasim — Str. Bogdan Voievod 18, Bacău"
+					src="https://www.openstreetmap.org/export/embed.html?bbox=26.9009%2C46.5636%2C26.9209%2C46.5736&layer=mapnik&marker=46.5686%2C26.9109"
+					style="width:100%;height:100%;border:0;"
+					allowfullscreen
+					loading="lazy"
+				></iframe>
+			</div>
+			<div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+				<p class="text-gray-700 text-sm">
+					<strong class="text-gray-900">Str. Bogdan Voievod nr. 18, Bacău</strong>
 				</p>
-				<p class="text-sm mt-2 text-gray-600">(Hartă Google Maps va fi adăugată aici)</p>
+				<a
+					href="https://www.openstreetmap.org/?mlat=46.5686&mlon=26.9109#map=16/46.5686/26.9109"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-sm text-[#dd4444] font-medium hover:underline whitespace-nowrap"
+				>
+					Deschide harta →
+				</a>
 			</div>
 		</div>
 	</div>
@@ -268,7 +283,7 @@
 	<div class="container-custom max-w-3xl">
 		<h2 class="text-3xl font-bold text-center mb-12 text-gray-900">Întrebări frecvente</h2>
 		<div class="space-y-6">
-			{#each [ { q: 'Cum pot face o programare?', a: 'Poți face o programare online prin sistemul nostru de rezervări, telefonic la 0711 039 666, sau prin email la office@psimed.ro.' }, { q: 'Acceptați card de sănătate?', a: 'Da, acceptăm card de sănătate pentru consultațiile acoperite de Casa de Asigurări de Sănătate. Unele servicii specializate se decontează separat.' }, { q: 'Cât durează o consultație?', a: 'O consultație inițială durează aproximativ 60 de minute, iar consultațiile de follow-up durează 30-45 de minute.' }, { q: 'Este nevoie de recomandare de la medicul de familie?', a: 'Pentru consultații private nu este nevoie de recomandare. Pentru decontare prin CNAS, este necesară trimitere de la medicul de familie.' } ] as faq}
+			{#each [ { q: 'Cum pot face o programare?', a: 'Poți face o programare online prin sistemul nostru de rezervări, telefonic la +40 711 039 666, sau prin email la office@clinicasfgherasim.ro.' }, { q: 'Acceptați card de sănătate?', a: 'Da, acceptăm card de sănătate pentru consultațiile acoperite de Casa de Asigurări de Sănătate. Unele servicii specializate se decontează separat.' }, { q: 'Cât durează o consultație?', a: 'O consultație inițială durează aproximativ 60 de minute, iar consultațiile de follow-up durează 30-45 de minute.' }, { q: 'Este nevoie de recomandare de la medicul de familie?', a: 'Pentru consultații private nu este nevoie de recomandare. Pentru decontare prin CNAS, este necesară trimitere de la medicul de familie.' } ] as faq}
 				<div class="border-b border-gray-200 pb-6">
 					<h3 class="text-lg font-bold mb-2 text-gray-900">{faq.q}</h3>
 					<p class="text-gray-700">{faq.a}</p>
