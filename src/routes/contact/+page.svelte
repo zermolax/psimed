@@ -19,29 +19,34 @@
 		e.preventDefault();
 		formStatus = 'submitting';
 
-		// Simulare submit (în realitate ar fi un API call)
 		try {
-			// Aici ar fi logica de trimitere email sau salvare în DB
-			await new Promise((resolve) => setTimeout(resolve, 1500));
+			const res = await fetch('/api/contact', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(formData)
+			});
+			const result = await res.json();
 
-			formStatus = 'success';
-			// Reset form
-			formData = {
-				name: '',
-				email: '',
-				phone: '',
-				subject: '',
-				message: '',
-				gdprConsent: false
-			};
-
-			// Reset success message după 5 secunde
-			setTimeout(() => {
-				formStatus = 'idle';
-			}, 5000);
-		} catch (error) {
+			if (result.success) {
+				formStatus = 'success';
+				formData = {
+					name: '',
+					email: '',
+					phone: '',
+					subject: '',
+					message: '',
+					gdprConsent: false
+				};
+				setTimeout(() => {
+					formStatus = 'idle';
+				}, 5000);
+			} else {
+				formStatus = 'error';
+				errorMessage = result.error || 'A apărut o eroare. Te rugăm să încerci din nou sau să ne contactezi telefonic.';
+			}
+		} catch {
 			formStatus = 'error';
-			errorMessage = 'A apărut o eroare. Te rugăm să încerci din nou sau să ne contactezi telefonic.';
+			errorMessage = 'A apărut o eroare de rețea. Te rugăm să încerci din nou.';
 		}
 	}
 </script>
