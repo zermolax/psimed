@@ -1,5 +1,6 @@
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
+import { presentationTool } from 'sanity/presentation';
 import { visionTool } from '@sanity/vision';
 import {
 	PUBLIC_SANITY_PROJECT_ID,
@@ -12,6 +13,15 @@ export default defineConfig({
 	projectId: PUBLIC_SANITY_PROJECT_ID,
 	dataset: PUBLIC_SANITY_DATASET,
 	title: 'Clinica Sf. Gherasim — CMS',
-	plugins: [structureTool(), visionTool()],
+	plugins: [
+		structureTool(),
+		presentationTool({
+			previewUrl: {
+				origin: 'same-origin',
+				preview: '/'
+			}
+		}),
+		visionTool()
+	],
 	schema: { types: schemaTypes }
 });
