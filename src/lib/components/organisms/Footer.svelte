@@ -1,7 +1,15 @@
 <script lang="ts">
 	import Icon from '../atoms/Icon.svelte';
+	import type { SiteSettings } from '$lib/queries';
+
+	let { siteSettings = null }: { siteSettings?: SiteSettings } = $props();
 
 	const currentYear = new Date().getFullYear();
+
+	const phone = siteSettings?.phone || '+40 711 039 666';
+	const email = siteSettings?.email || 'office@clinicasfgherasim.ro';
+	const phoneHref = `tel:${phone.replace(/\s/g, '')}`;
+	const emailHref = `mailto:${email}`;
 
 	const quickLinks = [
 		{ name: 'Ce Tratăm', href: '/ce-tratam' },
@@ -18,8 +26,8 @@
 	];
 
 	const contactInfo = [
-		{ icon: 'phone', text: '+40 711 039 666', href: 'tel:+40711039666' },
-		{ icon: 'email', text: 'office@clinicasfgherasim.ro', href: 'mailto:office@clinicasfgherasim.ro' }
+		{ icon: 'phone', text: phone, href: phoneHref },
+		{ icon: 'email', text: email, href: emailHref }
 	];
 
 	const legalLinks = [

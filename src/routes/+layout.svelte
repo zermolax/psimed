@@ -4,7 +4,7 @@
 	import Header from '$lib/components/organisms/Header.svelte';
 	import Footer from '$lib/components/organisms/Footer.svelte';
 
-	let { children } = $props();
+	let { children, data } = $props();
 </script>
 
 <svelte:head>
@@ -24,5 +24,5 @@
 		{@render children()}
 	</main>
 
-	<Footer />
+	<Footer siteSettings={data?.siteSettings ?? null} />
 </div>
