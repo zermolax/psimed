@@ -2,8 +2,7 @@ import { createClient } from '@sanity/client';
 import {
 	PUBLIC_SANITY_PROJECT_ID,
 	PUBLIC_SANITY_DATASET,
-	PUBLIC_SANITY_API_VERSION,
-	PUBLIC_SANITY_STUDIO_URL
+	PUBLIC_SANITY_API_VERSION
 } from '$env/static/public';
 
 export const sanity = createClient({
@@ -14,6 +13,6 @@ export const sanity = createClient({
 	perspective: 'published',
 	stega: {
 		enabled: true,
-		studioUrl: PUBLIC_SANITY_STUDIO_URL
+		studioUrl: '/studio'
 	}
 });

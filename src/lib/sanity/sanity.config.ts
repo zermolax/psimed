@@ -16,10 +16,7 @@ export default defineConfig({
 	plugins: [
 		structureTool(),
 		presentationTool({
-			previewUrl: {
-				origin: 'same-origin',
-				preview: '/'
-			}
+			previewUrl: '/'
 		}),
 		visionTool()
 	],
