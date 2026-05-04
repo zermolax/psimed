@@ -62,13 +62,47 @@ export type PolicyPage = {
 export const aboutPageQuery = /* groq */ `
   *[_type == "aboutPage"][0]{
     heroTitle,
+    heroTitleAccent,
     heroLead,
-    body
+    stats[]{ value, label, color },
+    storyEyebrow,
+    storyTitle,
+    storyBody,
+    storyQuoteText,
+    storyQuoteAttribution,
+    missionVisionEyebrow,
+    missionVisionTitle,
+    missionText,
+    visionText,
+    valuesEyebrow,
+    valuesTitle,
+    values[]{ iconName, title, description, color },
+    whyChooseUsEyebrow,
+    whyChooseUsTitle,
+    whyChooseUsItems[]{ iconName, title, description }
   }
 `;
 
+type ColorTheme = 'primary' | 'secondary' | 'accent' | 'nature';
+
 export type AboutPage = {
-	heroTitle: string;
+	heroTitle?: string;
+	heroTitleAccent?: string;
 	heroLead?: string;
-	body?: unknown[];
+	stats?: Array<{ value: string; label: string; color?: ColorTheme }>;
+	storyEyebrow?: string;
+	storyTitle?: string;
+	storyBody?: unknown[];
+	storyQuoteText?: string;
+	storyQuoteAttribution?: string;
+	missionVisionEyebrow?: string;
+	missionVisionTitle?: string;
+	missionText?: string;
+	visionText?: string;
+	valuesEyebrow?: string;
+	valuesTitle?: string;
+	values?: Array<{ iconName: string; title: string; description: string; color?: ColorTheme }>;
+	whyChooseUsEyebrow?: string;
+	whyChooseUsTitle?: string;
+	whyChooseUsItems?: Array<{ iconName: string; title: string; description: string }>;
 } | null;
