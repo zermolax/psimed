@@ -86,7 +86,7 @@
 					</p>
 					<p class="mt-2">
 						<strong>Email:</strong> office@psimed.ro<br />
-						<strong>Telefon:</strong> 0711 039 666
+						<strong>Telefon:</strong> 0376 501 501
 					</p>
 				</section>
 

@@ -48,7 +48,7 @@
 							Nr. 189
 						</li>
 						<li><strong>Email:</strong> office@psimed.ro</li>
-						<li><strong>Telefon:</strong> 0711 039 666</li>
+						<li><strong>Telefon:</strong> 0376 501 501</li>
 					</ul>
 					<p class="mt-3">
 						Prin accesarea și utilizarea acestui site, confirmați că ați citit, înțeles și acceptat

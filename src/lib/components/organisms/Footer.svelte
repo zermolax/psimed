@@ -6,7 +6,7 @@
 
 	const currentYear = new Date().getFullYear();
 
-	const phone = siteSettings?.phone || '+40 711 039 666';
+	const phone = siteSettings?.phone || '+40 376 501 501';
 	const email = siteSettings?.email || 'office@clinicasfgherasim.ro';
 	const phoneHref = `tel:${phone.replace(/\s/g, '')}`;
 	const emailHref = `mailto:${email}`;

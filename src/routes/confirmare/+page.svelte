@@ -137,10 +137,10 @@
 						Incercati din nou
 					</a>
 					<a
-						href="tel:+40711039666"
+						href="tel:+40376501501"
 						class="inline-flex items-center justify-center gap-2 border-2 border-[#dd4444] text-[#dd4444] px-6 py-3 rounded-xl font-bold"
 					>
-						0711 039 666
+						0376 501 501
 					</a>
 				</div>
 			</div>
@@ -287,7 +287,7 @@
 		<div class="mt-8 text-center text-sm text-gray-500 print:hidden">
 			<p>
 				Probleme? Contactati-ne la
-				<a href="tel:+40711039666" class="text-[#dd4444] font-medium">0711 039 666</a>
+				<a href="tel:+40376501501" class="text-[#dd4444] font-medium">0376 501 501</a>
 				sau
 				<a href="mailto:office@psimed.ro" class="text-[#dd4444] font-medium">office@psimed.ro</a>
 			</p>
