@@ -9,7 +9,7 @@ export const POLICY_KEYS = [
 
 export const policyPage = defineType({
 	name: 'policyPage',
-	title: 'Pagină legală (policy)',
+	title: 'Pagini legale (Politici și Termeni)',
 	type: 'document',
 	fields: [
 		defineField({

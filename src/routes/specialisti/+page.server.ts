@@ -50,9 +50,11 @@ export const load: PageServerLoad = async () => {
 		}));
 	}
 
-	specialists.sort(
-		(a, b) => CATEGORY_CONFIG[a.category].order - CATEGORY_CONFIG[b.category].order
-	);
+	specialists.sort((a, b) => {
+		const aOrder = CATEGORY_CONFIG[a.category]?.order ?? 999;
+		const bOrder = CATEGORY_CONFIG[b.category]?.order ?? 999;
+		return aOrder - bOrder;
+	});
 
 	return { specialists, source };
 };
