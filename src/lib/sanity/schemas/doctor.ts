@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { CATEGORY_LIST_OPTIONS } from '../categories';
 
 export const doctor = defineType({
 	name: 'doctor',
@@ -43,12 +44,7 @@ export const doctor = defineType({
 			description: 'Determină culoarea badge-ului și sortarea pe pagina /specialisti.',
 			type: 'string',
 			options: {
-				list: [
-					{ title: 'Psihiatru', value: 'psihiatru' },
-					{ title: 'Psiholog', value: 'psiholog' },
-					{ title: 'Psihoterapeut', value: 'terapeut' },
-					{ title: 'Alt specialist', value: 'alt-specialist' }
-				],
+				list: CATEGORY_LIST_OPTIONS,
 				layout: 'radio'
 			},
 			validation: (Rule) => Rule.required()

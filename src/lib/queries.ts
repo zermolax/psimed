@@ -29,7 +29,8 @@ export const doctorsQuery = /* groq */ `
   }
 `;
 
-export type DoctorCategory = 'psihiatru' | 'psiholog' | 'terapeut' | 'alt-specialist';
+export type { DoctorCategory } from './sanity/categories';
+import type { DoctorCategory } from './sanity/categories';
 
 export type Doctor = {
 	id: string;

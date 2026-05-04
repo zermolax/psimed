@@ -1,13 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { sanity } from '$lib/server/sanity';
 import { doctorsQuery, type Doctor } from '$lib/queries';
-
-const categoryOrder: Record<Doctor['category'], number> = {
-	psihiatru: 0,
-	psiholog: 1,
-	terapeut: 2,
-	'alt-specialist': 3
-};
+import { CATEGORY_CONFIG } from '$lib/sanity/categories';
 
 type SpecialistCardData = {
 	id: string;
@@ -56,7 +50,9 @@ export const load: PageServerLoad = async () => {
 		}));
 	}
 
-	specialists.sort((a, b) => categoryOrder[a.category] - categoryOrder[b.category]);
+	specialists.sort(
+		(a, b) => CATEGORY_CONFIG[a.category].order - CATEGORY_CONFIG[b.category].order
+	);
 
 	return { specialists, source };
 };

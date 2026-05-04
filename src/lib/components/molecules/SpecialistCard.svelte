@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/atoms/Button.svelte';
-
-	type Category = 'psihiatru' | 'psiholog' | 'terapeut' | 'alt-specialist';
+	import { CATEGORY_CONFIG, type DoctorCategory } from '$lib/sanity/categories';
 
 	interface Props {
 		name: string;
@@ -10,7 +9,7 @@
 		description: string;
 		image?: string;
 		bookingParam?: string;
-		category?: Category;
+		category?: DoctorCategory;
 	}
 
 	let { name, title, specialties, description, image, bookingParam, category }: Props = $props();
@@ -18,30 +17,7 @@
 	const bookingUrl = bookingParam ? `/programare?doctor=${bookingParam}` : '/programare';
 	const placeholderImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=dd4444&color=fff&size=200&font-size=0.35`;
 
-	const categoryConfig: Record<Category, { label: string; bgClass: string; borderClass: string }> = {
-		psihiatru: {
-			label: 'Psihiatru',
-			bgClass: 'bg-primary',
-			borderClass: 'border-l-primary'
-		},
-		psiholog: {
-			label: 'Psiholog',
-			bgClass: 'bg-secondary',
-			borderClass: 'border-l-secondary'
-		},
-		terapeut: {
-			label: 'Psihoterapeut',
-			bgClass: 'bg-accent',
-			borderClass: 'border-l-accent'
-		},
-		'alt-specialist': {
-			label: 'Specialist',
-			bgClass: 'bg-nature',
-			borderClass: 'border-l-nature'
-		}
-	};
-
-	const config = category ? categoryConfig[category] : null;
+	const config = category ? CATEGORY_CONFIG[category] : null;
 </script>
 
 <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 group {config ? `border-l-4 ${config.borderClass}` : ''}">
