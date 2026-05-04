@@ -8,8 +8,12 @@
 	let { children, data } = $props();
 
 	onMount(async () => {
-		const { enableVisualEditing } = await import('@sanity/visual-editing');
-		return enableVisualEditing();
+		// Activăm visual editing DOAR când pagina e încărcată în iframe-ul
+		// Presentation tool din Sanity Studio — nu pentru vizitatori normali.
+		if (window.parent !== window) {
+			const { enableVisualEditing } = await import('@sanity/visual-editing');
+			return enableVisualEditing();
+		}
 	});
 </script>
 

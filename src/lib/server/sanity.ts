@@ -12,7 +12,6 @@ export const sanity = createClient({
 	useCdn: true,
 	perspective: 'published',
 	stega: {
-		enabled: true,
-		studioUrl: '/studio'
+		enabled: false
 	}
 });
