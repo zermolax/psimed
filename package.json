@@ -13,7 +13,8 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"import:doctors": "tsx scripts/import-doctors.ts"
+		"import:doctors": "tsx scripts/import-doctors.ts",
+		"delete:doctors": "tsx scripts/delete-doctors.ts"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-vercel": "^5.0.0",
