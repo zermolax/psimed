@@ -6,11 +6,15 @@
 	let { data } = $props();
 
 	// Build the legend from the categories actually present in the data,
-	// sorted by their canonical order. Avoids cluttering the legend with
-	// 10 entries when only 3-4 are in use.
+	// sorted by their canonical order. Filter out anything that isn't in
+	// CATEGORY_CONFIG (a Sanity doc with no category set, or an old value
+	// that's no longer in the schema) so the legend never accesses an
+	// undefined config entry.
 	const presentCategories: DoctorCategory[] = Array.from(
-		new Set(data.specialists.map((s) => s.category as DoctorCategory))
-	).sort((a, b) => CATEGORY_CONFIG[a].order - CATEGORY_CONFIG[b].order);
+		new Set(data.specialists.map((s) => s.category))
+	)
+		.filter((cat): cat is DoctorCategory => !!cat && cat in CATEGORY_CONFIG)
+		.sort((a, b) => CATEGORY_CONFIG[a].order - CATEGORY_CONFIG[b].order);
 </script>
 
 <svelte:head>
