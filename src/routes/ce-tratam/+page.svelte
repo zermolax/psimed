@@ -3,8 +3,15 @@
 	import ProblemCard from '$lib/components/molecules/ProblemCard.svelte';
 	import { getProblemsByCategory } from '$lib/data/problems';
 
-	const problemsCopii = getProblemsByCategory('copii');
-	const problemsAdulti = getProblemsByCategory('adulti');
+	let { data } = $props();
+
+	// Folosim datele din Sanity dacă există, altfel fallback la datele statice
+	const problemsCopii = data.cms?.length
+		? data.cms.filter((p: { category: string }) => p.category === 'copii')
+		: getProblemsByCategory('copii');
+	const problemsAdulti = data.cms?.length
+		? data.cms.filter((p: { category: string }) => p.category === 'adulti')
+		: getProblemsByCategory('adulti');
 </script>
 
 <svelte:head>

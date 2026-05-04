@@ -59,6 +59,60 @@ export type PolicyPage = {
 	lastUpdated?: string;
 } | null;
 
+export const problemsQuery = /* groq */ `
+  *[_type == "problem"] | order(category asc, order asc, title asc) {
+    "slug": slug.current,
+    title,
+    subtitle,
+    category,
+    icon,
+    shortDescription
+  }
+`;
+
+export type ProblemCard = {
+	slug: string;
+	title: string;
+	subtitle?: string;
+	category: 'copii' | 'adulti';
+	icon?: string;
+	shortDescription: string;
+};
+
+export const problemBySlugQuery = /* groq */ `
+  *[_type == "problem" && slug.current == $slug][0] {
+    "slug": slug.current,
+    title,
+    subtitle,
+    category,
+    icon,
+    shortDescription,
+    heroDescription,
+    symptoms,
+    whenToSeekHelp,
+    treatments[]{ name, description },
+    specialists,
+    relatedProblems[]{ title, href },
+    specialtyParam
+  }
+`;
+
+export type ProblemFull = {
+	slug: string;
+	title: string;
+	subtitle?: string;
+	category: 'copii' | 'adulti';
+	icon?: string;
+	shortDescription: string;
+	heroDescription?: string;
+	symptoms?: string[];
+	whenToSeekHelp?: string[];
+	treatments?: Array<{ name: string; description: string }>;
+	specialists?: string[];
+	relatedProblems?: Array<{ title: string; href: string }>;
+	specialtyParam?: string;
+} | null;
+
 export const aboutPageQuery = /* groq */ `
   *[_type == "aboutPage"][0]{
     heroTitle,
