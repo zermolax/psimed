@@ -1,8 +1,20 @@
 <script lang="ts">
 	import Button from '$lib/components/atoms/Button.svelte';
 	import SpecialistCard from '$lib/components/molecules/SpecialistCard.svelte';
+	import { CATEGORY_CONFIG, type DoctorCategory } from '$lib/sanity/categories';
 
 	let { data } = $props();
+
+	// Build the legend from the categories actually present in the data,
+	// sorted by their canonical order. Filter out anything that isn't in
+	// CATEGORY_CONFIG (a Sanity doc with no category set, or an old value
+	// that's no longer in the schema) so the legend never accesses an
+	// undefined config entry.
+	const presentCategories: DoctorCategory[] = Array.from(
+		new Set(data.specialists.map((s) => s.category))
+	)
+		.filter((cat): cat is DoctorCategory => !!cat && cat in CATEGORY_CONFIG)
+		.sort((a, b) => CATEGORY_CONFIG[a].order - CATEGORY_CONFIG[b].order);
 </script>
 
 <svelte:head>
@@ -58,31 +70,23 @@
 </section>
 
 <!-- Category Legend -->
-<section class="py-6 bg-white border-b border-gray-100">
-	<div class="container-custom">
-		<div class="flex flex-wrap items-center justify-center gap-6">
-			<span class="text-sm text-gray-500 font-medium">Filtrează după specialitate:</span>
-			<div class="flex flex-wrap gap-3">
-				<span class="flex items-center gap-2 text-sm">
-					<span class="w-3 h-3 rounded-full bg-primary"></span>
-					Psihiatri
-				</span>
-				<span class="flex items-center gap-2 text-sm">
-					<span class="w-3 h-3 rounded-full bg-secondary"></span>
-					Psihologi
-				</span>
-				<span class="flex items-center gap-2 text-sm">
-					<span class="w-3 h-3 rounded-full bg-accent"></span>
-					Psihoterapeuți
-				</span>
-				<span class="flex items-center gap-2 text-sm">
-					<span class="w-3 h-3 rounded-full bg-nature"></span>
-					Alți Specialiști
-				</span>
+{#if presentCategories.length > 0}
+	<section class="py-6 bg-white border-b border-gray-100">
+		<div class="container-custom">
+			<div class="flex flex-wrap items-center justify-center gap-6">
+				<span class="text-sm text-gray-500 font-medium">Categorii:</span>
+				<div class="flex flex-wrap gap-3">
+					{#each presentCategories as cat}
+						<span class="flex items-center gap-2 text-sm">
+							<span class="w-3 h-3 rounded-full {CATEGORY_CONFIG[cat].bgClass}"></span>
+							{CATEGORY_CONFIG[cat].label}
+						</span>
+					{/each}
+				</div>
 			</div>
 		</div>
-	</div>
-</section>
+	</section>
+{/if}
 
 <!-- All Specialists Grid -->
 <section class="section-spacing bg-gray-50">

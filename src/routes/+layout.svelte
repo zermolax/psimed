@@ -1,10 +1,16 @@
 <script lang="ts">
 	import '../app.css';
+	import { onMount } from 'svelte';
 	import favicon from '$lib/assets/favicon.svg';
 	import Header from '$lib/components/organisms/Header.svelte';
 	import Footer from '$lib/components/organisms/Footer.svelte';
 
-	let { children } = $props();
+	let { children, data } = $props();
+
+	onMount(async () => {
+		const { enableVisualEditing } = await import('@sanity/visual-editing');
+		return enableVisualEditing();
+	});
 </script>
 
 <svelte:head>
@@ -24,5 +30,5 @@
 		{@render children()}
 	</main>
 
-	<Footer />
+	<Footer siteSettings={data?.siteSettings ?? null} />
 </div>
