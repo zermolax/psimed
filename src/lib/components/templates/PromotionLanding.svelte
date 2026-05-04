@@ -54,7 +54,6 @@
 	{#each data.altLanguages as alt}
 		<link rel="alternate" hreflang={alt.locale} href={alt.url} />
 	{/each}
-	<html lang={data.locale} />
 </svelte:head>
 
 <section class="bg-gradient-to-b from-emerald-50/40 via-white to-white py-12 md:py-16">
