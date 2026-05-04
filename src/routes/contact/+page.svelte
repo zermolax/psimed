@@ -55,7 +55,7 @@
 	<title>Contact - Clinica Sf. Gherasim</title>
 	<meta
 		name="description"
-		content="Contactează Clinica Sf. Gherasim din Bacău. Telefon: 0711 039 666. Programări, informații și întrebări despre serviciile noastre."
+		content="Contactează Clinica Sf. Gherasim din Bacău. Telefon: 0376 501 501. Programări, informații și întrebări despre serviciile noastre."
 	/>
 </svelte:head>
 
@@ -83,7 +83,7 @@
 				<!-- Contact Cards -->
 				<div class="space-y-6 mb-8">
 					<a
-						href="tel:+40711039666"
+						href="tel:+40376501501"
 						class="flex items-start space-x-4 p-6 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors border-2 border-gray-200"
 					>
 						<div class="flex-shrink-0 p-3 bg-gray-900 rounded-xl">
@@ -91,7 +91,7 @@
 						</div>
 						<div>
 							<h3 class="font-bold mb-1 text-gray-900">Telefon</h3>
-							<p class="text-lg text-gray-900 font-bold">+40 711 039 666</p>
+							<p class="text-lg text-gray-900 font-bold">+40 376 501 501</p>
 							<p class="text-sm text-gray-700 mt-1">Luni - Vineri: 09:00 - 18:00</p>
 						</div>
 					</a>
@@ -288,7 +288,7 @@
 	<div class="container-custom max-w-3xl">
 		<h2 class="text-3xl font-bold text-center mb-12 text-gray-900">Întrebări frecvente</h2>
 		<div class="space-y-6">
-			{#each [ { q: 'Cum pot face o programare?', a: 'Poți face o programare online prin sistemul nostru de rezervări, telefonic la +40 711 039 666, sau prin email la office@clinicasfgherasim.ro.' }, { q: 'Acceptați card de sănătate?', a: 'Da, acceptăm card de sănătate pentru consultațiile acoperite de Casa de Asigurări de Sănătate. Unele servicii specializate se decontează separat.' }, { q: 'Cât durează o consultație?', a: 'O consultație inițială durează aproximativ 60 de minute, iar consultațiile de follow-up durează 30-45 de minute.' }, { q: 'Este nevoie de recomandare de la medicul de familie?', a: 'Pentru consultații private nu este nevoie de recomandare. Pentru decontare prin CNAS, este necesară trimitere de la medicul de familie.' } ] as faq}
+			{#each [ { q: 'Cum pot face o programare?', a: 'Poți face o programare online prin sistemul nostru de rezervări, telefonic la +40 376 501 501, sau prin email la office@clinicasfgherasim.ro.' }, { q: 'Acceptați card de sănătate?', a: 'Da, acceptăm card de sănătate pentru consultațiile acoperite de Casa de Asigurări de Sănătate. Unele servicii specializate se decontează separat.' }, { q: 'Cât durează o consultație?', a: 'O consultație inițială durează aproximativ 60 de minute, iar consultațiile de follow-up durează 30-45 de minute.' }, { q: 'Este nevoie de recomandare de la medicul de familie?', a: 'Pentru consultații private nu este nevoie de recomandare. Pentru decontare prin CNAS, este necesară trimitere de la medicul de familie.' } ] as faq}
 				<div class="border-b border-gray-200 pb-6">
 					<h3 class="text-lg font-bold mb-2 text-gray-900">{faq.q}</h3>
 					<p class="text-gray-700">{faq.a}</p>
