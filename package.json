@@ -33,6 +33,7 @@
 		"vite": "^7.2.6"
 	},
 	"dependencies": {
+		"@portabletext/svelte": "^3.0.1",
 		"@sanity/client": "^7.22.0",
 		"@sanity/sveltekit": "^1.0.6",
 		"@sanity/vision": "^5.23.0",

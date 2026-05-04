@@ -1,9 +1,14 @@
 <script lang="ts">
 	import Button from '$lib/components/atoms/Button.svelte';
+	import PortableBody from '$lib/components/atoms/PortableBody.svelte';
+
+	let { data } = $props();
+	const cms = data?.cms;
+	const fallbackTitle = 'Politica de Livrare';
 </script>
 
 <svelte:head>
-	<title>Politica de Livrare - Clinica Sf. Gherasim</title>
+	<title>{cms?.title ?? fallbackTitle} - Clinica Sf. Gherasim</title>
 	<meta
 		name="description"
 		content="Politica de livrare și confirmare a programărilor la Clinica Sf. Gherasim - PSIMED din Bacău."
@@ -13,8 +18,20 @@
 <section class="py-16 bg-gray-50">
 	<div class="container-custom">
 		<div class="max-w-4xl mx-auto">
-			<h1 class="text-4xl font-black text-gray-900 mb-8">Politica de Livrare</h1>
+			<h1 class="text-4xl font-black text-gray-900 mb-8">{cms?.title ?? fallbackTitle}</h1>
 
+			{#if cms?.body}
+				<div class="bg-white rounded-xl p-8 shadow-sm">
+					<PortableBody value={cms.body} />
+					{#if cms.lastUpdated}
+						<div class="pt-6 mt-6 border-t border-gray-200">
+							<p class="text-sm text-gray-500">
+								Ultima actualizare: {new Date(cms.lastUpdated).toLocaleDateString('ro-RO', { year: 'numeric', month: 'long', day: 'numeric' })}
+							</p>
+						</div>
+					{/if}
+				</div>
+			{:else}
 			<div class="bg-white rounded-xl p-8 shadow-sm space-y-6 text-gray-700">
 				<section>
 					<h2 class="text-xl font-bold text-gray-900 mb-3">
@@ -99,6 +116,7 @@
 					<p class="text-sm text-gray-500">Ultima actualizare: Februarie 2026</p>
 				</div>
 			</div>
+			{/if}
 
 			<div class="mt-8 text-center">
 				<Button href="/" variant="secondary">Înapoi la pagina principală</Button>

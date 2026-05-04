@@ -44,3 +44,31 @@ export type Doctor = {
 	medsoftDoctorId?: string;
 	image?: string;
 };
+
+export const policyPageQuery = /* groq */ `
+  *[_type == "policyPage" && key == $key][0]{
+    title,
+    body,
+    lastUpdated
+  }
+`;
+
+export type PolicyPage = {
+	title: string;
+	body: unknown[];
+	lastUpdated?: string;
+} | null;
+
+export const aboutPageQuery = /* groq */ `
+  *[_type == "aboutPage"][0]{
+    heroTitle,
+    heroLead,
+    body
+  }
+`;
+
+export type AboutPage = {
+	heroTitle: string;
+	heroLead?: string;
+	body?: unknown[];
+} | null;

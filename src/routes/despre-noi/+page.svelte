@@ -1,10 +1,14 @@
 <script lang="ts">
 	import Button from '$lib/components/atoms/Button.svelte';
 	import Icon from '$lib/components/atoms/Icon.svelte';
+	import PortableBody from '$lib/components/atoms/PortableBody.svelte';
+
+	let { data } = $props();
+	const cms = data?.cms;
 </script>
 
 <svelte:head>
-	<title>Despre Noi - Clinica Sf. Gherasim</title>
+	<title>{cms?.heroTitle ?? 'Despre Noi'} - Clinica Sf. Gherasim</title>
 	<meta
 		name="description"
 		content="Clinica Sf. Gherasim - PSIMED oferă servicii de psihiatrie și psihologie în Bacău de peste 15 ani. Descoperă povestea, misiunea și valorile noastre."
@@ -17,12 +21,17 @@
 
 	<div class="container-custom relative z-10">
 		<div class="max-w-4xl">
-			<h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
-				Despre <span class="text-primary">Clinica Sf. Gherasim</span>
-			</h1>
+			{#if cms?.heroTitle}
+				<h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
+					{cms.heroTitle}
+				</h1>
+			{:else}
+				<h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
+					Despre <span class="text-primary">Clinica Sf. Gherasim</span>
+				</h1>
+			{/if}
 			<p class="text-xl text-gray-700 leading-relaxed mb-8">
-				De peste 15 ani, suntem dedicați îmbunătățirii sănătății mentale a comunității din Bacău
-				și împrejurimi. Oferim servicii medicale de înaltă calitate într-un mediu sigur și primitor.
+				{cms?.heroLead ?? 'De peste 15 ani, suntem dedicați îmbunătățirii sănătății mentale a comunității din Bacău și împrejurimi. Oferim servicii medicale de înaltă calitate într-un mediu sigur și primitor.'}
 			</p>
 			<div class="flex flex-wrap gap-4">
 				<Button href="/specialisti" variant="primary" size="lg">
@@ -69,21 +78,27 @@
 				<h2 class="text-3xl md:text-4xl font-black mt-2 mb-6 text-gray-900">
 					O Clinică Născută din Pasiune
 				</h2>
-				<div class="space-y-4 text-lg text-gray-700">
-					<p>
-						Clinica Sf. Gherasim - PSIMED a fost înființată cu o viziune clară: să aducem servicii
-						de sănătate mentală de calitate în regiunea Moldovei, într-un mediu lipsit de stigmatizare.
-					</p>
-					<p>
-						Am pornit de la un cabinet modest, dar cu o mare dorință de a ajuta. Astăzi, am crescut
-						într-o clinică completă, oferind o gamă largă de servicii - de la psihiatrie și
-						psihologie clinică până la terapii moderne precum neurofeedback.
-					</p>
-					<p>
-						Fiecare pas al acestei călătorii a fost ghidat de pacienții noștri și de nevoile lor.
-						Ei sunt în centrul a tot ceea ce facem.
-					</p>
-				</div>
+				{#if cms?.body && cms.body.length > 0}
+					<div class="space-y-4 text-lg text-gray-700">
+						<PortableBody value={cms.body} />
+					</div>
+				{:else}
+					<div class="space-y-4 text-lg text-gray-700">
+						<p>
+							Clinica Sf. Gherasim - PSIMED a fost înființată cu o viziune clară: să aducem servicii
+							de sănătate mentală de calitate în regiunea Moldovei, într-un mediu lipsit de stigmatizare.
+						</p>
+						<p>
+							Am pornit de la un cabinet modest, dar cu o mare dorință de a ajuta. Astăzi, am crescut
+							într-o clinică completă, oferind o gamă largă de servicii - de la psihiatrie și
+							psihologie clinică până la terapii moderne precum neurofeedback.
+						</p>
+						<p>
+							Fiecare pas al acestei călătorii a fost ghidat de pacienții noștri și de nevoile lor.
+							Ei sunt în centrul a tot ceea ce facem.
+						</p>
+					</div>
+				{/if}
 			</div>
 			<div class="relative">
 				<div class="bg-gradient-to-br from-primary to-primary-dark rounded-3xl p-12 text-white">
