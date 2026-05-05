@@ -28,7 +28,7 @@
 </svelte:head>
 
 <div class="flex flex-col min-h-screen">
-	<Header />
+	<Header siteSettings={data?.siteSettings ?? null} />
 
 	<main class="flex-grow">
 		{@render children()}

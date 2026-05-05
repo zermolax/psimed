@@ -2,10 +2,16 @@
 	import { page } from '$app/stores';
 	import Button from '../atoms/Button.svelte';
 	import Icon from '../atoms/Icon.svelte';
+	import type { SiteSettings } from '$lib/queries';
+
+	let { siteSettings = null }: { siteSettings?: SiteSettings } = $props();
 
 	let mobileMenuOpen = $state(false);
 
-	const navigation = [
+	type NavChild = { name: string; href: string; isHeader?: boolean };
+	type NavItem = { name: string; href: string; children?: NavChild[] };
+
+	const fallbackNavigation: NavItem[] = [
 		{ name: 'Acasă', href: '/' },
 		{
 			name: 'Ce Tratăm',
@@ -29,6 +35,21 @@
 		{ name: 'Promoții', href: '/promotii' },
 		{ name: 'Contact', href: '/contact' }
 	];
+
+	// Mapăm structura din CMS (label/isHeading) la cea așteptată de template (name/isHeader).
+	// Dacă siteSettings.navigation e gol/lipsă → folosim fallback-ul hardcodat.
+	const navigation: NavItem[] =
+		siteSettings?.navigation && siteSettings.navigation.length > 0
+			? siteSettings.navigation.map((item) => ({
+					name: item.label,
+					href: item.href,
+					children: item.children?.map((child) => ({
+						name: child.label,
+						href: child.href ?? '',
+						isHeader: child.isHeading
+					}))
+				}))
+			: fallbackNavigation;
 
 	function toggleMobileMenu() {
 		mobileMenuOpen = !mobileMenuOpen;

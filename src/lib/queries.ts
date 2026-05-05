@@ -84,15 +84,37 @@ export const siteSettingsQuery = /* groq */ `
     title,
     phone,
     email,
-    address
+    address,
+    navigation[]{
+      label,
+      href,
+      children[]{
+        label,
+        href,
+        isHeading
+      }
+    }
   }
 `;
+
+export type NavChild = {
+	label: string;
+	href?: string;
+	isHeading?: boolean;
+};
+
+export type NavItem = {
+	label: string;
+	href: string;
+	children?: NavChild[];
+};
 
 export type SiteSettings = {
 	title?: string;
 	phone?: string;
 	email?: string;
 	address?: string;
+	navigation?: NavItem[];
 } | null;
 
 export const doctorsQuery = /* groq */ `
