@@ -22,6 +22,11 @@ const config = {
 			// SvelteKit's default CSRF check blocks it with 403 — disable globally.
 			// Safe: our frontend uses fetch+JSON, not traditional form POSTs.
 			checkOrigin: false
+		},
+		prerender: {
+			// Catch-all /[...slug] is prerenderable but may have 0 entries (no pages
+			// in Sanity yet) and no internal links. Don't fail the build in that case.
+			handleUnseenRoutes: 'warn'
 		}
 	}
 };
