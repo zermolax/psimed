@@ -1,3 +1,31 @@
+export const pageBySlugQuery = /* groq */ `
+  *[_type == "page" && slug.current == $slug][0] {
+    title,
+    "slug": slug.current,
+    heroTitle,
+    heroLead,
+    body,
+    seoTitle,
+    seoDescription
+  }
+`;
+
+export type GenericPage = {
+	title: string;
+	slug: string;
+	heroTitle?: string;
+	heroLead?: string;
+	body?: unknown[];
+	seoTitle?: string;
+	seoDescription?: string;
+} | null;
+
+export const allPageSlugsQuery = /* groq */ `
+  *[_type == "page" && defined(slug.current)] {
+    "slug": slug.current
+  }
+`;
+
 export const siteSettingsQuery = /* groq */ `
   *[_type == "siteSettings"][0]{
     title,
