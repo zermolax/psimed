@@ -1,326 +1,432 @@
 <script lang="ts">
-	import Button from '$lib/components/atoms/Button.svelte';
 	import Icon from '$lib/components/atoms/Icon.svelte';
-	import ProblemCard from '$lib/components/molecules/ProblemCard.svelte';
 
-	const problems = [
+	let { data } = $props();
+	const featuredDoctors = data.featuredDoctors;
+	const featuredConditions = data.featuredConditions;
+
+	const trustPillars = [
 		{
-			title: 'Autism / TSA',
-			description: 'Evaluare și intervenție timpurie pentru tulburările din spectrul autist.',
-			href: '/ce-tratam/autism-tsa',
-			icon: 'brain',
-			category: 'copii' as const
+			icon: 'heart' as const,
+			title: 'Empatie înainte de toate',
+			desc: 'Fiecare pacient este ascultat cu atenție. Creăm un spațiu sigur, fără judecată.'
 		},
 		{
-			title: 'ADHD',
-			description: 'Diagnostic și tratament pentru deficitul de atenție și hiperactivitate.',
-			href: '/ce-tratam/adhd',
-			icon: 'brain',
-			category: 'copii' as const
+			icon: 'brain' as const,
+			title: 'Expertiză clinică verificată',
+			desc: 'Specialiști cu formare continuă, utilizând metode validate științific.'
 		},
 		{
-			title: 'Anxietate la copii',
-			description: 'Ajutor pentru copiii care se confruntă cu frici, griji și anxietate.',
-			href: '/ce-tratam/anxietate-copii',
-			icon: 'heart',
-			category: 'copii' as const
-		},
-		{
-			title: 'Depresie',
-			description: 'Tratament complet pentru depresie și tulburări de dispoziție.',
-			href: '/ce-tratam/depresie',
-			icon: 'heart',
-			category: 'adulti' as const
-		},
-		{
-			title: 'Anxietate',
-			description: 'Terapie pentru anxietate, atacuri de panică și fobii.',
-			href: '/ce-tratam/anxietate',
-			icon: 'heart',
-			category: 'adulti' as const
-		},
-		{
-			title: 'Tulburări de somn',
-			description: 'Soluții pentru insomnie și alte probleme de somn.',
-			href: '/ce-tratam/tulburari-somn',
-			icon: 'brain',
-			category: 'adulti' as const
+			icon: 'check' as const,
+			title: 'Rezultate dovedite',
+			desc: 'Planuri de tratament personalizate, cu urmărire atentă a progresului.'
 		}
 	];
 
 	const services = [
 		{
+			icon: 'user' as const,
 			title: 'Psihiatrie Adulți',
-			icon: 'user',
-			description: 'Diagnostic și tratament pentru tulburări psihiatrice la adulți.',
-			href: '/servicii#psihiatrie-adulti',
-			bgColor: 'bg-primary-light',
-			textColor: 'text-primary-dark',
-			iconBg: 'bg-primary'
+			desc: 'Diagnostic și tratament pentru tulburări psihiatrice la adulți, abordare personalizată.',
+			accent: 'primary' as const,
+			href: '/servicii-si-preturi'
 		},
 		{
+			icon: 'heart' as const,
 			title: 'Psihiatrie Pediatrică',
-			icon: 'child',
-			description: 'Îngrijire specializată pentru copii și adolescenți.',
-			href: '/servicii#psihiatrie-pediatrica',
-			bgColor: 'bg-secondary-light',
-			textColor: 'text-secondary-dark',
-			iconBg: 'bg-secondary'
+			desc: 'Îngrijire specializată pentru copii și adolescenți, în colaborare cu familia.',
+			accent: 'teal' as const,
+			href: '/psihologie-pediatrica'
 		},
 		{
+			icon: 'brain' as const,
 			title: 'Psihologie Clinică',
-			icon: 'brain',
-			description: 'Evaluări psihologice și consiliere specializată.',
-			href: '/servicii#psihologie-clinica',
-			bgColor: 'bg-accent-light',
-			textColor: 'text-accent-dark',
-			iconBg: 'bg-accent'
+			desc: 'Evaluări psihologice complete cu instrumente gold-standard și consiliere.',
+			accent: 'primary' as const,
+			href: '/servicii-si-preturi'
 		},
 		{
+			icon: 'heart' as const,
 			title: 'Psihoterapie',
-			icon: 'heart',
-			description: 'Terapie individuală și de grup pentru diverse probleme.',
-			href: '/servicii#psihoterapie',
-			bgColor: 'bg-nature-light',
-			textColor: 'text-nature-dark',
-			iconBg: 'bg-nature'
+			desc: 'Terapie individuală și de grup pentru diverse provocări emoționale.',
+			accent: 'teal' as const,
+			href: '/servicii-si-preturi'
 		},
 		{
-			title: 'Evaluări Psihologice',
-			icon: 'brain',
-			description: 'Evaluări comprehensive cu instrumente diagnostice gold-standard.',
-			href: '/evaluari-psihologice',
-			bgColor: 'bg-accent-light',
-			textColor: 'text-accent-dark',
-			iconBg: 'bg-accent'
-		},
-		{
+			icon: 'brain' as const,
 			title: 'Neurofeedback',
-			icon: 'brain',
-			description: 'Tratament modern pentru ADHD, anxietate și alte tulburări.',
-			href: '/tratamente/neurofeedback',
-			bgColor: 'bg-sunshine-light',
-			textColor: 'text-gray-800',
-			iconBg: 'bg-sunshine'
+			desc: 'Tratament modern pentru ADHD, anxietate și alte tulburări neurologice.',
+			accent: 'primary' as const,
+			href: '/servicii-si-preturi'
 		},
 		{
+			icon: 'brain' as const,
 			title: 'Hipnoză Clinică',
-			icon: 'brain',
-			description: 'Terapie prin hipnoză pentru diverse afecțiuni.',
-			href: '/tratamente/hipnoza-clinica',
-			bgColor: 'bg-primary-light',
-			textColor: 'text-primary-dark',
-			iconBg: 'bg-primary'
+			desc: 'Terapie prin hipnoză pentru diverse afecțiuni, în context clinic riguros.',
+			accent: 'teal' as const,
+			href: '/servicii-si-preturi'
 		}
 	];
+
+	const stats = [
+		{ value: '15+', label: 'Ani experiență' },
+		{ value: '5000+', label: 'Pacienți ajutați' },
+		{ value: '95%', label: 'Satisfacție' }
+	];
+
+	const testimonials = [
+		{
+			name: 'M.I.',
+			role: 'Pacientă, terapie pentru anxietate',
+			text: 'Am venit cu multă reticență, dar echipa m-a primit cu căldură. După 6 luni de terapie, mă simt o altă persoană. Recomand cu toată inima.'
+		},
+		{
+			name: 'T.A.',
+			role: 'Părinte, copil cu ADHD',
+			text: 'Fiul meu a progresat incredibil datorită specialiștilor de la Psimed. Sunt profesioniști adevărați, dar și oameni empatici și răbdători.'
+		},
+		{
+			name: 'C.D.',
+			role: 'Pacient, tratament depresie',
+			text: 'Clinica Sf. Gherasim mi-a schimbat viața. Abordarea personalizată și urmărirea atentă a fiecărui pas au făcut toată diferența.'
+		}
+	];
+
+	const trustBadges = ['15+ ani experiență', 'Tratamente moderne', 'Echipă dedicată'];
 </script>
 
 <svelte:head>
-	<title>Clinica Sf. Gherasim - Psihiatrie și Psihologie în Bacău</title>
+	<title>Clinica Sf. Gherasim - PSIMED Bacău | Psihiatrie & Psihologie</title>
 	<meta
 		name="description"
-		content="Clinică de psihiatrie și psihologie în Bacău. Oferim tratamente moderne și personalizate pentru sănătatea ta mentală."
+		content="Clinică de psihiatrie și psihologie în Bacău. Tratamente moderne pentru sănătate mentală: psihiatrie adulți și pediatrică, psihoterapie, neurofeedback, evaluări psihologice."
 	/>
 </svelte:head>
 
-<!-- Hero Section - High Contrast -->
-<section class="relative overflow-hidden bg-gradient-to-br from-primary-light via-white to-secondary-light py-20 md:py-28">
-	<!-- Decorative blobs - subtle -->
-	<div class="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-	<div class="absolute bottom-0 left-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3"></div>
+<div class="font-['Plus_Jakarta_Sans']">
+	<!-- HERO -->
+	<section class="bg-[#f8f9fa] py-20 md:py-24">
+		<div class="container-custom">
+			<div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+				<div>
+					<span
+						class="inline-block text-xs font-bold uppercase tracking-[0.12em] text-[#155e75] mb-5"
+					>
+						Psihiatrie · Psihologie · Psihoterapie
+					</span>
+					<h1
+						class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[1.05] mb-5"
+					>
+						Îngrijire<br />
+						<span class="text-[#c13333]">Psihiatrică</span><br />
+						de Încredere
+					</h1>
+					<p class="text-lg text-gray-600 leading-[1.7] mb-9 max-w-md">
+						Oferim tratamente moderne și personalizate pentru sănătatea ta mentală. Echipa noastră
+						de specialiști îți stă alături cu profesionalism și empatie.
+					</p>
+					<div class="flex flex-wrap gap-3 mb-10">
+						<a
+							href="/programare"
+							class="inline-flex items-center gap-2 bg-[#c13333] hover:bg-[#a52828] text-white font-bold text-base px-8 py-3.5 rounded transition-colors"
+						>
+							<Icon name="calendar" size="16" />
+							Programează consultație
+						</a>
+						<a
+							href="/ce-tratam"
+							class="inline-flex items-center gap-2 border-2 border-[#155e75] text-[#155e75] hover:bg-[#155e75] hover:text-white font-bold text-base px-8 py-3.5 rounded transition-colors"
+						>
+							Ce tratăm
+							<Icon name="arrow-right" size="16" />
+						</a>
+					</div>
+					<div class="flex flex-wrap gap-3">
+						{#each trustBadges as badge}
+							<div
+								class="inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded px-3.5 py-1.5 shadow-sm"
+							>
+								<span class="text-[#155e75]">
+									<Icon name="check" size="14" />
+								</span>
+								<span class="text-sm font-semibold text-gray-900">{badge}</span>
+							</div>
+						{/each}
+					</div>
+				</div>
+				<div class="flex flex-col gap-4">
+					<div
+						class="aspect-[4/3] bg-gradient-to-br from-[#cffafe] to-[#fef2f2] rounded flex items-center justify-center border border-gray-200"
+					>
+						<span class="text-sm text-gray-500 text-center px-6">
+							fotografie clinică · echipă medicală · spații prietenoase
+						</span>
+					</div>
+					<div class="grid grid-cols-3 gap-3">
+						{#each stats as stat}
+							<div class="bg-white border border-gray-200 rounded p-4 text-center">
+								<div class="text-3xl font-extrabold text-[#c13333] leading-none">
+									{stat.value}
+								</div>
+								<div class="text-[11px] text-gray-500 mt-1">{stat.label}</div>
+							</div>
+						{/each}
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
-	<div class="container-custom relative z-10">
-		<div class="grid md:grid-cols-2 gap-12 items-center">
-			<div class="space-y-8">
-				<div class="inline-block">
-					<span class="bg-gray-900 text-white px-5 py-3 rounded-full text-sm font-bold shadow-lg">
-						✨ Îngrijire cu suflet pentru sănătatea ta mentală
+	<!-- TRUST PILLARS -->
+	<section class="bg-gray-900 py-14">
+		<div class="container-custom">
+			<div class="grid md:grid-cols-3 gap-10">
+				{#each trustPillars as pillar, i}
+					<div
+						class="flex flex-col gap-3.5 px-2 {i > 0
+							? 'md:pl-10 md:border-l md:border-white/10'
+							: ''}"
+					>
+						<div class="text-[#c13333]">
+							<Icon name={pillar.icon} size="28" />
+						</div>
+						<h3 class="text-xl font-extrabold text-white">{pillar.title}</h3>
+						<p class="text-sm text-white/60 leading-[1.7]">{pillar.desc}</p>
+					</div>
+				{/each}
+			</div>
+		</div>
+	</section>
+
+	<!-- SERVICES -->
+	<section class="bg-white py-20 md:py-24 border-y border-gray-200">
+		<div class="container-custom">
+			<div class="mb-12">
+				<div class="flex items-center gap-2.5 mb-2.5">
+					<span class="w-7 h-px bg-[#155e75]"></span>
+					<span class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#155e75]">
+						Serviciile Noastre
 					</span>
 				</div>
-
-				<h1 class="text-5xl md:text-6xl lg:text-7xl font-black leading-tight text-gray-900">
-					Îngrijire
-					<span class="text-primary">Psihiatrică</span>
-					de Încredere
-				</h1>
-
-				<p class="text-xl md:text-2xl text-gray-700 leading-relaxed">
-					Oferim tratamente moderne și personalizate pentru sănătatea ta mentală.
-					Echipa noastră de specialiști îți stă la dispoziție cu căldură și profesionalism.
-				</p>
-
-				<div class="flex flex-col sm:flex-row gap-4 pt-2">
-					<Button href="/programare" variant="primary" size="lg">
-						🗓️ Programează Consultație
-					</Button>
-					<Button href="/ce-tratam" variant="secondary" size="lg">
-						Ce Tratăm
-					</Button>
-				</div>
-
-				<!-- Trust Indicators -->
-				<div class="flex flex-wrap gap-4 pt-4">
-					<div class="flex items-center space-x-2 bg-white px-4 py-3 rounded-full shadow-md border-2 border-nature/20">
-						<Icon name="check" size="20" class="text-nature" />
-						<span class="text-sm font-bold text-gray-800">15+ ani experiență</span>
-					</div>
-					<div class="flex items-center space-x-2 bg-white px-4 py-3 rounded-full shadow-md border-2 border-accent/20">
-						<Icon name="check" size="20" class="text-accent" />
-						<span class="text-sm font-bold text-gray-800">Tratamente moderne</span>
-					</div>
-					<div class="flex items-center space-x-2 bg-white px-4 py-3 rounded-full shadow-md border-2 border-secondary/20">
-						<Icon name="check" size="20" class="text-secondary" />
-						<span class="text-sm font-bold text-gray-800">Echipă dedicată</span>
-					</div>
-				</div>
+				<h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+					Îngrijire Completă pentru
+					<span class="text-[#c13333]">Sănătatea Ta</span>
+				</h2>
 			</div>
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+				{#each services as svc}
+					{@const c = svc.accent === 'primary' ? '#c13333' : '#155e75'}
+					{@const cl = svc.accent === 'primary' ? '#fef2f2' : '#cffafe'}
+					<a
+						href={svc.href}
+						class="group block bg-white rounded p-7 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all"
+						style="border-top: 3px solid {c};"
+					>
+						<div
+							class="w-11 h-11 rounded flex items-center justify-center mb-4"
+							style="background: {cl}; color: {c};"
+						>
+							<Icon name={svc.icon} size="22" />
+						</div>
+						<h3 class="text-xl font-extrabold text-gray-900 mb-2">{svc.title}</h3>
+						<p class="text-sm text-gray-500 leading-[1.65] mb-4">{svc.desc}</p>
+						<span
+							class="inline-flex items-center gap-1 text-sm font-semibold"
+							style="color: {c};"
+						>
+							Află mai mult
+							<Icon name="arrow-right" size="13" />
+						</span>
+					</a>
+				{/each}
+			</div>
+		</div>
+	</section>
 
-			<!-- Hero Visual -->
-			<div class="relative hidden md:block">
-				<div class="relative aspect-square rounded-3xl bg-white border-4 border-primary/20 shadow-2xl p-12 hover:border-primary/40 transition-all duration-500">
-					<div class="w-full h-full flex items-center justify-center">
-						<div class="text-center">
-							<div class="text-8xl mb-6">🧠✨</div>
-							<p class="text-3xl font-black text-gray-900 mb-2">
-								Sănătate Mentală
-							</p>
-							<p class="text-xl font-semibold text-gray-600">pentru toată familia</p>
+	<!-- CONDITIONS -->
+	<section class="bg-[#f8f9fa] py-20 md:py-24">
+		<div class="container-custom">
+			<div class="mb-12 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
+				<div>
+					<div class="flex items-center gap-2.5 mb-2.5">
+						<span class="w-7 h-px bg-[#155e75]"></span>
+						<span class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#155e75]">
+							Ce Tratăm
+						</span>
+					</div>
+					<h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+						Afecțiuni <span class="text-[#c13333]">Frecvente</span>
+					</h2>
+				</div>
+				<a
+					href="/ce-tratam"
+					class="inline-flex items-center gap-2 border-2 border-[#c13333] text-[#c13333] hover:bg-[#c13333] hover:text-white font-bold text-sm px-5 py-2.5 rounded transition-colors self-start"
+				>
+					Vezi toate
+					<Icon name="arrow-right" size="13" />
+				</a>
+			</div>
+			<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+				{#each featuredConditions as condition}
+					{@const isChild = condition.category === 'copii'}
+					{@const c = isChild ? '#155e75' : '#c13333'}
+					{@const cl = isChild ? '#cffafe' : '#fef2f2'}
+					<a
+						href="/ce-tratam/{condition.slug}"
+						class="flex gap-4 items-start bg-white rounded p-5 border border-gray-200 hover:shadow-lg transition-shadow"
+					>
+						<div
+							class="flex-shrink-0 w-9 h-9 rounded flex items-center justify-center mt-0.5"
+							style="background: {cl}; color: {c};"
+						>
+							<Icon name={(condition.icon as 'brain' | 'heart' | 'child' | 'user') ?? 'brain'} size="16" />
+						</div>
+						<div>
+							<div class="text-[15px] font-bold text-gray-900 mb-1">{condition.title}</div>
+							<div class="text-xs text-gray-500 leading-[1.6] mb-2">
+								{condition.shortDescription}
+							</div>
+							<span
+								class="inline-block text-[11px] font-bold text-white px-2.5 py-0.5 rounded-full"
+								style="background: {c};"
+							>
+								{isChild ? 'Copii' : 'Adulți'}
+							</span>
+						</div>
+					</a>
+				{/each}
+			</div>
+		</div>
+	</section>
+
+	<!-- TESTIMONIALS -->
+	<section class="bg-gray-900 py-20 md:py-24 text-white relative overflow-hidden">
+		<div
+			class="absolute -top-52 -right-24 w-96 h-96 rounded-full blur-[80px] opacity-[0.12]"
+			style="background: #c13333;"
+		></div>
+		<div
+			class="absolute -bottom-36 -left-24 w-[350px] h-[350px] rounded-full blur-[80px] opacity-[0.15]"
+			style="background: #155e75;"
+		></div>
+
+		<div class="container-custom relative z-10">
+			<div class="text-center mb-14">
+				<div class="flex items-center justify-center gap-2.5 mb-2.5">
+					<span class="w-7 h-px bg-[#c13333]"></span>
+					<span class="text-[11px] font-bold uppercase tracking-[0.18em] text-white/65">
+						Ce Spun Pacienții
+					</span>
+					<span class="w-7 h-px bg-[#c13333]"></span>
+				</div>
+				<h2 class="text-4xl md:text-5xl font-extrabold text-white leading-tight">
+					Povești de <span class="text-[#c13333]">Recuperare</span>
+				</h2>
+			</div>
+			<div class="grid md:grid-cols-3 gap-6">
+				{#each testimonials as t}
+					<div class="bg-white/[0.04] rounded p-8 relative border border-white/10">
+						<div class="flex gap-0.5 mb-4">
+							{#each [1, 2, 3, 4, 5] as _}
+								<svg
+									width="14"
+									height="14"
+									viewBox="0 0 24 24"
+									fill="#fbbf24"
+									aria-hidden="true"
+								>
+									<polygon
+										points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"
+									/>
+								</svg>
+							{/each}
+						</div>
+						<p class="text-sm text-white/90 leading-[1.75] mb-5">{t.text}</p>
+						<div class="border-t border-white/10 pt-4">
+							<div class="text-sm font-bold text-white">{t.name}</div>
+							<div class="text-xs text-white/55">{t.role}</div>
 						</div>
 					</div>
-				</div>
+				{/each}
+			</div>
+		</div>
+	</section>
 
-				<!-- Floating badges - removed duplicate/unclear labels -->
-				<div class="absolute -top-6 -left-6 bg-gray-900 text-white px-6 py-4 rounded-2xl shadow-xl font-bold border-4 border-white">
-					💝 Empatie
+	<!-- SPECIALISTS TEASER -->
+	<section class="bg-white py-20 md:py-24 border-b border-gray-200">
+		<div class="container-custom">
+			<div class="grid lg:grid-cols-[1fr_1.4fr] gap-14 items-center">
+				<div>
+					<div class="flex items-center gap-2.5 mb-2.5">
+						<span class="w-7 h-px bg-[#155e75]"></span>
+						<span class="text-[11px] font-bold uppercase tracking-[0.18em] text-[#155e75]">
+							Echipa Noastră
+						</span>
+					</div>
+					<h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
+						Specialiști cu <span class="text-[#c13333]">Vocație</span>
+					</h2>
+					<p class="text-base text-gray-500 leading-[1.7] mb-7">
+						Echipa noastră reunește psihiatri, psihologi și psihoterapeuți cu formare continuă și
+						experiență clinică bogată.
+					</p>
+					<a
+						href="/specialisti"
+						class="inline-flex items-center gap-2 bg-[#c13333] hover:bg-[#a52828] text-white font-bold text-base px-7 py-3 rounded transition-colors"
+					>
+						Cunoaște echipa
+						<Icon name="arrow-right" size="15" />
+					</a>
 				</div>
-				<div class="absolute -bottom-6 -right-6 text-white px-6 py-4 rounded-2xl shadow-xl font-bold border-4 border-white" style="background-color: #dd4444;">
-					🌱 Vindecare
+				<div class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+					{#each featuredDoctors as doc}
+						<div class="bg-white rounded overflow-hidden shadow-sm border border-gray-200">
+							<div class="aspect-square bg-gradient-to-br from-[#cffafe] to-[#fef2f2]">
+								{#if doc.image}
+									<img src={doc.image} alt={doc.name} class="w-full h-full object-cover" />
+								{:else}
+									<div class="w-full h-full flex items-center justify-center text-gray-400">
+										<Icon name="user" size="40" />
+									</div>
+								{/if}
+							</div>
+							<div class="p-3">
+								<div class="text-xs font-bold text-gray-900 mb-0.5 truncate">{doc.name}</div>
+								<div class="text-[10px] text-gray-500 capitalize truncate">{doc.title}</div>
+							</div>
+						</div>
+					{/each}
 				</div>
 			</div>
 		</div>
-	</div>
-</section>
+	</section>
 
-<!-- Services Section - Colorful Cards with Good Contrast -->
-<section class="section-spacing bg-white">
-	<div class="container-custom">
-		<div class="text-center max-w-3xl mx-auto mb-16">
-			<span class="text-primary font-bold text-sm uppercase tracking-wider">Serviciile Noastre</span>
-			<h2 class="text-4xl md:text-5xl font-black mt-4 mb-6 text-gray-900">
-				Îngrijire Completă pentru
-				<span class="text-primary">Sănătatea Ta</span>
-			</h2>
-			<p class="text-xl text-gray-700">
-				Oferim o gamă completă de servicii de psihiatrie și psihologie pentru adulți și copii.
-			</p>
-		</div>
-
-		<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-			{#each services as service}
-				<a
-					href={service.href}
-					class="group relative {service.bgColor} rounded-3xl p-8 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-3 border-{service.iconBg.replace('bg-', '')}"
-				>
-					<!-- Content with high contrast -->
-					<h3 class="text-2xl font-bold mb-3 {service.textColor} flex items-center gap-2">
-						<Icon name={service.icon} size="24" class="{service.textColor}" />
-						{service.title}
-					</h3>
-					<p class="text-gray-800 mb-6 leading-relaxed font-medium">{service.description}</p>
-
-					<!-- CTA -->
-					<div class="flex items-center space-x-2 {service.textColor} font-bold group-hover:translate-x-2 transition-transform">
-						<span>Află mai mult</span>
-						<Icon name="arrow-right" size="16" />
-					</div>
-				</a>
-			{/each}
-		</div>
-	</div>
-</section>
-
-<!-- Stats Section - Dark Background with White Text -->
-<section class="section-spacing bg-gray-900 text-white relative overflow-hidden">
-	<!-- Subtle decorative elements -->
-	<div class="absolute inset-0 opacity-5">
-		<div class="absolute top-0 left-0 w-64 h-64 bg-primary rounded-full blur-3xl"></div>
-		<div class="absolute bottom-0 right-0 w-96 h-96 bg-accent rounded-full blur-3xl"></div>
-	</div>
-
-	<div class="container-custom relative z-10">
-		<div class="text-center mb-16">
-			<h2 class="text-4xl md:text-5xl font-black mb-4 text-white">De ce să ne alegi?</h2>
-			<p class="text-xl text-gray-300">Cifre care vorbesc despre dedicarea noastră</p>
-		</div>
-
-		<div class="grid md:grid-cols-4 gap-8">
-			{#each [ { number: '15+', label: 'Ani de experiență', icon: '🏆', color: 'bg-primary' }, { number: '5000+', label: 'Pacienți fericiți', icon: '😊', color: 'bg-nature' }, { number: '10+', label: 'Servicii specializate', icon: '🎯', color: 'bg-accent' }, { number: '95%', label: 'Satisfacție pacienți', icon: '⭐', color: 'bg-sunshine' } ] as stat}
-				<div class="text-center bg-white/5 backdrop-blur rounded-3xl p-8 hover:bg-white/10 transition-all duration-300 hover:scale-105 border border-white/10">
-					<div class="inline-flex items-center justify-center w-20 h-20 {stat.color} rounded-2xl mb-4 text-3xl">
-						{stat.icon}
-					</div>
-					<div class="text-5xl md:text-6xl font-black mb-2 text-white">{stat.number}</div>
-					<div class="text-lg font-semibold text-gray-300">{stat.label}</div>
+	<!-- CTA -->
+	<section class="bg-[#c13333] py-20">
+		<div class="container-custom">
+			<div class="max-w-2xl mx-auto text-center">
+				<h2 class="text-5xl md:text-6xl font-extrabold text-white mb-4 leading-tight">
+					Fă primul pas astăzi
+				</h2>
+				<p class="text-lg text-white/85 mb-9 leading-[1.65]">
+					Programează o consultație și descoperă cum te putem ajuta să îți regăsești echilibrul.
+				</p>
+				<div class="flex flex-wrap justify-center gap-3">
+					<a
+						href="/programare"
+						class="inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-[#c13333] font-bold text-base px-8 py-3.5 rounded transition-colors"
+					>
+						<Icon name="calendar" size="16" />
+						Programează-te acum
+					</a>
+					<a
+						href="/contact"
+						class="inline-flex items-center gap-2 border-2 border-white/50 text-white hover:bg-white/10 font-bold text-base px-8 py-3.5 rounded transition-colors"
+					>
+						Contactează-ne
+					</a>
 				</div>
-			{/each}
-		</div>
-	</div>
-</section>
-
-<!-- Problems Section - What We Treat -->
-<section class="section-spacing bg-gray-50">
-	<div class="container-custom">
-		<div class="text-center max-w-3xl mx-auto mb-16">
-			<span class="text-primary font-bold text-sm uppercase tracking-wider">Ce Tratăm</span>
-			<h2 class="text-4xl md:text-5xl font-black mt-4 mb-6 text-gray-900">
-				Probleme Frecvente pe Care le
-				<span class="text-primary">Tratăm</span>
-			</h2>
-			<p class="text-xl text-gray-700">
-				Suntem specializați în diagnosticul și tratamentul unei game largi de tulburări psihice, atât pentru copii cât și pentru adulți.
-			</p>
-		</div>
-
-		<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-			{#each problems as problem}
-				<ProblemCard
-					title={problem.title}
-					description={problem.description}
-					href={problem.href}
-					icon={problem.icon}
-					category={problem.category}
-				/>
-			{/each}
-		</div>
-
-		<div class="text-center mt-12">
-			<Button href="/ce-tratam" variant="secondary" size="md">
-				Vezi toate problemele pe care le tratăm
-			</Button>
-		</div>
-	</div>
-</section>
-
-<!-- CTA Section - Warm Background with Dark Text -->
-<section class="section-spacing bg-gradient-to-br from-primary-light to-secondary-light">
-	<div class="container-custom">
-		<div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-12 md:p-16 text-center border-4 border-primary/10">
-			<div class="text-6xl mb-6">🌟</div>
-			<h2 class="text-4xl md:text-5xl font-black mb-6 text-gray-900">
-				Gata să faci primul pas?
-			</h2>
-			<p class="text-xl md:text-2xl text-gray-700 mb-10 leading-relaxed">
-				Programează o consultație astăzi și începe călătoria către o sănătate mentală mai bună.
-				Suntem aici pentru tine! 💙
-			</p>
-			<div class="flex flex-col sm:flex-row gap-4 justify-center">
-				<Button href="/programare" variant="primary" size="lg">
-					📅 Programează-te Acum
-				</Button>
-				<Button href="/contact" variant="secondary" size="lg">
-					💬 Contactează-ne
-				</Button>
 			</div>
 		</div>
-	</div>
-</section>
+	</section>
+</div>

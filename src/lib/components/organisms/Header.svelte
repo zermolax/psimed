@@ -12,7 +12,6 @@
 	type NavItem = { name: string; href: string; children?: NavChild[] };
 
 	const fallbackNavigation: NavItem[] = [
-		{ name: 'Acasă', href: '/' },
 		{
 			name: 'Ce Tratăm',
 			href: '/ce-tratam',
@@ -51,6 +50,9 @@
 				}))
 			: fallbackNavigation;
 
+	const phone = siteSettings?.phone || '+40 376 501 501';
+	const phoneHref = `tel:${phone.replace(/\s/g, '')}`;
+
 	function toggleMobileMenu() {
 		mobileMenuOpen = !mobileMenuOpen;
 	}
@@ -61,6 +63,22 @@
 </script>
 
 <header class="sticky top-0 bg-white shadow-sm z-50 transition-shadow duration-300">
+	<!-- Top contact bar -->
+	<div class="bg-gray-900 text-white">
+		<div class="container-custom">
+			<div class="flex flex-wrap items-center justify-between gap-2 py-1.5 text-xs">
+				<span class="text-white/60">Luni–Vineri: 09:00–18:00 · Sâmbătă: la cerere</span>
+				<a
+					href={phoneHref}
+					class="inline-flex items-center gap-1.5 font-semibold text-white hover:text-white/80 transition-colors"
+				>
+					<Icon name="phone" size="14" />
+					{phone}
+				</a>
+			</div>
+		</div>
+	</div>
+
 	<div class="container-custom">
 		<div class="flex justify-between items-center py-4">
 			<!-- Logo -->
