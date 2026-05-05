@@ -168,7 +168,7 @@
 								<div class="text-3xl font-extrabold text-[#c13333] leading-none">
 									{stat.value}
 								</div>
-								<div class="text-[11px] text-gray-500 mt-1">{stat.label}</div>
+								<div class="text-xs text-gray-600 mt-1">{stat.label}</div>
 							</div>
 						{/each}
 					</div>
@@ -191,7 +191,7 @@
 							<Icon name={pillar.icon} size="28" />
 						</div>
 						<h3 class="text-xl font-extrabold text-white">{pillar.title}</h3>
-						<p class="text-sm text-white/60 leading-[1.7]">{pillar.desc}</p>
+						<p class="text-base text-white/75 leading-[1.7]">{pillar.desc}</p>
 					</div>
 				{/each}
 			</div>
@@ -229,7 +229,7 @@
 							<Icon name={svc.icon} size="22" />
 						</div>
 						<h3 class="text-xl font-extrabold text-gray-900 mb-2">{svc.title}</h3>
-						<p class="text-sm text-gray-500 leading-[1.65] mb-4">{svc.desc}</p>
+						<p class="text-base text-gray-600 leading-[1.65] mb-4">{svc.desc}</p>
 						<span
 							class="inline-flex items-center gap-1 text-sm font-semibold"
 							style="color: {c};"
@@ -282,8 +282,8 @@
 							<Icon name={(condition.icon as 'brain' | 'heart' | 'child' | 'user') ?? 'brain'} size="16" />
 						</div>
 						<div>
-							<div class="text-[15px] font-bold text-gray-900 mb-1">{condition.title}</div>
-							<div class="text-xs text-gray-500 leading-[1.6] mb-2">
+							<div class="text-base font-bold text-gray-900 mb-1">{condition.title}</div>
+							<div class="text-sm text-gray-600 leading-[1.6] mb-2">
 								{condition.shortDescription}
 							</div>
 							<span
@@ -341,10 +341,10 @@
 								</svg>
 							{/each}
 						</div>
-						<p class="text-sm text-white/90 leading-[1.75] mb-5">{t.text}</p>
+						<p class="text-base text-white/90 leading-[1.75] mb-5">{t.text}</p>
 						<div class="border-t border-white/10 pt-4">
-							<div class="text-sm font-bold text-white">{t.name}</div>
-							<div class="text-xs text-white/55">{t.role}</div>
+							<div class="text-base font-bold text-white">{t.name}</div>
+							<div class="text-sm text-white/70">{t.role}</div>
 						</div>
 					</div>
 				{/each}
@@ -366,7 +366,7 @@
 					<h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
 						Specialiști cu <span class="text-[#c13333]">Vocație</span>
 					</h2>
-					<p class="text-base text-gray-500 leading-[1.7] mb-7">
+					<p class="text-base text-gray-600 leading-[1.7] mb-7">
 						Echipa noastră reunește psihiatri, psihologi și psihoterapeuți cu formare continuă și
 						experiență clinică bogată.
 					</p>
@@ -391,8 +391,8 @@
 								{/if}
 							</div>
 							<div class="p-3">
-								<div class="text-xs font-bold text-gray-900 mb-0.5 truncate">{doc.name}</div>
-								<div class="text-[10px] text-gray-500 capitalize truncate">{doc.title}</div>
+								<div class="text-sm font-bold text-gray-900 mb-0.5 truncate">{doc.name}</div>
+								<div class="text-xs text-gray-600 capitalize truncate">{doc.title}</div>
 							</div>
 						</div>
 					{/each}

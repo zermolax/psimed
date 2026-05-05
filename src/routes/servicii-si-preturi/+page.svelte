@@ -227,7 +227,7 @@
 							{p.title}
 						</div>
 						<div
-							class="text-sm leading-[1.6]"
+							class="text-base leading-[1.65]"
 							style={isActive
 								? 'color: rgba(255,255,255,0.85);'
 								: 'color: rgba(255,255,255,0.55);'}
@@ -266,7 +266,7 @@
 						<h2 class="text-xl md:text-2xl font-extrabold text-gray-900 mb-2 leading-tight">
 							Nu sunteți sigur de ce aveți nevoie?
 						</h2>
-						<p class="text-[15px] text-gray-700 leading-[1.7] mb-4">
+						<p class="text-base text-gray-700 leading-[1.7] mb-4">
 							Oferim o gamă largă de servicii medicale și evaluări psihologice — înțelegem că
 							poate fi greu să identificați singur ce vi se potrivește. Pentru recomandări
 							personalizate, vă invităm să ne sunați. Vă vom asculta și vă vom îndruma către
@@ -308,7 +308,7 @@
 				<h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
 					Consultații <span class="text-[#c13333]">psihiatrice</span>
 				</h2>
-				<p class="text-base text-gray-500 leading-[1.65] max-w-2xl">
+				<p class="text-base text-gray-600 leading-[1.65] max-w-2xl">
 					Prima vizită include interviu detaliat, anamneză și plan terapeutic. Controalele
 					monitorizează evoluția tratamentului.
 				</p>
@@ -319,11 +319,11 @@
 						class="grid grid-cols-[1fr_auto_auto] gap-6 items-center bg-white border border-gray-200 rounded p-5 md:p-6"
 					>
 						<div>
-							<div class="text-[15px] font-semibold text-gray-900 leading-[1.4]">{item.name}</div>
-							<div class="text-xs text-gray-500 mt-1">{item.duration}</div>
+							<div class="text-base font-semibold text-gray-900 leading-[1.4]">{item.name}</div>
+							<div class="text-sm text-gray-600 mt-1">{item.duration}</div>
 						</div>
 						<div class="text-2xl font-extrabold text-[#c13333] whitespace-nowrap">
-							{item.price} <span class="text-[13px] text-gray-500 font-medium">RON</span>
+							{item.price} <span class="text-sm text-gray-600 font-medium">RON</span>
 						</div>
 						<a
 							href="/programare"
@@ -358,7 +358,7 @@
 				<h2 class="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-4">
 					Psihoterapie <span class="text-[#c13333]">& consiliere</span>
 				</h2>
-				<p class="text-base text-white/70 leading-[1.65] max-w-2xl">
+				<p class="text-lg text-white/80 leading-[1.65] max-w-2xl">
 					Spațiul sigur, fără judecată, pentru a procesa și a crește. Ședințe individuale sau de
 					cuplu cu psihoterapeuți acreditați.
 				</p>
@@ -369,11 +369,11 @@
 						class="grid grid-cols-[1fr_auto_auto] gap-6 items-center bg-white/[0.04] border border-white/10 rounded p-5 md:p-6"
 					>
 						<div>
-							<div class="text-[15px] font-semibold text-white leading-[1.4]">{item.name}</div>
-							<div class="text-xs text-white/55 mt-1">{item.duration}</div>
+							<div class="text-base font-semibold text-white leading-[1.4]">{item.name}</div>
+							<div class="text-sm text-white/70 mt-1">{item.duration}</div>
 						</div>
 						<div class="text-2xl font-extrabold text-white whitespace-nowrap">
-							{item.price} <span class="text-[13px] text-white/55 font-medium">RON</span>
+							{item.price} <span class="text-sm text-white/70 font-medium">RON</span>
 						</div>
 						<a
 							href="/programare"
@@ -402,7 +402,7 @@
 				<h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
 					Pornind de <span class="text-[#c13333]">la nevoia ta</span>
 				</h2>
-				<p class="text-base text-gray-500 leading-[1.65] max-w-2xl mx-auto">
+				<p class="text-base text-gray-600 leading-[1.65] max-w-2xl mx-auto">
 					Evaluările pot părea complicate la prima vedere. Le-am grupat după ce căutați — alegeți
 					situația dumneavoastră și vedeți doar opțiunile relevante.
 				</p>
@@ -420,10 +420,10 @@
 								<div class="text-xl md:text-2xl font-extrabold text-gray-900 leading-[1.25] mb-2">
 									{path.title}
 								</div>
-								<div class="text-sm text-gray-500 leading-[1.6] max-w-2xl">{path.intro}</div>
+								<div class="text-base text-gray-600 leading-[1.6] max-w-2xl">{path.intro}</div>
 							</div>
 							<div class="flex-shrink-0 flex items-center gap-2.5 pt-1.5">
-								<span class="text-xs text-gray-500 hidden sm:inline">
+								<span class="text-sm text-gray-600 hidden sm:inline">
 									{path.items.length} opțiuni · {pathPriceRange(path.items)}
 								</span>
 								<span
@@ -463,10 +463,10 @@
 												class="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-4 sm:gap-6 items-center p-5"
 											>
 												<div>
-													<div class="text-[15px] font-bold text-gray-900 leading-[1.4] mb-1">
+													<div class="text-base font-bold text-gray-900 leading-[1.4] mb-1">
 														{item.name}
 													</div>
-													<div class="text-[13px] text-gray-500 leading-[1.55]">{item.desc}</div>
+													<div class="text-sm text-gray-600 leading-[1.55]">{item.desc}</div>
 												</div>
 												<div class="text-right whitespace-nowrap">
 													<div class="text-[22px] font-extrabold text-[#c13333] leading-none">
@@ -508,7 +508,7 @@
 					<h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-4">
 						Tratamente <span class="text-[#c13333]">moderne</span>
 					</h2>
-					<p class="text-sm text-gray-500 leading-[1.7] mb-6">
+					<p class="text-base text-gray-600 leading-[1.7] mb-6">
 						Neurofeedback și hipnoză clinică — abordări complementare validate științific.
 					</p>
 					<div class="flex flex-col gap-2.5">
@@ -518,7 +518,7 @@
 							>
 								<div>
 									<div class="text-sm font-semibold text-gray-900 leading-[1.4]">{item.name}</div>
-									<div class="text-xs text-gray-500 mt-1">{item.duration}</div>
+									<div class="text-sm text-gray-600 mt-1">{item.duration}</div>
 								</div>
 								<div class="text-xl font-extrabold text-[#c13333] whitespace-nowrap">
 									{item.price} <span class="text-xs text-gray-500 font-medium">RON</span>
@@ -537,7 +537,7 @@
 					<h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight mb-4">
 						Evaluare <span class="text-[#c13333]">logopedică</span>
 					</h2>
-					<p class="text-sm text-gray-500 leading-[1.7] mb-6">
+					<p class="text-base text-gray-600 leading-[1.7] mb-6">
 						Pentru copii cu tulburări de limbaj și comunicare. Evaluare comprehensivă cu plan de
 						terapie.
 					</p>
@@ -548,7 +548,7 @@
 							>
 								<div>
 									<div class="text-sm font-semibold text-gray-900 leading-[1.4]">{item.name}</div>
-									<div class="text-xs text-gray-500 mt-1">{item.duration}</div>
+									<div class="text-sm text-gray-600 mt-1">{item.duration}</div>
 								</div>
 								<div class="text-xl font-extrabold text-[#c13333] whitespace-nowrap">
 									{item.price} <span class="text-xs text-gray-500 font-medium">RON</span>
@@ -579,7 +579,7 @@
 				{#each INFO_UTILE as item}
 					<div class="pl-6 border-l-2" style="border-color: #155e75;">
 						<div class="text-xl font-extrabold text-gray-900 mb-2.5">{item.title}</div>
-						<div class="text-sm text-gray-500 leading-[1.7]">{item.body}</div>
+						<div class="text-base text-gray-600 leading-[1.7]">{item.body}</div>
 					</div>
 				{/each}
 			</div>
