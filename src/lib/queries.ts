@@ -1,3 +1,56 @@
+export const blogPostsQuery = /* groq */ `
+  *[_type == "blogPost" && defined(publishedAt) && publishedAt <= now()]
+    | order(publishedAt desc) {
+    "slug": slug.current,
+    title,
+    excerpt,
+    publishedAt,
+    "coverUrl": cover.asset->url,
+    "author": author->{ name, title }
+  }
+`;
+
+export type BlogPostCard = {
+	slug: string;
+	title: string;
+	excerpt?: string;
+	publishedAt: string;
+	coverUrl?: string;
+	author?: { name: string; title?: string };
+};
+
+export const blogPostBySlugQuery = /* groq */ `
+  *[_type == "blogPost" && slug.current == $slug && defined(publishedAt) && publishedAt <= now()][0] {
+    "slug": slug.current,
+    title,
+    excerpt,
+    publishedAt,
+    "coverUrl": cover.asset->url,
+    "author": author->{ name, title, "image": photo.asset->url },
+    body,
+    seoTitle,
+    seoDescription
+  }
+`;
+
+export type BlogPostFull = {
+	slug: string;
+	title: string;
+	excerpt?: string;
+	publishedAt: string;
+	coverUrl?: string;
+	author?: { name: string; title?: string; image?: string };
+	body?: unknown[];
+	seoTitle?: string;
+	seoDescription?: string;
+} | null;
+
+export const allBlogPostSlugsQuery = /* groq */ `
+  *[_type == "blogPost" && defined(slug.current) && defined(publishedAt) && publishedAt <= now()] {
+    "slug": slug.current
+  }
+`;
+
 export const pageBySlugQuery = /* groq */ `
   *[_type == "page" && slug.current == $slug][0] {
     title,
