@@ -5,5 +5,15 @@ import { aboutPage } from './aboutPage';
 import { problem } from './problem';
 import { page } from './page';
 import { blogPost } from './blogPost';
+import { promotion } from './promotion';
 
-export const schemaTypes = [siteSettings, aboutPage, doctor, policyPage, problem, page, blogPost];
+export const schemaTypes = [
+	siteSettings,
+	aboutPage,
+	doctor,
+	policyPage,
+	problem,
+	page,
+	blogPost,
+	promotion
+];

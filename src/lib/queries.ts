@@ -51,6 +51,97 @@ export const allBlogPostSlugsQuery = /* groq */ `
   }
 `;
 
+export const promotionsQuery = /* groq */ `
+  *[_type == "promotion" && defined(publishedAt) && publishedAt <= now()
+    && (!defined(expiresAt) || expiresAt > now())]
+    | order(publishedAt desc) {
+    "slug": slug.current,
+    title,
+    locale,
+    campaignKey,
+    subtitle,
+    excerpt,
+    "coverUrl": cover.asset->url,
+    publishedAt
+  }
+`;
+
+export type PromotionCard = {
+	slug: string;
+	title: string;
+	locale: 'ro' | 'en' | 'it';
+	campaignKey: string;
+	subtitle?: string;
+	excerpt?: string;
+	coverUrl?: string;
+	publishedAt: string;
+};
+
+export const promotionBySlugQuery = /* groq */ `
+  *[_type == "promotion" && slug.current == $slug
+    && defined(publishedAt) && publishedAt <= now()
+    && (!defined(expiresAt) || expiresAt > now())][0] {
+    "slug": slug.current,
+    title,
+    locale,
+    campaignKey,
+    subtitle,
+    "coverUrl": cover.asset->url,
+    excerpt,
+    intro,
+    bullets[]{ iconName, label, description },
+    closing,
+    ctaText,
+    ctaSubtext,
+    ctaHref,
+    hashtags,
+    disclaimer,
+    seoTitle,
+    seoDescription,
+    seoKeywords,
+    "altLanguages": *[_type == "promotion" && campaignKey == ^.campaignKey
+      && _id != ^._id && defined(publishedAt) && publishedAt <= now()] {
+      locale,
+      "url": "/promotii/" + slug.current,
+      "label": select(
+        locale == "ro" => "Română",
+        locale == "en" => "English",
+        locale == "it" => "Italiano",
+        locale
+      )
+    }
+  }
+`;
+
+export type PromotionFull = {
+	slug: string;
+	title: string;
+	locale: 'ro' | 'en' | 'it';
+	campaignKey: string;
+	subtitle?: string;
+	coverUrl?: string;
+	excerpt?: string;
+	intro?: unknown[];
+	bullets?: Array<{ iconName?: string; label: string; description?: string }>;
+	closing?: unknown[];
+	ctaText?: string;
+	ctaSubtext?: string;
+	ctaHref?: string;
+	hashtags?: string[];
+	disclaimer?: unknown[];
+	seoTitle?: string;
+	seoDescription?: string;
+	seoKeywords?: string[];
+	altLanguages?: Array<{ locale: 'ro' | 'en' | 'it'; url: string; label: string }>;
+} | null;
+
+export const allPromotionSlugsQuery = /* groq */ `
+  *[_type == "promotion" && defined(slug.current)
+    && defined(publishedAt) && publishedAt <= now()] {
+    "slug": slug.current
+  }
+`;
+
 export const pageBySlugQuery = /* groq */ `
   *[_type == "page" && slug.current == $slug][0] {
     title,
