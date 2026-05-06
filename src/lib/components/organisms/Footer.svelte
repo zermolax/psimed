@@ -13,9 +13,10 @@
 
 	const quickLinks = [
 		{ name: 'Ce Tratăm', href: '/ce-tratam' },
-		{ name: 'Specialiști', href: '/specialisti' },
 		{ name: 'Servicii & Prețuri', href: '/servicii-si-preturi' },
-		{ name: 'Despre Noi', href: '/despre-noi' },
+		{ name: 'Clinica & Echipa', href: '/clinica' },
+		{ name: 'Blog', href: '/blog' },
+		{ name: 'Promoții', href: '/promotii' },
 		{ name: 'Contact', href: '/contact' }
 	];
 

@@ -244,7 +244,7 @@
 						</ul>
 
 						<a
-							href="/specialisti"
+							href="/clinica#echipa"
 							class="inline-flex items-center gap-1.5 font-semibold text-base hover:opacity-80 transition-opacity"
 							style="color: {accentColor};"
 						>

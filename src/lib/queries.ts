@@ -312,45 +312,27 @@ export const aboutPageQuery = /* groq */ `
     heroTitle,
     heroTitleAccent,
     heroLead,
-    stats[]{ value, label, color },
     storyEyebrow,
     storyTitle,
     storyBody,
-    storyQuoteText,
-    storyQuoteAttribution,
-    missionVisionEyebrow,
-    missionVisionTitle,
+    foundationsEyebrow,
+    foundationsTitle,
     missionText,
     visionText,
-    valuesEyebrow,
-    valuesTitle,
-    values[]{ iconName, title, description, color },
-    whyChooseUsEyebrow,
-    whyChooseUsTitle,
-    whyChooseUsItems[]{ iconName, title, description }
+    principles[]{ iconName, title, description }
   }
 `;
-
-type ColorTheme = 'primary' | 'secondary' | 'accent' | 'nature';
 
 export type AboutPage = {
 	heroTitle?: string;
 	heroTitleAccent?: string;
 	heroLead?: string;
-	stats?: Array<{ value: string; label: string; color?: ColorTheme }>;
 	storyEyebrow?: string;
 	storyTitle?: string;
 	storyBody?: unknown[];
-	storyQuoteText?: string;
-	storyQuoteAttribution?: string;
-	missionVisionEyebrow?: string;
-	missionVisionTitle?: string;
+	foundationsEyebrow?: string;
+	foundationsTitle?: string;
 	missionText?: string;
 	visionText?: string;
-	valuesEyebrow?: string;
-	valuesTitle?: string;
-	values?: Array<{ iconName: string; title: string; description: string; color?: ColorTheme }>;
-	whyChooseUsEyebrow?: string;
-	whyChooseUsTitle?: string;
-	whyChooseUsItems?: Array<{ iconName: string; title: string; description: string }>;
+	principles?: Array<{ iconName?: string; title: string; description?: string }>;
 } | null;

@@ -1,0 +1,14 @@
+{
+	"redirects": [
+		{
+			"source": "/despre-noi",
+			"destination": "/clinica",
+			"permanent": true
+		},
+		{
+			"source": "/specialisti",
+			"destination": "/clinica#echipa",
+			"permanent": true
+		}
+	]
+}

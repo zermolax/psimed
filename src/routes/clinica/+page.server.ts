@@ -1,9 +1,14 @@
 import type { PageServerLoad } from './$types';
 import { sanity } from '$lib/server/sanity';
-import { doctorsQuery, type Doctor } from '$lib/queries';
+import {
+	aboutPageQuery,
+	doctorsQuery,
+	type AboutPage,
+	type Doctor
+} from '$lib/queries';
 import { CATEGORY_CONFIG } from '$lib/sanity/categories';
 
-type SpecialistCardData = {
+type SpecialistCard = {
 	id: string;
 	name: string;
 	title: string;
@@ -14,15 +19,19 @@ type SpecialistCardData = {
 };
 
 export const load: PageServerLoad = async () => {
-	let specialists: SpecialistCardData[] = [];
-	let source: 'sanity' | 'static' = 'static';
+	let about: AboutPage = null;
+	let specialists: SpecialistCard[] = [];
+
+	try {
+		about = await sanity.fetch<AboutPage>(aboutPageQuery);
+	} catch (e) {
+		console.warn('[sanity] aboutPage fetch failed:', e);
+	}
 
 	try {
 		const fromSanity = await sanity.fetch<Doctor[]>(doctorsQuery);
-		if (fromSanity && fromSanity.length > 0) {
+		if (fromSanity?.length) {
 			specialists = fromSanity.map((d) => ({
-				// `id` drives the booking link param; prefer Medsoft ID when available
-				// so /programare can pre-select the doctor, fall back to slug otherwise.
 				id: d.medsoftDoctorId || d.id,
 				name: d.name,
 				title: d.title,
@@ -31,15 +40,14 @@ export const load: PageServerLoad = async () => {
 				category: d.category,
 				image: d.image
 			}));
-			source = 'sanity';
 		}
 	} catch (e) {
-		console.warn('[sanity] doctorsQuery failed, falling back to static data:', e);
+		console.warn('[sanity] doctors fetch failed, falling back to static:', e);
 	}
 
 	if (specialists.length === 0) {
-		const { specialists: staticSpecialists } = await import('$lib/data/specialists');
-		specialists = staticSpecialists.map((s) => ({
+		const { specialists: staticList } = await import('$lib/data/specialists');
+		specialists = staticList.map((s) => ({
 			id: s.id,
 			name: s.name,
 			title: s.title,
@@ -56,5 +64,5 @@ export const load: PageServerLoad = async () => {
 		return aOrder - bOrder;
 	});
 
-	return { specialists, source };
+	return { about, specialists };
 };

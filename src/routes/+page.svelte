@@ -371,7 +371,7 @@
 						experiență clinică bogată.
 					</p>
 					<a
-						href="/specialisti"
+						href="/clinica#echipa"
 						class="inline-flex items-center gap-2 bg-[#c13333] hover:bg-[#a52828] text-white font-bold text-base px-7 py-3 rounded transition-colors"
 					>
 						Cunoaște echipa

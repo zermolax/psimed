@@ -28,10 +28,9 @@
 				{ name: 'Stres și Burnout', href: '/ce-tratam/stres-burnout' }
 			]
 		},
-		{ name: 'Specialiști', href: '/specialisti' },
 		{ name: 'Servicii & Prețuri', href: '/servicii-si-preturi' },
-		{ name: 'Despre Noi', href: '/despre-noi' },
-		{ name: 'Promoții', href: '/promotii' },
+		{ name: 'Clinica', href: '/clinica' },
+		{ name: 'Blog', href: '/blog' },
 		{ name: 'Contact', href: '/contact' }
 	];
 

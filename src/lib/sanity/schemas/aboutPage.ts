@@ -1,23 +1,15 @@
 import { defineType, defineField, defineArrayMember } from 'sanity';
 
 /**
- * Singleton document for the /despre-noi page.
+ * Singleton document for the /clinica page (formerly /despre-noi).
  *
- * Each top-level field maps 1:1 to a visual section of the page.
- * Editors fill predefined slots; layout and styling stay in code so
- * the page can never look "broken".
+ * Slim structure — sections are render-order:
+ *  1. hero        → big title + lead
+ *  2. story       → eyebrow + title + Portable Text body
+ *  3. foundations → mission + vision + principles (all in one cohesive section)
  *
- * Sections (in render order):
- *  1. hero          → big title + lead paragraph
- *  2. stats         → 4 stat cards (e.g. "15+ Ani de experiență")
- *  3. story         → "Povestea Noastră" with prose + optional pull-quote
- *  4. missionVision → side-by-side Mission / Vision text
- *  5. values        → grid of value cards (icon + title + description)
- *  6. whyChooseUs   → grid of feature cards
- *
- * The two CTA sections at the bottom of the page are intentionally NOT
- * editable — they link to fixed routes (/specialisti, /programare) and
- * are template-level concerns, not content.
+ * The team (doctor list) is composed on the page from the doctor schema
+ * — not part of aboutPage.
  */
 
 const ICON_OPTIONS = [
@@ -30,32 +22,21 @@ const ICON_OPTIONS = [
 	{ title: 'Email', value: 'email' }
 ];
 
-const COLOR_OPTIONS = [
-	{ title: 'Roșu (primary)', value: 'primary' },
-	{ title: 'Albastru (secondary)', value: 'secondary' },
-	{ title: 'Galben (accent)', value: 'accent' },
-	{ title: 'Verde (nature)', value: 'nature' }
-];
-
 export const aboutPage = defineType({
 	name: 'aboutPage',
-	title: 'Despre noi (pagină)',
+	title: 'Clinica (pagină Despre noi + Echipă)',
 	type: 'document',
 	groups: [
 		{ name: 'hero', title: '1. Hero (titlul mare)' },
-		{ name: 'stats', title: '2. Statistici (4 numere)' },
-		{ name: 'story', title: '3. Povestea Noastră' },
-		{ name: 'missionVision', title: '4. Misiune & Viziune' },
-		{ name: 'values', title: '5. Valorile Noastre' },
-		{ name: 'whyChooseUs', title: '6. De Ce Noi' }
+		{ name: 'story', title: '2. Povestea Noastră' },
+		{ name: 'foundations', title: '3. Misiune · Viziune · Principii' }
 	],
 	fields: [
 		// --- 1. HERO -----------------------------------------------------
 		defineField({
 			name: 'heroTitle',
 			title: 'Titlu principal',
-			description:
-				'Apare ca H1 mare. Poți marca o porțiune cu culoare (vezi câmpul următor).',
+			description: 'Apare ca H1 mare. Poți marca o porțiune cu culoare (vezi câmpul următor).',
 			type: 'string',
 			group: 'hero',
 			validation: (Rule) => Rule.required()
@@ -64,7 +45,7 @@ export const aboutPage = defineType({
 			name: 'heroTitleAccent',
 			title: 'Cuvânt accentuat (opțional)',
 			description:
-				'Dacă completat, această porțiune din titlu apare colorată. Ex: titlu="Despre Clinica Sf. Gherasim", accent="Clinica Sf. Gherasim" → apare colorat doar numele.',
+				'Dacă completat, această porțiune din titlu apare colorată. Ex: titlu="Despre Clinica Sf. Gherasim", accent="Sf. Gherasim".',
 			type: 'string',
 			group: 'hero'
 		}),
@@ -77,223 +58,99 @@ export const aboutPage = defineType({
 			group: 'hero'
 		}),
 
-		// --- 2. STATS ----------------------------------------------------
-		defineField({
-			name: 'stats',
-			title: 'Statistici (recomandat 4)',
-			description:
-				'Apar pe banda neagră de sub hero. Numerele apar mari în culoare, etichetele dedesubt.',
-			type: 'array',
-			group: 'stats',
-			of: [
-				defineArrayMember({
-					type: 'object',
-					name: 'statItem',
-					fields: [
-						defineField({
-							name: 'value',
-							title: 'Valoare',
-							description: 'Ex: "15+", "5000+", "95%"',
-							type: 'string',
-							validation: (Rule) => Rule.required()
-						}),
-						defineField({
-							name: 'label',
-							title: 'Etichetă',
-							description: 'Ex: "Ani de experiență", "Pacienți ajutați"',
-							type: 'string',
-							validation: (Rule) => Rule.required()
-						}),
-						defineField({
-							name: 'color',
-							title: 'Culoare',
-							type: 'string',
-							options: { list: COLOR_OPTIONS, layout: 'radio' },
-							initialValue: 'primary'
-						})
-					],
-					preview: {
-						select: { title: 'value', subtitle: 'label' }
-					}
-				})
-			],
-			validation: (Rule) => Rule.max(4)
-		}),
-
-		// --- 3. STORY ----------------------------------------------------
+		// --- 2. STORY ----------------------------------------------------
 		defineField({
 			name: 'storyEyebrow',
-			title: 'Eyebrow (text mic deasupra titlului)',
-			description: 'Ex: "Povestea Noastră". Apare cu litere mici colorate.',
+			title: 'Eyebrow (etichetă mică deasupra)',
+			description: 'Ex: "Povestea noastră"',
 			type: 'string',
-			group: 'story',
-			initialValue: 'Povestea Noastră'
+			group: 'story'
 		}),
 		defineField({
 			name: 'storyTitle',
 			title: 'Titlu secțiune',
+			description: 'Ex: "De ce am pornit la drum"',
 			type: 'string',
 			group: 'story'
 		}),
 		defineField({
 			name: 'storyBody',
-			title: 'Conținut (rich text)',
-			description: 'Mai multe paragrafe, suport pentru bold, italic, link-uri.',
+			title: 'Conținut',
+			description: 'Narativul clinicii. Suportă paragrafe, bold, italic.',
 			type: 'array',
 			group: 'story',
 			of: [
-				{
+				defineArrayMember({
 					type: 'block',
-					styles: [{ title: 'Paragraf', value: 'normal' }],
+					styles: [
+						{ title: 'Paragraf', value: 'normal' },
+						{ title: 'Citat', value: 'blockquote' }
+					],
 					lists: [],
 					marks: {
 						decorators: [
 							{ title: 'Bold', value: 'strong' },
 							{ title: 'Italic', value: 'em' }
-						]
-					}
-				}
-			]
-		}),
-		defineField({
-			name: 'storyQuoteText',
-			title: 'Citat (opțional)',
-			description:
-				'Textul citatului afișat pe cardul roșu din dreapta. Lasă gol dacă nu vrei card de citat.',
-			type: 'text',
-			rows: 3,
-			group: 'story'
-		}),
-		defineField({
-			name: 'storyQuoteAttribution',
-			title: 'Atribuire citat',
-			description: 'Cine a spus citatul. Ex: "Filosofia Clinicii Sf. Gherasim"',
-			type: 'string',
-			group: 'story'
-		}),
-
-		// --- 4. MISSION & VISION ----------------------------------------
-		defineField({
-			name: 'missionVisionEyebrow',
-			title: 'Eyebrow',
-			type: 'string',
-			group: 'missionVision',
-			initialValue: 'Misiune & Viziune'
-		}),
-		defineField({
-			name: 'missionVisionTitle',
-			title: 'Titlu secțiune',
-			type: 'string',
-			group: 'missionVision'
-		}),
-		defineField({
-			name: 'missionText',
-			title: 'Misiunea Noastră',
-			type: 'text',
-			rows: 5,
-			group: 'missionVision'
-		}),
-		defineField({
-			name: 'visionText',
-			title: 'Viziunea Noastră',
-			type: 'text',
-			rows: 5,
-			group: 'missionVision'
-		}),
-
-		// --- 5. VALUES --------------------------------------------------
-		defineField({
-			name: 'valuesEyebrow',
-			title: 'Eyebrow',
-			type: 'string',
-			group: 'values',
-			initialValue: 'Valorile Noastre'
-		}),
-		defineField({
-			name: 'valuesTitle',
-			title: 'Titlu secțiune',
-			type: 'string',
-			group: 'values'
-		}),
-		defineField({
-			name: 'values',
-			title: 'Valori (recomandat 4)',
-			type: 'array',
-			group: 'values',
-			of: [
-				defineArrayMember({
-					type: 'object',
-					name: 'valueItem',
-					fields: [
-						defineField({
-							name: 'iconName',
-							title: 'Icon',
-							type: 'string',
-							options: { list: ICON_OPTIONS },
-							validation: (Rule) => Rule.required()
-						}),
-						defineField({
-							name: 'title',
-							title: 'Titlu',
-							type: 'string',
-							validation: (Rule) => Rule.required()
-						}),
-						defineField({
-							name: 'description',
-							title: 'Descriere scurtă',
-							type: 'text',
-							rows: 2,
-							validation: (Rule) => Rule.required()
-						}),
-						defineField({
-							name: 'color',
-							title: 'Culoare icon',
-							type: 'string',
-							options: { list: COLOR_OPTIONS, layout: 'radio' },
-							initialValue: 'primary'
-						})
-					],
-					preview: {
-						select: { title: 'title', subtitle: 'iconName' }
+						],
+						annotations: []
 					}
 				})
 			]
 		}),
 
-		// --- 6. WHY CHOOSE US -------------------------------------------
+		// --- 3. FOUNDATIONS (Mission + Vision + Principles together) ---
 		defineField({
-			name: 'whyChooseUsEyebrow',
+			name: 'foundationsEyebrow',
 			title: 'Eyebrow',
+			description: 'Ex: "Misiune · Viziune · Principii"',
 			type: 'string',
-			group: 'whyChooseUs',
-			initialValue: 'De Ce Noi'
+			group: 'foundations',
+			initialValue: 'Misiune · Viziune · Principii'
 		}),
 		defineField({
-			name: 'whyChooseUsTitle',
+			name: 'foundationsTitle',
 			title: 'Titlu secțiune',
+			description: 'Ex: "Ce ne motivează"',
 			type: 'string',
-			group: 'whyChooseUs'
+			group: 'foundations',
+			initialValue: 'Ce ne motivează'
 		}),
 		defineField({
-			name: 'whyChooseUsItems',
-			title: 'Argumente (recomandat 6)',
+			name: 'missionText',
+			title: 'Misiune',
+			description: 'Un paragraf scurt despre misiunea clinicii.',
+			type: 'text',
+			rows: 4,
+			group: 'foundations'
+		}),
+		defineField({
+			name: 'visionText',
+			title: 'Viziune',
+			description: 'Un paragraf scurt despre viziunea pe termen lung.',
+			type: 'text',
+			rows: 4,
+			group: 'foundations'
+		}),
+		defineField({
+			name: 'principles',
+			title: 'Principii',
+			description:
+				'Listă de principii / valori care ghidează clinica. 3-6 items recomandat.',
 			type: 'array',
-			group: 'whyChooseUs',
+			group: 'foundations',
 			of: [
 				defineArrayMember({
 					type: 'object',
-					name: 'whyItem',
 					fields: [
 						defineField({
 							name: 'iconName',
 							title: 'Icon',
 							type: 'string',
-							options: { list: ICON_OPTIONS },
-							validation: (Rule) => Rule.required()
+							options: { list: ICON_OPTIONS, layout: 'radio' }
 						}),
 						defineField({
 							name: 'title',
-							title: 'Titlu',
+							title: 'Titlu principiu',
 							type: 'string',
 							validation: (Rule) => Rule.required()
 						}),
@@ -301,19 +158,15 @@ export const aboutPage = defineType({
 							name: 'description',
 							title: 'Descriere',
 							type: 'text',
-							rows: 2,
-							validation: (Rule) => Rule.required()
+							rows: 3
 						})
 					],
-					preview: {
-						select: { title: 'title', subtitle: 'iconName' }
-					}
+					preview: { select: { title: 'title', subtitle: 'iconName' } }
 				})
 			]
 		})
 	],
 	preview: {
-		select: { title: 'heroTitle' },
-		prepare: ({ title }) => ({ title: title || 'Despre noi' })
+		prepare: () => ({ title: 'Clinica — Despre noi + Echipă' })
 	}
 });
