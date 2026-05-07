@@ -8,11 +8,17 @@
 		phone: '',
 		subject: '',
 		message: '',
-		gdprConsent: false
+		gdprConsent: false,
+		website: '',
+		loadedAt: 0
 	});
 
 	let formStatus = $state<'idle' | 'submitting' | 'success' | 'error'>('idle');
 	let errorMessage = $state('');
+
+	$effect(() => {
+		formData.loadedAt = Date.now();
+	});
 
 	async function handleSubmit(e: Event) {
 		e.preventDefault();
@@ -34,7 +40,9 @@
 					phone: '',
 					subject: '',
 					message: '',
-					gdprConsent: false
+					gdprConsent: false,
+					website: '',
+					loadedAt: Date.now()
 				};
 				setTimeout(() => {
 					formStatus = 'idle';
@@ -260,6 +268,18 @@
 								class="w-full px-4 py-3 border border-gray-300 rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent"
 								style="--tw-ring-color: #c13333;"
 							></textarea>
+						</div>
+
+						<div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden">
+							<label for="website">Website (lasă gol)</label>
+							<input
+								type="text"
+								id="website"
+								name="website"
+								tabindex="-1"
+								autocomplete="off"
+								bind:value={formData.website}
+							/>
 						</div>
 
 						<div class="flex items-start gap-3">
