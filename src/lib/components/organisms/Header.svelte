@@ -31,6 +31,7 @@
 		{ name: 'Servicii & Prețuri', href: '/servicii-si-preturi' },
 		{ name: 'Clinica', href: '/clinica' },
 		{ name: 'Blog', href: '/blog' },
+		{ name: 'Promoții', href: '/promotii' },
 		{ name: 'Contact', href: '/contact' }
 	];
 

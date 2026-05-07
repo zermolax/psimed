@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Button from '$lib/components/atoms/Button.svelte';
 	import Icon from '$lib/components/atoms/Icon.svelte';
 
 	export type PromotionBullet = {
@@ -34,11 +33,29 @@
 	let { data }: { data: PromotionData } = $props();
 
 	const ctaHref = data.ctaHref ?? '/programare';
-	const localeLabels: Record<'ro' | 'en' | 'it', string> = {
-		ro: 'Română',
-		en: 'English',
-		it: 'Italiano'
+
+	const localeBadge: Record<'ro' | 'en' | 'it', { label: string; flag: string }> = {
+		ro: { label: 'Română', flag: 'RO' },
+		en: { label: 'English', flag: 'EN' },
+		it: { label: 'Italiano', flag: 'IT' }
 	};
+
+	function safeIcon(
+		name: string
+	): 'brain' | 'heart' | 'check' | 'user' | 'calendar' | 'phone' | 'email' {
+		if (
+			name === 'brain' ||
+			name === 'heart' ||
+			name === 'check' ||
+			name === 'user' ||
+			name === 'calendar' ||
+			name === 'phone' ||
+			name === 'email'
+		) {
+			return name;
+		}
+		return 'check';
+	}
 </script>
 
 <svelte:head>
@@ -50,121 +67,160 @@
 	{#if data.seoKeywords && data.seoKeywords.length > 0}
 		<meta name="keywords" content={data.seoKeywords.join(', ')} />
 	{/if}
-	<!-- Cross-language alternates for SEO -->
 	{#each data.altLanguages as alt}
 		<link rel="alternate" hreflang={alt.locale} href={alt.url} />
 	{/each}
 </svelte:head>
 
-<section class="bg-gradient-to-b from-emerald-50/40 via-white to-white py-12 md:py-16">
-	<div class="container-custom">
-		<div class="max-w-3xl mx-auto">
-			<!-- Language switcher -->
-			<div class="flex flex-wrap items-center gap-2 mb-8 text-sm border-b border-gray-200 pb-4">
-				<span class="text-gray-500 mr-2">Limbă:</span>
-				<span
-					class="inline-flex items-center px-3 py-1.5 rounded-full bg-emerald-700 text-white font-semibold uppercase tracking-wide text-xs"
-				>
-					{localeLabels[data.locale]}
-				</span>
-				{#each data.altLanguages as alt}
-					<a
-						href={alt.url}
-						class="inline-flex items-center px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 hover:bg-emerald-100 hover:text-emerald-800 transition-colors uppercase tracking-wide text-xs font-medium"
-						hreflang={alt.locale}
+<div class="font-['Plus_Jakarta_Sans'] bg-[#f8f9fa]">
+	<!-- HERO + LANG SWITCHER -->
+	<section class="bg-[#f8f9fa] py-16 md:py-20">
+		<div class="container-custom">
+			<div class="max-w-3xl mx-auto">
+				<!-- Language switcher -->
+				<div class="flex flex-wrap items-center gap-2 mb-8 pb-4 border-b border-gray-200">
+					<span class="text-sm text-gray-500 mr-2">Limbă:</span>
+					<span
+						class="inline-flex items-center px-3 py-1.5 rounded-full text-white font-bold uppercase tracking-wide text-xs"
+						style="background: #c13333;"
 					>
-						{alt.label}
-					</a>
-				{/each}
-			</div>
+						{localeBadge[data.locale].flag} · {localeBadge[data.locale].label}
+					</span>
+					{#each data.altLanguages as alt}
+						<a
+							href={alt.url}
+							hreflang={alt.locale}
+							class="inline-flex items-center px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 uppercase tracking-wide text-xs font-medium transition-colors"
+						>
+							{alt.label}
+						</a>
+					{/each}
+				</div>
 
-			<!-- Hero quote -->
-			<div class="border-l-4 border-emerald-700 pl-6 mb-8">
+				<!-- Eyebrow -->
+				<div class="flex items-center gap-2.5 mb-5">
+					<span class="w-7 h-px bg-[#155e75]"></span>
+					<span class="text-xs font-bold uppercase tracking-[0.18em] text-[#155e75]">
+						{localeBadge[data.locale].label}
+					</span>
+				</div>
+
 				<h1
-					class="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight"
+					class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 leading-[1.15] mb-6"
 				>
 					{data.title}
 				</h1>
 			</div>
+		</div>
+	</section>
 
-			<!-- Intro paragraph (HTML allowed for inline bold) -->
-			<p class="text-gray-700 text-lg leading-relaxed mb-8">
+	<!-- INTRO -->
+	<section class="bg-white py-16 md:py-20 border-y border-gray-200">
+		<div class="container-custom max-w-3xl">
+			<p class="text-lg text-gray-700 leading-[1.7]">
 				{@html data.intro}
 			</p>
+		</div>
+	</section>
 
-			<!-- Bullets card -->
-			<div class="bg-emerald-50/70 rounded-2xl p-6 md:p-8 mb-8 border border-emerald-100">
-				<ul class="space-y-4">
+	<!-- BULLETS -->
+	<section class="bg-[#f8f9fa] py-16 md:py-20">
+		<div class="container-custom max-w-3xl">
+			<div class="rounded p-6 md:p-8 bg-white border border-gray-200">
+				<ul class="space-y-5">
 					{#each data.bullets as bullet, i}
 						<li
 							class="flex items-start gap-4 {i < data.bullets.length - 1
-								? 'pb-4 border-b border-emerald-100'
+								? 'pb-5 border-b border-gray-100'
 								: ''}"
 						>
 							<div
-								class="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700"
+								class="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center"
+								style="background: #cffafe; color: #155e75;"
 							>
-								<Icon name={bullet.iconName} size="20" />
+								<Icon name={safeIcon(bullet.iconName)} size="20" />
 							</div>
-							<div class="text-gray-700 leading-relaxed pt-1.5">
-								<strong class="font-semibold text-gray-900">{bullet.label}</strong>
-								<span>{@html bullet.description}</span>
+							<div class="flex-1 pt-1">
+								<strong class="font-bold text-gray-900">{bullet.label}</strong>
+								<span class="text-base text-gray-700 leading-[1.65]">
+									{@html bullet.description}
+								</span>
 							</div>
 						</li>
 					{/each}
 				</ul>
 			</div>
+		</div>
+	</section>
 
-			<!-- Closing paragraph -->
-			{#if data.closing}
-				<p class="text-gray-700 text-lg leading-relaxed mb-8">
+	<!-- CLOSING -->
+	{#if data.closing}
+		<section class="bg-white py-16 md:py-20 border-t border-gray-200">
+			<div class="container-custom max-w-3xl">
+				<p class="text-lg text-gray-700 leading-[1.7]">
 					{@html data.closing}
 				</p>
-			{/if}
-
-			<!-- CTA -->
-			<div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-10">
-				<a
-					href={ctaHref}
-					class="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-7 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
-				>
-					<Icon name="heart" size="20" class="text-emerald-200" />
-					{data.ctaText}
-				</a>
-				{#if data.ctaSubtext}
-					<p class="text-sm text-gray-600">{data.ctaSubtext}</p>
-				{/if}
 			</div>
+		</section>
+	{/if}
 
-			<!-- Hashtags -->
-			{#if data.hashtags && data.hashtags.length > 0}
-				<div class="flex flex-wrap gap-2 mb-12">
+	<!-- HASHTAGS -->
+	{#if data.hashtags && data.hashtags.length > 0}
+		<section class="bg-white py-8">
+			<div class="container-custom max-w-3xl">
+				<div class="flex flex-wrap gap-2">
 					{#each data.hashtags as tag}
 						<span
-							class="inline-flex items-center px-3 py-1.5 rounded-full bg-emerald-100/60 text-emerald-800 text-sm font-medium"
+							class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium"
+							style="background: #cffafe; color: #155e75;"
 						>
 							#{tag}
 						</span>
 					{/each}
 				</div>
-			{/if}
+			</div>
+		</section>
+	{/if}
 
-			<!-- Disclaimer -->
-			{#if data.disclaimer}
-				<div class="mt-8 p-5 bg-gray-50 rounded-xl border border-gray-200">
-					<p class="text-sm text-gray-600 leading-relaxed">
-						<span class="font-semibold text-gray-800">⚖️ Conformitate etică medicală</span> —
+	<!-- CTA -->
+	<section class="bg-[#c13333] py-16 md:py-20 text-white">
+		<div class="container-custom">
+			<div class="max-w-2xl mx-auto text-center">
+				<a
+					href={ctaHref}
+					class="inline-flex items-center gap-2 bg-white text-[#c13333] hover:bg-gray-100 font-bold text-lg px-10 py-4 rounded shadow-lg transition-colors"
+				>
+					<Icon name="heart" size="20" />
+					{data.ctaText}
+				</a>
+				{#if data.ctaSubtext}
+					<p class="text-base text-white/90 mt-5">{data.ctaSubtext}</p>
+				{/if}
+			</div>
+		</div>
+	</section>
+
+	<!-- DISCLAIMER -->
+	{#if data.disclaimer}
+		<section class="bg-[#f8f9fa] py-12 border-t border-gray-200">
+			<div class="container-custom max-w-3xl">
+				<div class="bg-white p-6 rounded border border-gray-200">
+					<p class="text-sm text-gray-600 leading-[1.65]">
+						<span class="font-bold text-gray-800">⚖️ Conformitate etică medicală</span> —
 						{@html data.disclaimer}
 					</p>
 				</div>
-			{/if}
-
-			<!-- Back to home -->
-			<div class="mt-10 text-center">
-				<Button href="/" variant="secondary" size="md">
-					← {data.locale === 'ro' ? 'Înapoi la pagina principală' : data.locale === 'en' ? 'Back to home' : 'Torna alla pagina principale'}
-				</Button>
 			</div>
-		</div>
-	</div>
-</section>
+		</section>
+	{/if}
+
+	<!-- BACK -->
+	<section class="bg-[#f8f9fa] py-12 text-center">
+		<a
+			href="/promotii"
+			class="inline-flex items-center gap-2 border-2 border-gray-300 text-gray-700 hover:bg-gray-100 font-bold text-base px-6 py-3 rounded transition-colors"
+		>
+			← Toate campaniile
+		</a>
+	</section>
+</div>
