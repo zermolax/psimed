@@ -44,38 +44,38 @@
 
 	const localeGroups: Array<{
 		key: 'ro' | 'en' | 'it';
-		eyebrow: string;
 		title: string;
 		flag: string;
+		titleBg: string;
 		accent: string;
 		accentBg: string;
 		readMoreLabel: string;
 	}> = [
 		{
 			key: 'ro',
-			eyebrow: 'În română',
-			title: 'Pentru părinți români',
+			title: 'Vorbesc românește',
 			flag: 'RO',
-			accent: '#c13333',
-			accentBg: '#fef2f2',
+			titleBg: '#1e3a8a',
+			accent: '#2563eb',
+			accentBg: '#dbeafe',
 			readMoreLabel: 'Citește mai mult'
 		},
 		{
 			key: 'en',
-			eyebrow: 'In English',
-			title: 'For English-speaking parents',
+			title: 'Speak English',
 			flag: 'EN',
-			accent: '#155e75',
-			accentBg: '#cffafe',
+			titleBg: '#c13333',
+			accent: '#c13333',
+			accentBg: '#fef2f2',
 			readMoreLabel: 'Read more'
 		},
 		{
 			key: 'it',
-			eyebrow: 'In italiano',
-			title: 'Per genitori italiani',
+			title: 'Parlo italiano',
 			flag: 'IT',
-			accent: '#b45309',
-			accentBg: '#fef3c7',
+			titleBg: '#166534',
+			accent: '#15803d',
+			accentBg: '#dcfce7',
 			readMoreLabel: 'Leggi di più'
 		}
 	];
@@ -103,21 +103,14 @@
 	<section class="bg-[#f8f9fa] py-20 md:py-24">
 		<div class="container-custom">
 			<div class="max-w-3xl mx-auto text-center">
-				<div class="flex items-center justify-center gap-2.5 mb-5">
-					<span class="w-7 h-px bg-[#155e75]"></span>
-					<span class="text-xs font-bold uppercase tracking-[0.18em] text-[#155e75]">
-						Campanii și Inițiative
-					</span>
-					<span class="w-7 h-px bg-[#155e75]"></span>
-				</div>
 				<h1
 					class="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[1.05] mb-6"
 				>
-					Pentru fiecare <span class="text-[#c13333]">familie</span>
+					Campanii și <span class="text-[#c13333]">inițiative</span>
 				</h1>
 				<p class="text-lg text-gray-700 leading-[1.65] max-w-2xl mx-auto">
 					Materiale educaționale și inițiative — traduse în trei limbi pentru a ajunge la cât mai
-					multe familii. Selectează limba care îți este accesibilă.
+					mulți oameni. Selectează limba care îți este accesibilă.
 				</p>
 			</div>
 		</div>
@@ -127,32 +120,21 @@
 	{#each localeGroups as group}
 		{@const items = promotions.filter((p) => p.locale === group.key)}
 		{#if items.length > 0}
-			<section
-				class="py-16 md:py-20 {group.key === 'en'
-					? 'bg-white border-y border-gray-200'
-					: 'bg-[#f8f9fa]'}"
-			>
+			<!-- Title band: full-width, colored, white text -->
+			<div class="py-10 md:py-14" style="background: {group.titleBg};">
+				<div class="container-custom">
+					<h2
+						class="text-4xl md:text-5xl font-extrabold text-white text-center leading-tight"
+					>
+						{group.title}
+					</h2>
+				</div>
+			</div>
+
+			<!-- Cards on neutral bg -->
+			<section class="bg-white py-16 md:py-20 border-b border-gray-200">
 				<div class="container-custom">
 					<div class="max-w-5xl mx-auto">
-						<div class="flex items-center gap-3 mb-8">
-							<span
-								class="inline-flex items-center justify-center text-white font-extrabold text-lg w-12 h-12 rounded"
-								style="background: {group.accent};"
-							>
-								{group.flag}
-							</span>
-							<div>
-								<div
-									class="text-xs font-bold uppercase tracking-[0.18em] text-gray-500 mb-1"
-								>
-									{group.eyebrow}
-								</div>
-								<h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 leading-tight">
-									{group.title}
-								</h2>
-							</div>
-						</div>
-
 						<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
 							{#each items as p}
 								<a
