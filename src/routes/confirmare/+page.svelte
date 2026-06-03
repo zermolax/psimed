@@ -237,12 +237,13 @@
 					</div>
 				{/if}
 
-				<!-- Order reference -->
+				<!-- Order reference — same code is written on the MedSoft appointment
+				     and shown in the Netopia dashboard, so staff can match them. -->
 				{#if orderId}
 					<div
 						class="bg-gray-50 rounded-lg px-5 py-3 mb-6 flex justify-between items-center text-sm"
 					>
-						<span class="text-gray-500">Referinta plata</span>
+						<span class="text-gray-500">Cod programare</span>
 						<span class="font-mono text-gray-700">{orderId}</span>
 					</div>
 				{/if}
@@ -289,7 +290,9 @@
 				Probleme? Contactati-ne la
 				<a href="tel:+40376501501" class="text-[#dd4444] font-medium">0376 501 501</a>
 				sau
-				<a href="mailto:office@psimed.ro" class="text-[#dd4444] font-medium">office@psimed.ro</a>
+				<a href="mailto:office@clinicasfgherasim.ro" class="text-[#dd4444] font-medium"
+					>office@clinicasfgherasim.ro</a
+				>
 			</p>
 		</div>
 	</div>

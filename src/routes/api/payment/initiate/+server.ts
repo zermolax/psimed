@@ -81,7 +81,11 @@ export const POST: RequestHandler = async ({ request }) => {
 		const orderId = crypto.randomUUID().replace(/-/g, '').substring(0, 20);
 
 		// The booking payload will be echoed back by Netopia in the IPN <params>
+		// orderId is included so the callback can stamp it onto the MedSoft
+		// appointment — this is the shared key that lets staff match a payment
+		// (visible in the Netopia dashboard) to its appointment.
 		const bookingPayload = {
+			orderId,
 			doctorId,
 			locationId,
 			startDateTime,

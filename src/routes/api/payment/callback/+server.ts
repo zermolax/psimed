@@ -137,6 +137,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		let bookingPayload: {
+			orderId?: string;
 			doctorId: number;
 			locationId: number;
 			startDateTime: string;
@@ -166,6 +167,17 @@ export const POST: RequestHandler = async ({ request }) => {
 		// The payment already went through — returning an error would make
 		// NETOPIA retry the IPN endlessly while the patient is already charged.
 		step = 'medsoft';
+		// Stamp the payment order id onto the appointment notes so staff can
+		// match a Netopia payment (same id in the Netopia dashboard) to this
+		// appointment. paymentRef prefers the id echoed in the booking payload,
+		// falling back to the order id parsed from the IPN XML.
+		const paymentRef = bookingPayload.orderId || orderId;
+		const stampedNotes = [
+			paymentRef ? `Plată online Netopia · Cod: ${paymentRef}` : null,
+			bookingPayload.appointmentNotes || null
+		]
+			.filter(Boolean)
+			.join(' — ');
 		try {
 			const result = await medsoft.createAppointment({
 				doctorId: bookingPayload.doctorId,
@@ -177,9 +189,9 @@ export const POST: RequestHandler = async ({ request }) => {
 				patientPhoneNumber: bookingPayload.patientPhoneNumber,
 				patientAddress: null,
 				appointmentDetails: bookingPayload.appointmentDetails || 'Consultație',
-				appointmentNotes: bookingPayload.appointmentNotes || undefined
+				appointmentNotes: stampedNotes || undefined
 			});
-			console.log('[Netopia IPN] MedSoft appointment created:', result);
+			console.log(`[Netopia IPN] MedSoft appointment created (orderId=${paymentRef}):`, result);
 		} catch (medsoftErr) {
 			// Log the error but DO NOT fail the IPN — payment is already charged
 			const msg = medsoftErr instanceof Error ? medsoftErr.message : String(medsoftErr);
