@@ -186,6 +186,44 @@
 		return { morning, afternoon };
 	});
 
+	// Deep-link: a ?specialty=<slug> query param (e.g. from "Programează"
+	// buttons on the services page) pre-selects the matching specialty.
+	// Matching is by NORMALISED NAME, never by MedSoft id — so it keeps
+	// working when MedSoft ids change, and falls back to the normal flow
+	// (no error) if nothing matches. Consumed once.
+	let deepLinkConsumed = false;
+
+	function normalizeName(s: string): string {
+		return s
+			.toLowerCase()
+			.normalize('NFD')
+			.replace(/[̀-ͯ]/g, '') // strip diacritics (combining marks)
+			.replace(/[^a-z0-9]+/g, ' ')
+			.trim();
+	}
+
+	function tryResolveSpecialtyDeepLink() {
+		if (deepLinkConsumed) return;
+		const slug = new URLSearchParams(window.location.search).get('specialty');
+		if (!slug) {
+			deepLinkConsumed = true;
+			return;
+		}
+		if (!specialties.length) return; // specialties not loaded yet — wait
+		deepLinkConsumed = true;
+		const target = normalizeName(slug);
+		const match =
+			specialties.find((s) => normalizeName(s.Name) === target) ||
+			specialties.find(
+				(s) =>
+					normalizeName(s.Name).startsWith(target) || target.startsWith(normalizeName(s.Name))
+			) ||
+			specialties.find(
+				(s) => normalizeName(s.Name).includes(target) || target.includes(normalizeName(s.Name))
+			);
+		if (match) selectSpecialty(match);
+	}
+
 	// Load initial data
 	$effect(() => {
 		loadLocations();
@@ -222,6 +260,7 @@
 			const data = await res.json();
 			if (data.success) {
 				specialties = data.data;
+				tryResolveSpecialtyDeepLink();
 			} else {
 				error = data.error;
 			}

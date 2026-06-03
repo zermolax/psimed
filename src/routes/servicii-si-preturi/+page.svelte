@@ -326,7 +326,7 @@
 							{item.price} <span class="text-sm text-gray-600 font-medium">RON</span>
 						</div>
 						<a
-							href="/programare"
+							href={`/programare?specialty=${item.name.includes('Pediatric') ? 'psihiatrie-pediatrica' : 'psihiatrie-adulti'}`}
 							class="hidden sm:inline-flex items-center gap-1 text-sm font-bold text-[#155e75] hover:text-[#0e4458] whitespace-nowrap"
 						>
 							Programează
@@ -376,7 +376,7 @@
 							{item.price} <span class="text-sm text-white/70 font-medium">RON</span>
 						</div>
 						<a
-							href="/programare"
+							href="/programare?specialty=psihologie-clinica"
 							class="hidden sm:inline-flex items-center gap-1 text-sm font-bold text-white hover:text-white/80 whitespace-nowrap"
 						>
 							Programează
@@ -476,7 +476,7 @@
 													<div class="text-[11px] text-gray-500 mt-1">{item.time}</div>
 												</div>
 												<a
-													href="/programare"
+													href="/programare?specialty=psihologie-clinica"
 													class="hidden sm:inline-flex items-center gap-1 text-[13px] font-bold text-[#155e75] hover:text-[#0e4458] whitespace-nowrap"
 												>
 													Programează
