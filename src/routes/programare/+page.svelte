@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { formatPersonName } from '$lib/utils/format';
+
 	// Types
 	interface ClinicLocation {
 		LocationId: number;
@@ -446,7 +448,7 @@
 			case STEPS.SPECIALTY:
 				return selectedSpecialty?.Name ?? '';
 			case STEPS.DOCTOR:
-				return shortenName(selectedDoctor?.Name ?? '');
+				return shortenName(formatPersonName(selectedDoctor?.Name));
 			case STEPS.SERVICE:
 				return selectedScope?.scop ?? '';
 			case STEPS.DATETIME:
@@ -543,7 +545,7 @@
 					appointmentDetails: selectedScope?.scop || 'Consultație',
 					appointmentNotes: patientData.observatii || undefined,
 					amount: price,
-					doctorName: selectedDoctor.Name,
+					doctorName: formatPersonName(selectedDoctor.Name),
 					locationName: selectedLocation.LocationName,
 					displayDate: selectedDate,
 					displayTime: selectedTimeSlot.formatted
@@ -792,7 +794,7 @@
 								<span class="bk-doc-top">
 									<span class="bk-avatar avatar-{tone}"><span>{initialsOf(doctor.Name)}</span></span>
 									<span class="bk-doc-id">
-										<span class="bk-doc-name">{doctor.Name}</span>
+										<span class="bk-doc-name">{formatPersonName(doctor.Name)}</span>
 										<span class="bk-doc-meta">
 											{#if doctor.Grade}<span class="bk-grade grade-{tone}">{doctor.Grade}</span>{/if}
 										</span>
@@ -869,7 +871,7 @@
 					<p class="bk-kicker">Pasul 5 din 6</p>
 					<h2 class="bk-title">Când îți e mai ușor să vii?</h2>
 					<p class="bk-sub">
-						{selectedDoctor?.Name} · {selectedScope?.scop?.toLowerCase()}{#if getPrice() > 0} · {getPrice()} RON{/if}
+						{formatPersonName(selectedDoctor?.Name)} · {selectedScope?.scop?.toLowerCase()}{#if getPrice() > 0} · {getPrice()} RON{/if}
 					</p>
 				</div>
 
@@ -976,7 +978,7 @@
 						<div class="bk-summary__rows">
 							<div class="bk-sum-row"><span class="bk-sum-k">Clinica</span><span class="bk-sum-v">{selectedLocation?.LocationName}</span></div>
 							<div class="bk-sum-row"><span class="bk-sum-k">Specialitate</span><span class="bk-sum-v">{selectedSpecialty?.Name}</span></div>
-							<div class="bk-sum-row"><span class="bk-sum-k">Medic</span><span class="bk-sum-vwrap"><span class="bk-sum-v">{selectedDoctor?.Name}</span>{#if selectedDoctor?.Grade}<span class="bk-sum-sub">{selectedDoctor.Grade}</span>{/if}</span></div>
+							<div class="bk-sum-row"><span class="bk-sum-k">Medic</span><span class="bk-sum-vwrap"><span class="bk-sum-v">{formatPersonName(selectedDoctor?.Name)}</span>{#if selectedDoctor?.Grade}<span class="bk-sum-sub">{selectedDoctor.Grade}</span>{/if}</span></div>
 							<div class="bk-sum-row"><span class="bk-sum-k">Serviciu</span><span class="bk-sum-vwrap"><span class="bk-sum-v">{selectedScope?.scop}</span><span class="bk-sum-sub">{selectedScope?.durata} min</span></span></div>
 							<div class="bk-sum-row is-highlight"><span class="bk-sum-k">Când</span><span class="bk-sum-vwrap"><span class="bk-sum-v">{selectedDate ? formatDate(selectedDate) : ''}</span><span class="bk-sum-sub">ora {selectedTimeSlot?.formatted}</span></span></div>
 						</div>
